@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="find-exe"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        find-exe.xml
+Date:         2018-02-14
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definition to find an executable on the path, OS independant
+...
+
+# find-exe.xml
+
+A macro definition that checks that the specified executable is available on the path, sets
+a property with the name of the executable and fails the build if it cannot find it.
+This is typically used for build files that might be used on both Windows and Unix that
+use the &lt;exec&gt; or &lt;apply&gt; tasks.
+
+The simplest usage is to just supply the name of a property that will be set to the
+executable name. If this is of the form "app.exe" then the macro will assume that the
+executable is called "app" in Unix and "app.exe" in Windows. This can be overridden using
+the *unix* and *windows* attributes. For example, setting the *windows* attribute to
+"my-app.exe" would search for that in the path.
+
+
+## Usage
+
+This build file fragment ensures that the correct name for the "git" executable is passed
+to the &lt;exec&gt; task. This would be *git* in Unix/MacOS and *git.exe* in Windows.
+
+```nohighlight
+&lt;find-exe property="git.exe"/&gt;
+
+&lt;exec
+&#9;executable="${git.exe}"
+&#9;dir="@{dir}"
+&#9;outputproperty="${status}"&gt;
+&#9;&lt;arg value="status"/&gt;
+&lt;/exec&gt;
+```
+
+This fragment finds the executable name for the "Pandoc" program. The normal Windows name
+is "pandoc.exe" but as this is sometimes caught by AV software this has been changed to
+"pan-doc.exe":
+
+```nohighlight
+&lt;find-exe property="pandoc.exe" windows="pan-doc.exe"/&gt;
+```
+
+
+## Dependencies
+
+None.
+
+
+## Change Log
+
+##### 2018-02-14 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.find-exe}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/attr-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="find-exe"
+        description="Find the name of the executable">
+
+        <attribute
+            name="property"
+            description="Property to set with the executable name"/>
+
+        <attribute
+            name="windows"
+            default=""
+            description="Name of the Windows executable (if different from 'property')"/>
+
+        <attribute
+            name="unix"
+            default=""
+            description="Name of the Unix executable (if different from 'property')"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="find-exe" name="property" value="@{property}"/>
+
+            <local name="property.name"/>
+            <propertyregex
+                property="property.name"
+                input="@{property}"
+                regexp="(\w+).\w+"
+                replace="\1"/>
+
+            <local name="property.ext"/>
+            <propertyregex
+                property="property.ext"
+                input="@{property}"
+                regexp="\w+.(\w+)"
+                replace="\1"/>
+
+            <local name="windows.name"/>
+            <property name="windows.name" value="@{windows}" unless:blank="@{windows}"/>
+            <property name="windows.name" value="${property.name}.${property.ext}" if:blank="@{windows}"/>
+
+            <local name="unix.name"/>
+            <property name="unix.name" value="@{unix}" unless:blank="@{unix}"/>
+            <property name="unix.name" value="${property.name}" if:blank="@{unix}"/>
+
+            <!-- set property -->
+            <condition property="@{property}" value="${windows.name}">
+              <os family="windows"/>
+            </condition>
+
+            <condition property="@{property}" value="${unix.name}">
+              <not><os family="windows"/></not>
+            </condition>
+
+            <!-- check that executable is in the PATH -->
+            <fail message="[find-exe] An executable file for '@{property}' cannot be found on the path">
+              <condition>
+                  <not>
+                      <available file="${@{property}}" filepath="${env.PATH}" />
+                  </not>
+              </condition>
+            </fail>
+
+            <echo message="[find-exe] @{property}=${@{property}}" if:true="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+</project>

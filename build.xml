@@ -16,7 +16,6 @@ Summary:     Build file for XPants
 ...
     </description>
 
-
     <!-- load ant-contrib -->
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
@@ -29,19 +28,18 @@ Summary:     Build file for XPants
     <property name="docs.dir" value="docs"/>
     <property name="dist.dir" value="dist"/>
     <property name="build.dir" value="build"/>
+    <property name="install.dir" value="/usr/local/lib/${ant.project.name}"/>
 
-    <property name="dist.file" value="${ant.project.name}-{xpants.version}.zip"/>
-
-    <property file="${xpants.dir}/xpants.properties"/>
+    <property name="dist.file" value="${ant.project.name}-{version.number}.zip"/>
 
     <!-- use local not deployed versions of macros -->
     <property name="xpants.dir" value="${src.dir}"/>
 
-    <!-- include required macros (locally) -->
-    <include file="${xpants.dir}/extract-markdown.xml"/>
-    <include file="${xpants.dir}/pandoc.xml"/>
-    <include file="${xpants.dir}/deploy-files.xml"/>
+    <!-- load default properties -->
+    <property file="${xpants.dir}/xpants.properties"/>
 
+    <!-- include all macros (locally) -->
+    <include file="${xpants.dir}/xpants.xml"/>
 
     <!-- TODO targets for "local-deploy", "build-distribution" and "install"? Also "test" -->
 
@@ -52,6 +50,7 @@ Summary:     Build file for XPants
         <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
     </target>
+
 
     <target
         name="docs"
@@ -80,19 +79,10 @@ Summary:     Build file for XPants
             header="${source.dir}/default-header.md">
             <fileset dir="${build.md.dir}">
                 <include name="*.md"/>
-                <exclude name="sidebar.md"/>
-            </fileset>
-        </convert-markdown>
-
-        <convert-markdown
-            output="${build.deploy.dir}/${docs.dir}"
-            format="html"
-            header="">
-            <fileset dir="${build.md.dir}">
-                <include name="sidebar.md"/>
             </fileset>
         </convert-markdown>
     </target>
+
 
     <target
         name="build"
@@ -102,11 +92,8 @@ Summary:     Build file for XPants
         <copy
             todir="${build.deploy.dir}">
 
-            <fileset dir="${source.utility.dir}" includes="*.xml"/>
-            <fileset dir="${source.schema.dir}" includes="*.xml"/>
-            <fileset dir="${source.schematron.dir}" includes="*.xml"/>
-            <fileset dir="${source.dir}" includes="default-header.md"/>
-            <fileset dir="${source.dir}" includes="default.properties"/>
+            <fileset dir="${src.dir}" includes="*.xml"/>
+            <fileset dir="${src.dir}" includes="*.properties"/>
         </copy>
 
         <zip
@@ -118,15 +105,13 @@ Summary:     Build file for XPants
         </zip>
     </target>
 
+
     <target
         name="deploy"
         description="Copy all deployable items to the production environment"
         depends="build">
 
-        <echo message="ANT Library Deployment Target: '${deploy.env}'"/>
-
-        <!-- deploy all modules to same location on CAPE -->
-        <!-- default env is CAPE -->
+        <!-- deploy all modules to same location -->
         <deploy-files
             target="${deploy.target}"
             overwrite="true"
@@ -140,8 +125,22 @@ Summary:     Build file for XPants
             verify="false">
 
             <fileset dir="${build.dir}" includes="${zip.file}"/>
-            <fileset dir="${source.dir}" includes="${install.script}"/>
+            <fileset dir="${src.dir}" includes="${install.script}"/>
         </deploy-files>
     </target>
+
+    <target
+        name="local-install"
+        description="Deploy to local folder">
+
+        <copy todir="${install.dir}">
+
+            <fileset dir="${src.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+
+    </target>
+
 
 </project>

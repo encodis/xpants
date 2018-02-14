@@ -43,6 +43,9 @@ These macros will set the following (global) properties:
 
     </description>
 
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
     <!-- include macros/properties -->
     <property environment="env"/>
 

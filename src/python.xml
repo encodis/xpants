@@ -45,7 +45,7 @@ These macros will set the following (global) properties:
 
     <!-- load ant-contrib -->
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
-    
+
     <!-- include macros/properties -->
     <property environment="env"/>
 
@@ -189,7 +189,9 @@ These macros will set the following (global) properties:
 
             <!-- unzip to build -->
             <local name="unzip.dir"/>
-            <tempfile property="unzip.dir" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+            <tempfile property="unzip.dir" prefix="${ant.project.name}" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+
+            <echo message="[python] temp.file=${temp.file}" if:true="${debug.macro}"/>
 
             <unzip src="@{module}-@{version}.zip" dest="${unzip.dir}"/>
 

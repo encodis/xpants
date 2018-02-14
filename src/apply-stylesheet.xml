@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="apply-stylesheet"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        apply-stylesheet.xml
+Date:         2018-02-14
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to apply a standard XSLT library stylesheet
+...
+
+# apply-stylesheet.xml
+
+Macro definitions to apply an XSLT stylesheet (e.g. one in the XSLT library)
+to an XML file. By default the stylesheet is applied in place, i.e. the name of the file is
+not changed. The top level macro ("apply-stylesheet") will transform either a single file
+or a folder, depending on the arguments supplied:
+
+* If the *file* attribute is not blank and refers to a file that exists then it will be
+transformed.
+* If the *file* attribute is not supplied then the macro will transform all files in a folder
+determined by the *input.files* element.
+
+Furthermore:
+
+*  When processing an individual input file it will be overwritten in place, unless the
+*output* attribute is set in which case that will be used as the resulting file name.
+*  If the *output* attribute refers to a directory then the output of the transform will
+be copied there. Also, if the *ext* attribute is set then it will replace the file's
+original extension. *ext* should therefore contain a leading "." if that is required.
+
+&gt; NOTE: It is the responsibility of the calling task to ensure that any output folders are
+created before running this task. Otherwise each transformed file will overwrite
+the given output path.
+
+The macro *apply-stylesheet-file* can take an optional *params.xslt* element which contains
+additional parameters to pass to ANT's &lt;xslt&gt; task. This cannot be passed to this macro via
+the main *apply-stylesheet* macro.
+
+The *stylesheet* attribute can be used in one of two ways:
+
+* Primarily it can be used to specify a relative or absolute path to a stylesheet
+(e.g. `stylesheet="./my-stylesheets/convert.xsl"`).
+
+* However, it can also be used to specify default stylesheets in the XPants XSLT Library.
+If the attribute value contains no path related information (e.g. `stylesheet="filter-svrl"`)
+then the macro will try to locate a stylesheet of that name at the location given by the
+path created by the property *${xpants.xslt.dir}* and with the extension ".xsl". With the default
+values this would be **${xpants.dir}/xslt/stylesheet.xsl**. In the previous example
+(`stylesheet="filter-svrl"`), the macro will try to use a stylesheet at
+**${xpants.dir}/xslt/filter-svrl.xsl**.
+
+
+## Usage
+
+To apply the XPants XSLT standard library stylesheet **remove-doc.xsl** to the **my-schema.xsd**
+file, putting the result into the file **my-schema-nodocs.xsd**:
+
+```
+&lt;apply-stylesheet
+&#9;file="my-schema.xsd"
+&#9;output="my-schema-nodocs.xsd"
+&#9;stylesheet="remove-doc"/&gt;
+```
+
+To apply the **remove-doc.xsl** stylesheet to the **my-schema.xsd** file in place (so that
+**my-schema.xsd** is overwritten/updated):
+
+```
+&lt;apply-stylesheet
+&#9;file="my-schema.xsd"
+&#9;stylesheet="remove-doc"/&gt;
+```
+
+To apply the **remove-doc.xsl** stylesheet to all files in the **schema** folder, putting the
+transformed files in the **updated** folder with an extension of ".upd":
+
+```
+&lt;apply-stylesheet
+&#9;output="updated"
+&#9;ext=".upd"
+&#9;stylesheet="remove-doc"&gt;
+&#9;&lt;fileset dir="schema"&gt;
+&#9;&#9;&lt;include name="*.xml"/&gt;
+&#9;&lt;/fileset&gt;
+&lt;/apply-stylesheet&gt;
+```
+
+## Dependencies
+
+None.
+
+## Properties
+
+None.
+
+## Change Log
+
+##### 2018-02-14 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.apply-stylesheet}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <property name="xpants.xslt.dir" value="${xpants.dir}/xslt"/>
+
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="apply-stylesheet"
+        description="Apply a stylsheet to the designated file(s)">
+
+        <attribute
+            name="file"
+            default=""
+            description="Source XML file"/>
+
+        <attribute
+            name="stylesheet"
+            description="The XSLT file to be applied"/>
+
+        <attribute
+            name="ext"
+            default=""
+            description="Extension of output file(s)"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Path for output file(s)"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="apply-stylesheet" name="stylesheet" value="@{stylesheet}"/>
+
+            <!-- NOTE do not check for blank output, as this indicates @{file} should be overwritten -->
+
+            <!-- file or dir mode? -->
+            <apply-stylesheet-file
+                file="@{file}"
+                stylesheet="@{stylesheet}"
+                output="@{output}"
+                unless:blank="@{file}"/>
+
+            <apply-stylesheet-dir
+                stylesheet="@{stylesheet}"
+                ext="@{ext}"
+                output="@{output}"
+                if:blank="@{file}">
+                <input.files/>
+            </apply-stylesheet-dir>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="apply-stylesheet-file"
+        description="Apply a stylsheet to a file">
+
+        <attribute
+            name="file"
+            description="Source XML file"/>
+
+        <attribute
+            name="ext"
+            default=""
+            description="Extension of output file(s)"/>
+
+        <attribute
+            name="stylesheet"
+            description="The XSLT file to be applied"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Path for output file"/>
+
+        <element
+            name="params.xslt"
+            optional="true"
+            implicit="true"
+            description="A set of parameters for XSLT"/>
+
+        <sequential>
+
+            <!-- fail if file does not exist -->
+            <check-file-exists macro="apply-stylesheet-file" file="@{file}"/>
+
+            <!-- check stylesheet exists, either as given or as a standard library one -->
+            <local name="given.stylesheet.exists"/>
+            <available file="@{stylesheet}" type="file" property="given.stylesheet.exists"/>
+
+            <local name="standard.stylesheet.exists"/>
+            <available file="${xpants.dir}/xslt/@{stylesheet}.xsl" type="file" property="standard.stylesheet.exists"/>
+
+            <fail message="[apply-stylesheet-file] stylesheet '@{stylesheet}' does not exist and/or is not in the XSLT library">
+                <condition>
+                    <and>
+                        <not><isset property="given.stylesheet.exists"/></not>
+                        <not><isset property="standard.stylesheet.exists"/></not>
+                    </and>
+                </condition>
+            </fail>
+
+            <!-- which stylesheet to use? -->
+            <local name="use.stylesheet"/>
+            <condition property="use.stylesheet" value="@{stylesheet}" else="${xpants.dir}/xslt/@{stylesheet}.xsl">
+                <isset property="given.stylesheet.exists"/>
+            </condition>
+
+            <!-- apply the stylesheet -->
+            <echo message="[apply-stylesheet-file] use.stylesheet=${use.stylesheet}" if:true="${debug.macro}"/>
+
+            <local name="temp.file"/>
+            <tempfile property="temp.file" prefix="${ant.project.name}" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+
+            <echo message="[apply-stylesheet-file] temp.file=${temp.file}" if:true="${debug.macro}"/>
+
+            <xslt
+            	style="${use.stylesheet}"
+            	in="@{file}"
+            	out="${temp.file}"
+            	force="true"
+                suppresswarnings="${xslt.suppresswarnings}"
+                failonerror="${xslt.failonerror}">
+
+                <factory name="com.saxonica.config.EnterpriseTransformerFactory">
+                    <attribute name="http://saxon.sf.net/feature/ignoreSAXSourceParser" value="true"/>
+                    <!-- NOTE sourceParserClass always ignored by ANT's xslt task -->
+                    <attribute name="http://saxon.sf.net/feature/sourceParserClass" value="org.xmlresolver.tools.ResolvingXMLReader"/>
+                    <attribute name="http://saxon.sf.net/feature/entityResolverClass" value="org.xmlresolver.Resolver"/>
+                    <attribute name="http://saxon.sf.net/feature/uriResolverClass" value="org.xmlresolver.Resolver"/>
+                    <!-- <attribute name="http://saxon.sf.net/feature/validation" value="false"/> -->
+                    <!-- TODO check that turning this on is OK for regular transforms -->
+                    <attribute name="http://saxon.sf.net/feature/xinclude-aware" value="true"/>
+                </factory>
+
+                <sysproperty key="xml.catalog.files" value="${xpants.catalog}"/>
+
+                <params.xslt/>
+            </xslt>
+
+            <!-- if 'output' is blank/not given then overwrite existing file -->
+            <!-- NOTE if this macro is called by apply-stylesheet-dir, then 'output' must be a folder -->
+
+            <local name="overwrite.input"/>
+            <condition property="overwrite.input">
+                <equals arg1="@{output}" arg2=""/>
+            </condition>
+
+            <copy file="${temp.file}" tofile="@{file}" overwrite="true" if:set="overwrite.input"/>
+
+            <!-- if 'output' exists and is a folder, copy file to output dir -->
+            <!-- NOTE if 'output' is blank the <available> task will still detect the folder as existing, so must do it in this order -->
+            <local name="copy.dir"/>
+            <condition property="copy.dir">
+                <and>
+                    <available file="@{output}" type="dir"/>
+                    <not><isset property="overwrite.input"/></not>
+                </and>
+            </condition>
+
+            <!-- get file extension -->
+            <local name="suffix.name"/>
+            <propertyregex
+                property="suffix.name"
+                input="@{file}"
+                regexp="(.*)\.(.*)"
+                select="\2"/>
+
+            <!-- get file root name -->
+            <local name="file.name"/>
+            <basename property="file.name" file="@{file}" suffix="${suffix.name}"/>
+
+            <!-- if no extension given use existing one, given extension must have leading "." -->
+            <local name="file.ext"/>
+            <condition
+                property="file.ext"
+                value=".${suffix.name}"
+                else="@{ext}">
+                <equals arg1="@{ext}" arg2=""/>
+            </condition>
+
+            <copy file="${temp.file}" tofile="@{output}/${file.name}${file.ext}" overwrite="true" if:set="copy.dir"/>
+
+            <!-- if 'output' in not blank but is not a folder, just copy file to output file -->
+            <local name="copy.file"/>
+            <condition property="copy.file">
+                <and>
+                    <not><isset property="copy.dir"/></not>
+                    <not><isset property="overwrite.input"/></not>
+                </and>
+            </condition>
+
+            <copy file="${temp.file}" tofile="@{output}" overwrite="true" if:set="copy.file"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="apply-stylesheet-dir"
+        description="Apply a stylsheet to all files in a folder">
+
+        <attribute
+            name="stylesheet"
+            description="The XSLT file to be applied"/>
+
+        <attribute
+            name="ext"
+            default=""
+            description="Extension of output file(s)"/>
+
+        <attribute
+            name="output"
+            description="Path for output files"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if input.files is empty -->
+            <check-fileset-empty macro="apply-stylesheet-dir">
+                <input.files/>
+            </check-fileset-empty>
+
+            <!-- make output dir if needed -->
+            <mkdir dir="@{output}"/>
+
+            <for param="file" keepgoing="${for.keepgoing}">
+                <input.files/>
+
+                <sequential>
+
+                    <!-- if ext isset then replace file ext -->
+                    <!-- TODO set output file name and dir here, not in a-s-file ???
+                         yes scope for simplifying this but need @ext as cannot infer like
+                         for convert-markdown etc -->
+                    <apply-stylesheet-file
+                        file="@{file}"
+                        stylesheet="@{stylesheet}"
+                        ext="@{ext}"
+                        output="@{output}"/>
+
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+</project>

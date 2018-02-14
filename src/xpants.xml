@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="xpants"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        xpants.xml
+Date:         2018-02-14
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Single file to include all XPants macros
+...
+
+# xpants.xml
+
+A single file to include that then includes all XPants macros, so they don't have to be
+included separately. This may increase load time, as each file loads the environment properties
+(and ANT-contrib, if required) separately.
+
+
+## Usage
+
+
+
+## Change Log
+
+##### 2018-02-14 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- set properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.xpants}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <!-- include macros -->
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/aws.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+    <include file="${xpants.dir}/find-exe.xml"/>
+    <include file="${xpants.dir}/git.xml"/>
+    <include file="${xpants.dir}/pandoc.xml"/>
+    <include file="${xpants.dir}/python.xml"/>
+    <include file="${xpants.dir}/ssh.xml"/>
+    <include file="${xpants.dir}/tidy.xml"/>
+
+</project>
