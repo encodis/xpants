@@ -126,7 +126,8 @@ These macros will set the following (global) properties:
             <!-- file or dir mode? -->
             <pandoc-file
                 file="@{file}"
-                format="@{format}"
+                from="@{from}"
+                to="@{to}"
                 options="@{options}"
                 datadir="@{datadir}"
                 template="@{template}"
@@ -137,7 +138,8 @@ These macros will set the following (global) properties:
                 unless:blank="@{file}"/>
 
             <pandoc-dir
-                format="@{format}"
+                from="@{from}"
+                to="@{to}"
                 options="@{options}"
                 template="@{template}"
                 style="@{style}"
@@ -338,7 +340,8 @@ These macros will set the following (global) properties:
 
                     <pandoc-file
                         file="@{file}"
-                        format="@{format}"
+                        from="@{from}"
+                        to="@{to}"
                         options="@{options}"
                         datadir="@{datadir}"
                         template="@{template}"
