@@ -260,7 +260,7 @@ These macros will set the following (global) properties:
                 <arg line="--${lua-filters.list}" unless:blank="@{lua-filters}"/>
                 <arg value="--output=@{output}"/>
 
-                <arg value="@{input}"/>
+                <arg value="@{file}"/>
             </exec>
 
         </sequential>
