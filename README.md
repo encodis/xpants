@@ -24,4 +24,6 @@ sch-insert-id
 sch-remove-empty
 sch-remove-disabled (combine in sch-filter with params? or keep separate?)
 
-iso/schematron - with ${xpants.xslt.iso.dir} 
+iso/schematron - with ${xpants.xslt.iso.dir}
+
+should we have linearize-xml etc like minimize-xml.xml ???
