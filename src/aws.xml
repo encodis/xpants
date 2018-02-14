@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="aws"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        aws.xml
+Date:         2018-02-14
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to use aws commands within a build file
+...
+
+# aws.xml
+
+A set of macro definitions to use *aws* CLI commands within a build file.
+
+## Dependencies
+
+*  The *aws* executable must be installed and available on the PATH.
+
+
+## Properties
+
+The following properties can be set on the command line to override the default behaviour:
+
+* _aws.exe_ Used to specify a specific _aws_ CLI binary
+
+
+## Change Log
+
+##### 2018-02-14 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.aws}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/find-exe.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="aws"
+        description="Run AWS with command line arguments">
+
+        <attribute
+            name="profile"
+            default="${aws.profile}"
+            description="AWS profile"/>
+
+        <attribute
+            name="command"
+            description="AWS command to run"/>
+
+        <attribute
+            name="subcommand"
+            description="AWS sub-command to run"/>
+
+        <attribute
+            name="dir"
+            default="."
+            description="Directory in which to run the AWS command"/>
+
+        <attribute
+            name="property"
+            default=""
+            description="Name of the property to store the result in"/>
+
+        <element
+            name="args"
+            optional="true"
+            description="Remaining command line arguments"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="aws" name="profile" value="@{profile}"/>
+            <check-attr-set macro="aws" name="command" value="@{command}"/>
+            <check-attr-set macro="aws" name="subcommand" value="@{subcommand}"/>
+            <check-attr-set macro="aws" name="dir" value="@{dir}"/>
+
+            <!-- find aws.exe -->
+            <find-exe property="aws.exe" unless:set="aws.exe"/>
+
+            <!-- run AWS command -->
+            <echo message="[aws] command=@{command} @{subcommand}" if:true="${macro.debug}"/>
+
+            <exec
+                executable="${aws.exe}"
+                dir="@{dir}"
+                outputproperty="@{property}"
+                failonerror="${exec.failonerror}">
+                <arg line="--profile @{profile}"/>
+                <arg value="@{command}"/>
+                <arg value="@{subcommand}"/>
+                <args/>
+            </exec>
+
+            <echo message="[aws] output=${@{property}}" if:true="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+    <macrodef
+        name="aws-s3-sync"
+        description="Synchronise a source folder with a target S3 bucket">
+
+        <attribute
+            name="profile"
+            default="${aws.profile}"
+            description="AWS profile"/>
+
+        <attribute
+            name="source"
+            description="Source folder"/>
+
+        <attribute
+            name="target"
+            description="Target folder"/>
+
+        <attribute
+            name="bucket"
+            description="Destination bucket"/>
+
+        <attribute
+            name="delete"
+            default="true"
+            description="Delete unmatched files on target"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="aws-s3-sync" name="profile" value="@{profile}"/>
+            <check-attr-set macro="aws-s3-sync" name="target" value="@{target}"/>
+            <check-attr-set macro="aws-s3-sync" name="bucket" value="@{bucket}"/>
+            <check-dir-exists macro="aws-s3-sync" dir="@{source}"/>
+
+            <!-- TODO ideally @{bucket} would be applied on call to this macro, to allow it to go both ways -->
+
+            <aws
+                profile="@{profile}"
+                command="s3"
+                subcommand="sync">
+
+                <args>
+                    <arg value="--delete" if:true="@{delete}"/>
+                    <arg value="@{source}"/>
+                    <arg value="@{bucket}/@{target}"/>
+                </args>
+            </aws>
+
+        </sequential>
+    </macrodef>
+
+</project>

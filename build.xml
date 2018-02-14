@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+    name="xpants"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:     XPants
+Title:       build.xml
+Date:        2018-02-14
+Author:      Philip Hodder
+Contact:     philip.hodder@encodis.com
+Summary:     Build file for XPants
+...
+    </description>
+
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <property file="build.properties"/>
+
+    <property name="src.dir" value="src"/>
+    <property name="docs.dir" value="docs"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="build.dir" value="build"/>
+
+    <property name="dist.file" value="${ant.project.name}-{xpants.version}.zip"/>
+
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <!-- use local not deployed versions of macros -->
+    <property name="xpants.dir" value="${src.dir}"/>
+
+    <!-- include required macros (locally) -->
+    <include file="${xpants.dir}/extract-markdown.xml"/>
+    <include file="${xpants.dir}/pandoc.xml"/>
+    <include file="${xpants.dir}/deploy-files.xml"/>
+
+
+    <!-- TODO targets for "local-deploy", "build-distribution" and "install"? Also "test" -->
+
+    <target
+        name="clean"
+        description="Clean build folder">
+
+        <delete dir="${build.dir}"/>
+        <mkdir dir="${build.dir}"/>
+    </target>
+
+    <target
+        name="docs"
+        description="Extract Markdown documentation from macro files and create HTML files">
+
+        <mkdir dir="${build.md.dir}"/>
+
+        <extract-markdown-from-ant
+            output="${build.md.dir}">
+
+            <fileset dir="${src.dir}"/>
+        </extract-markdown-from-ant>
+
+        <copy
+            todir="${build.md.dir}">
+            <fileset dir="${docs.dir}" includes="*.md"/>
+        </copy>
+
+        <delete dir="${build.deploy.dir}"/>
+        <mkdir dir="${build.deploy.dir}"/>
+        <mkdir dir="${build.deploy.dir}/${docs.dir}"/>
+
+        <convert-markdown
+            output="${build.deploy.dir}/${docs.dir}"
+            format="html"
+            header="${source.dir}/default-header.md">
+            <fileset dir="${build.md.dir}">
+                <include name="*.md"/>
+                <exclude name="sidebar.md"/>
+            </fileset>
+        </convert-markdown>
+
+        <convert-markdown
+            output="${build.deploy.dir}/${docs.dir}"
+            format="html"
+            header="">
+            <fileset dir="${build.md.dir}">
+                <include name="sidebar.md"/>
+            </fileset>
+        </convert-markdown>
+    </target>
+
+    <target
+        name="build"
+        description="Assemble files for deployment"
+        depends="docs">
+
+        <copy
+            todir="${build.deploy.dir}">
+
+            <fileset dir="${source.utility.dir}" includes="*.xml"/>
+            <fileset dir="${source.schema.dir}" includes="*.xml"/>
+            <fileset dir="${source.schematron.dir}" includes="*.xml"/>
+            <fileset dir="${source.dir}" includes="default-header.md"/>
+            <fileset dir="${source.dir}" includes="default.properties"/>
+        </copy>
+
+        <zip
+            zipfile="${build.dir}/${zip.file}">
+
+            <fileset dir="${build.deploy.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </zip>
+    </target>
+
+    <target
+        name="deploy"
+        description="Copy all deployable items to the production environment"
+        depends="build">
+
+        <echo message="ANT Library Deployment Target: '${deploy.env}'"/>
+
+        <!-- deploy all modules to same location on CAPE -->
+        <!-- default env is CAPE -->
+        <deploy-files
+            target="${deploy.target}"
+            overwrite="true"
+            verify="false"
+            flatten="false"
+            source="${build.deploy.dir}"/>
+
+        <deploy-files
+            target="${install.deploy.target}"
+            overwrite="true"
+            verify="false">
+
+            <fileset dir="${build.dir}" includes="${zip.file}"/>
+            <fileset dir="${source.dir}" includes="${install.script}"/>
+        </deploy-files>
+    </target>
+
+</project>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="python"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        python.xml
+Date:         2018-02-14
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to run, build and install python modules or scripts
+...
+
+# python.xml
+
+A set of macro definitions to work with *python* modules.
+
+## Usage
+
+
+## Dependencies
+
+*  The *python* executable must be installed and available on the PATH.
+*  ${xpants.dir}/find-exe.xml
+*  ${xpants.dir}/attr-checks.xml
+*  ${xpants.dir}/file-checks.xml
+
+
+## Properties
+
+These macros will set the following (global) properties:
+
+*  *xpants.dir*
+*  *python.exe*
+
+
+## Change Log
+
+##### 2018-02-14 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+    
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.python}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/find-exe.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="python"
+        description="Run a python module or script">
+
+        <attribute
+            name="module"
+            default=""
+            description="Python module name"/>
+
+        <attribute
+            name="script"
+            default=""
+            description="Python script path"/>
+
+        <attribute
+            name="dir"
+            default="."
+            description="Directory to run module/script in"/>
+
+        <element
+            name="args"
+            optional="true"
+            description="Remaining command line arguments"/>
+
+        <sequential>
+
+            <check-attr-set macro="python" name="dir" value="@{dir}"/>
+
+            <fail message="[python] cannot specify 'module' and 'script' attributes together">
+                <condition>
+                    <and>
+                        <not><equals arg1="@{module}" arg2=""/></not>
+                        <not><equals arg1="@{script}" arg2=""/></not>
+                    </and>
+                </condition>
+            </fail>
+
+            <!-- check python exists in path -->
+            <find-exe property="python.exe" unless:set="python.exe"/>
+
+            <!-- check script exists -->
+            <check-file-exists macro="python" file="@{script}" unless:blank="@script"/>
+
+            <!-- run module or script -->
+            <exec
+                executable="${python.exe}"
+                searchpath="true"
+                dir="@{dir}">
+                <arg line="-m @{module}" unless:blank="@{module}"/>
+                <arg line="@{script}" unless:blank="@{script}"/>
+                <args/>
+            </exec>
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="python-update-version"
+        description="Update the setup config with a version number taken from the source module">
+
+        <attribute
+            name="module"
+            description="Python module name"/>
+
+        <sequential>
+
+            <!-- check that setup.py exists -->
+            <check-file-exists macro="python-update-version" file="setup.py"/>
+
+            <local name="version.number"/>
+
+            <!-- get version number from module -->
+            <loadfile srcFile="@{module}" property="version.number">
+                <filterchain>
+                    <tokenfilter>
+                        <containsregex
+                            pattern="__version__ = '(.*)'"
+                            replace="\1"/>
+                    </tokenfilter>
+                    <striplinebreaks/>
+                </filterchain>
+            </loadfile>
+
+            <echo message="Updating '@{module}' to version '${version.number}'" if:true="${macro.debug}"/>
+
+            <!-- insert version number into setup.py -->
+            <replaceregexp file="setup.py"
+                           match="version='[0-9\.]*'"
+                           replace="version='${version.number}'"
+                           byline="true"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="python-build-distribution"
+        description="Build a distribution for a python module">
+
+        <sequential>
+
+            <python script="setup.py">
+                <args>
+                    <arg value="sdist"/>
+                    <arg value="--formats=zip"/>
+                </args>
+            </python>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="python-install-module"
+        description="Install a python module">
+
+        <attribute
+            name="module"
+            description="Python module name"/>
+
+        <attribute
+            name="version"
+            description="Python module version number"/>
+
+        <sequential>
+
+            <!-- check that setup.py exists -->
+            <check-file-exists macro="python-install-module" file="setup.py"/>
+
+            <!-- unzip to build -->
+            <local name="unzip.dir"/>
+            <tempfile property="unzip.dir" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+
+            <unzip src="@{module}-@{version}.zip" dest="${unzip.dir}"/>
+
+            <!-- run python setup.py install in build/module-1.0.zip -->
+            <python script="setup.py" dir="${unzip.dir}/@{module}-@{version}">
+                <args>
+                    <arg value="install"/>
+                </args>
+            </python>
+
+        </sequential>
+    </macrodef>
+
+</project>

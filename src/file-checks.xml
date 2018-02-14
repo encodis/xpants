@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+    name="file-checks"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:    XPants
+Title:      file-checks.xml
+Date:       2018-02-14
+Author:     Philip Hodder
+Contact:    philip.hodder@encodis.com
+Summary:    Macros to check various file system related things
+...
+
+# file-checks.xml
+
+A set of utility macros to check if files or directories exist, and if a fileset is empty
+or not.
+
+
+## Usage
+
+```
+&lt;check-file-exists macro="apply-stylesheet" file="result.dat"/&gt;
+
+&lt;check-fileset-empty macro="apply-stylesheet"&gt;
+    &lt;fileset dir="../build" includes="**/*.dat"/&gt;
+&lt;/check-fileset-empty&gt;
+```
+
+
+## Dependencies
+
+None
+
+
+## Properties
+
+These macros create the following (global) properties:
+
+*  *xpants.dir*
+
+
+## Change Log
+
+##### 2018-02-14 (PH) Initial version
+
+    </description>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.file-checks}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="check-file-exists"
+        description="Fail the build if the specified file does not exist">
+
+        <attribute
+            name="macro"
+            description="Calling macro name"/>
+
+        <attribute
+            name="file"
+            description="File to check for availability"/>
+
+        <sequential>
+
+            <fail message="[@{macro}] file '@{file}' does not exist or is a directory">
+                <condition>
+                    <not><available file="@{file}" type="file"/></not>
+                </condition>
+            </fail>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="check-dir-exists"
+        description="Fail the build if the specified directory does not exist">
+
+        <attribute
+            name="macro"
+            description="Calling macro name"/>
+
+        <attribute
+            name="dir"
+            description="Directory to check for availability"/>
+
+        <sequential>
+
+            <fail message="[@{macro}] directory '@{dir}' does not exist or is a file">
+                <condition>
+                    <not><available file="@{dir}" type="dir"/></not>
+                </condition>
+            </fail>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="check-fileset-empty"
+        description="Fail the build if the specified fileset is empty">
+
+        <attribute
+            name="macro"
+            description="Calling macro name"/>
+
+        <attribute
+            name="refid"
+            default=""
+            description="Reference to fileset specification to check"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="Fileset specification to check"/>
+
+        <sequential>
+
+            <local name="fileset.notempty"/>
+
+            <pathconvert property="fileset.notempty" setonempty="false">
+                <input.files if:blank="@{refid}"/>
+                <fileset refid="@{refid}" unless:blank="@{refid}"/>
+            </pathconvert>
+
+            <fail message="[@{macro}] fileset is empty" unless:set="fileset.notempty"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="check-class-path"
+        description="Fail the build if the class is not in the classpath">
+
+        <attribute
+            name="macro"
+            description="Calling macro name"/>
+
+        <attribute
+            name="class"
+            description="Class to check"/>
+
+        <sequential>
+
+            <fail message="[@{macro}] class '@{class}' not available on the classpath">
+                <condition>
+                    <not><available classname="@{class}"/></not>
+                </condition>
+            </fail>
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="check-file-contains"
+        description="Set a property if a file contains a string">
+
+        <attribute
+            name="file"
+            description="File to examine"/>
+
+        <attribute
+            name="string"
+            description="String to check"/>
+
+        <attribute
+            name="property"
+            default=""
+            description="Property to update with result"/>
+
+        <sequential>
+
+            <check-file-exists macro="check-file-contains" file="@{file}"/>
+
+            <fail message="[check-file-contains] attribute '@{string}' is blank or not set" if:blank="@{string}"/>
+
+            <!-- if property exists then set it if file contains the string -->
+            <condition property="@{property}" value="true" unless:blank="@{property}">
+                <resourcecontains resource="@{file}" substring="@{string}"/>
+            </condition>
+
+            <!-- if property does not exist then fail the build if the file does not contain the string -->
+            <fail message="[check-file-contains] '@file' does not contain '@{string}'" if:blank="@{property}">
+                <condition>
+                    <not>
+                        <resourcecontains resource="@{file}" substring="@{string}"/>
+                    </not>
+                </condition>
+            </fail>
+
+        </sequential>
+    </macrodef>
+
+</project>

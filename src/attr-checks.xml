@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+    name="attr-checks"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:    Xpants
+Title:      attr-checks.xml
+Date:       2018-02-14
+Author:     Philip Hodder
+Contact:    philip.hodder@encodis.com
+Summary:    Macros to check various types of attribute
+...
+
+# attr-checks.xml
+
+A set of utility macros to check the status of attributes used in macros.
+
+## Usage
+
+```
+&lt;check-attr-set macro="apply-stylesheet" name="file" value="@{file}"/&gt;
+```
+
+```
+&lt;check-attr-list
+&#9;macro="apply-stylesheet"
+&#9;name="options"
+&#9;value="@{options}"
+&#9;list="alpha,bravo,charlie"/&gt;
+```
+
+
+## Dependencies
+
+None
+
+
+## Properties
+
+These macros use the following properties:
+
+* *macro.debug* Output additional information for debugging
+
+
+## Change Log
+
+##### 2017-12-05 (Initial version) (PH)
+
+    </description>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.attr-checks}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="check-attr-set"
+        description="Fail the build if the specified attribute is blank">
+
+        <attribute
+            name="macro"
+            description="Calling macro name"/>
+
+        <attribute
+            name="name"
+            description="Attribute name"/>
+
+        <attribute
+            name="value"
+            description="Attribute value"/>
+
+        <sequential>
+
+            <fail message="[@{macro}] attribute '@{name}' is blank or not set" if:blank="@{value}"/>
+
+            <!-- TODO add check for it all being spaces -->
+
+            <echo message="[@{macro}] @{name}=@{value}" if:true="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="check-attr-bool"
+        description="Fail the build if the specified attribute is not a boolean value">
+
+        <attribute
+            name="macro"
+            description="Calling macro name"/>
+
+        <attribute
+            name="name"
+            description="Attribute name"/>
+
+        <attribute
+            name="value"
+            description="Attribute value"/>
+
+        <sequential>
+
+            <fail message="[@{macro}] attribute '@{name}' is blank" if:blank="@{value}"/>
+
+            <!-- <check-attr-list macro="@{macro}" name="@{name}" value="@{value}" allowed="true,false,on,off,yes,no"/> -->
+
+            <fail message="[@{macro}] attribute '@{name}' is not 'true' or 'false', 'on' or 'off', 'yes' or 'no'">
+                <condition>
+                    <not>
+                        <or>
+                            <equals arg1="@{value}" arg2="true"/>
+                            <equals arg1="@{value}" arg2="false"/>
+                            <equals arg1="@{value}" arg2="on"/>
+                            <equals arg1="@{value}" arg2="off"/>
+                            <equals arg1="@{value}" arg2="yes"/>
+                            <equals arg1="@{value}" arg2="no"/>
+                        </or>
+                    </not>
+                </condition>
+            </fail>
+
+            <echo message="[@{macro}] @{name}=@{value}" if:true="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="check-attr-list"
+        description="Fail the build if the specified attribute is not one of a list of values">
+
+        <attribute
+            name="macro"
+            description="Calling macro name"/>
+
+        <attribute
+            name="name"
+            description="Attribute name"/>
+
+        <attribute
+            name="value"
+            description="Attribute value"/>
+
+        <attribute
+            name="list"
+            description="List of allowed values"/>
+
+        <sequential>
+
+            <fail message="[@{macro}] attribute '@{name}' is blank" if:blank="@{value}"/>
+
+            <fail message="[@{macro}] value '@{value}' of attribute '@{name}' is not one of the allowed values: '@{list}'">
+                <condition>
+                    <not><contains string="@{list}" substring="@{value}"/></not>
+                    <!-- TODO what if value contains a , (or a space) -->
+                    <!-- TODO tokenize comma/space sep list and check tokens? -->
+                </condition>
+            </fail>
+
+            <echo message="[@{macro}] @{name}=@{value}" if:true="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+</project>

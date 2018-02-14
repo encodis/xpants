@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="ssh"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        ssh.xml
+Date:         2018-02-14
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to use the ssh command within a build file
+...
+
+# ssh.xml
+
+A set of macro definitions to use *ssh* to commands on an external machine within a build
+file. The basic 'ssh' macro is defined that runs an arbitrary command, along with some
+useful wrapper macros.
+
+Note that ANT defines an 'scp' task but this requires external libraries to actually work.
+Hence the macro 'ssh-copy' that actually executes the local *scp* binary.
+
+
+## Dependencies
+
+*  The *ssh* executable must be installed and available on the PATH.
+*  The *scp* executable must be installed and available on the PATH.
+
+
+## Properties
+
+These macros will set the following (global) properties. These can be
+
+* *ssh.exe* Override on the command line to specify a specific *ssh* binary
+* *scp.exe* Override on the command line to specify a specific *scp* binary
+
+The following properties can be set on the command line or a properties file to provide default
+behaviour:
+
+*  *ssh.host* The DNS name of the SSH server to connect to
+*  *ssh.user* The user on the SSH host to connect as
+*  *ssh.keys* The key file to authorise the connection
+*  *ssh.mode* The default mode for file/folder creation (default: 0777)
+
+
+## Change Log
+
+##### 2018-02-14 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.ssh}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/find-exe.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+
+
+    <!-- macros -->
+
+    <macrodef
+        name="ssh"
+        description="Run ssh with command line arguments">
+
+        <attribute
+            name="user"
+            default="${ssh.user}"
+            description="User name on remote host"/>
+
+        <attribute
+            name="host"
+            default="${ssh.host}"
+            description="Domain name of host"/>
+
+        <attribute
+            name="keys"
+            default="${ssh.keys}"
+            description="Key file (e.g. PEM) to authenticate"/>
+
+        <attribute
+            name="command"
+            description="Command to run on host"/>
+
+        <attribute
+            name="property"
+            default=""
+            description="Name of the property to store output of command"/>
+
+        <element
+            name="args"
+            optional="true"
+            description="Remaining ssh command line arguments"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="ssh" name="user" value="@{user}"/>
+            <check-attr-set macro="ssh" name="host" value="@{host}"/>
+            <check-attr-set macro="ssh" name="keys" value="@{keys}"/>
+            <check-attr-set macro="ssh" name="command" value="@{command}"/>
+
+            <!-- find ssh.exe -->
+            <find-exe property="ssh.exe" unless:set="ssh.exe"/>
+
+            <!-- TODO should be able to set default host etc from user name in env vars -->
+            <exec
+                executable="${ssh.exe}"
+                outputproperty="@{property}"
+                failonerror="${exec.failonerror}">
+                <arg line="-i @{keys}"/>
+                <arg value="@{user}@@@{host}"/>
+                <arg line="@{command}"/>
+                <args/>
+            </exec>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="ssh-copy"
+        description="Copy files using the scp command">
+
+        <attribute
+            name="user"
+            default="${ssh.user}"
+            description="User name on remote host"/>
+
+        <attribute
+            name="host"
+            default="${ssh.host}"
+            description="Domain name of host"/>
+
+        <attribute
+            name="keys"
+            default="${ssh.keys}"
+            description="Key file (e.g. PEM) to authenticate"/>
+
+        <attribute
+            name="source"
+            description="Source directory to copy"/>
+
+        <attribute
+            name="target"
+            description="Target directory on host"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="ssh-copy" name="user" value="@{user}"/>
+            <check-attr-set macro="ssh-copy" name="host" value="@{host}"/>
+            <check-attr-set macro="ssh-copy" name="keys" value="@{keys}"/>
+            <check-attr-set macro="ssh-copy" name="source" value="@{source}"/>
+            <check-attr-set macro="ssh-copy" name="target" value="@{target}"/>
+
+            <!-- find scp.exe -->
+            <find-exe property="scp.exe" unless:set="scp.exe"/>
+
+            <!-- run scp with -B (batch mode), -q (quiet), -p (preserve file times), -r (recursive directory copy) -->
+            <exec
+                executable="${scp.exe}"
+                failonerror="${exec.failonerror}">
+                <arg line="-B -q -p -r -i @{keys}"/>
+                <arg line="@{source}"/>
+                <arg value="@{user}@@@{host}:@{target}"/>
+            </exec>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="ssh-chmod"
+        description="Use ssh to change file permissions on the host">
+
+        <attribute
+            name="user"
+            default="${ssh.user}"
+            description="User name on remote host"/>
+
+        <attribute
+            name="host"
+            default="${ssh.host}"
+            description="Domain name of host"/>
+
+        <attribute
+            name="keys"
+            default="${ssh.keys}"
+            description="Key file (e.g. PEM) to authenticate"/>
+
+        <attribute
+            name="mode"
+            default="${ssh.mode}"
+            description="Permissions to be set (Unix style)"/>
+
+        <attribute
+            name="dir"
+            description="Directory on host to be removed"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="ssh-chmod" name="user" value="@{user}"/>
+            <check-attr-set macro="ssh-chmod" name="host" value="@{host}"/>
+            <check-attr-set macro="ssh-chmod" name="keys" value="@{keys}"/>
+            <check-attr-set macro="ssh-chmod" name="mode" value="@{mode}"/>
+            <check-attr-set macro="ssh-chmod" name="dir" value="@{dir}"/>
+
+            <ssh
+                user="@{user}"
+                host="@{host}"
+                keys="@{keys}"
+                command="chmod -R @{mode} @{dir}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="ssh-mkdir"
+        description="Use ssh to make a directory on the host">
+
+        <attribute
+            name="user"
+            default="${ssh.user}"
+            description="User name on remote host"/>
+
+        <attribute
+            name="host"
+            default="${ssh.host}"
+            description="Domain name of host"/>
+
+        <attribute
+            name="keys"
+            default="${ssh.keys}"
+            description="Key file (e.g. PEM) to authenticate"/>
+
+        <attribute
+            name="mode"
+            default="${ssh.mode}"
+            description="Permissions to be set (Unix style)"/>
+
+        <attribute
+            name="dir"
+            description="Directory on host to be created"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="ssh-mkdir" name="user" value="@{user}"/>
+            <check-attr-set macro="ssh-mkdir" name="host" value="@{host}"/>
+            <check-attr-set macro="ssh-mkdir" name="keys" value="@{keys}"/>
+            <check-attr-set macro="ssh-mkdir" name="mode" value="@{mode}"/>
+            <check-attr-set macro="ssh-mkdir" name="dir" value="@{dir}"/>
+
+            <ssh
+                user="@{user}"
+                host="@{host}"
+                keys="@{keys}"
+                command="mkdir -m @{mode} @{dir}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="ssh-delete"
+        description="Use ssh to remove a directory or files on the host">
+
+        <attribute
+            name="user"
+            default="${ssh.user}"
+            description="User name on remote host"/>
+
+        <attribute
+            name="host"
+            default="${ssh.host}"
+            description="Domain name of host"/>
+
+        <attribute
+            name="keys"
+            default="${ssh.keys}"
+            description="Key file (e.g. PEM) to authenticate"/>
+
+        <attribute
+            name="dir"
+            description="Directory or path on host to be removed"/>
+
+        <attribute
+            name="recursive"
+            default="true"
+            description="Recursively delete directories [true,false]"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="ssh-delete" name="user" value="@{user}"/>
+            <check-attr-set macro="ssh-delete" name="host" value="@{host}"/>
+            <check-attr-set macro="ssh-delete" name="keys" value="@{keys}"/>
+            <check-attr-set macro="ssh-delete" name="dir" value="@{dir}"/>
+
+            <check-attr-bool macro="ssh-delete" name="recursive" value="@{recursive}"/>
+
+            <!-- NOTE: this does not work in quite the same way as ant's <delete> task -->
+
+            <ssh
+                user="@{user}"
+                host="@{host}"
+                keys="@{keys}"
+                command="rm -rf @{dir}"
+                if:true="@{recursive}"/>
+
+            <ssh
+                user="@{user}"
+                host="@{host}"
+                keys="@{keys}"
+                command="rm -f @{dir}"
+                unless:true="@{recursive}"/>
+
+        </sequential>
+    </macrodef>
+
+</project>

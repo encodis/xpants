@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="git"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        git.xml
+Date:         2018-02-14
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to use git commands within a build file
+...
+
+# git.xml
+
+A set of macro definitions to use *git* commands within a build file. The basic
+'git' macro is defined, along with others that set properties using the results
+of certain *git* commands like "status" and "branch".
+
+## Dependencies
+
+*  The *git* executable must be installed and available on the PATH.
+
+
+## Properties
+
+The following properties can be set on the command line to override the default behaviour:
+
+*  *git.exe* Used to specify a specific _git_ binary
+
+
+## Change Log
+
+##### 2018-02-14 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.git}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/find-exe.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+
+
+    <!-- macros -->
+
+    <macrodef
+        name="git"
+        description="Run git with command line arguments">
+
+        <attribute
+            name="command"
+            description="git command to run"/>
+
+        <attribute
+            name="dir"
+            default="."
+            description="Directory in which to run the git command"/>
+
+        <attribute
+            name="property"
+            default=""
+            description="Name of the property to store the result in"/>
+
+        <element
+            name="args"
+            optional="true"
+            description="Remaining command line arguments"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="git" name="command" value="@{command}"/>
+
+            <!-- find git.exe -->
+            <find-exe property="git.exe" unless:set="git.exe"/>
+
+            <!-- run git command -->
+            <echo message="[git] command=@{command}" if:true="${macro.debug}"/>
+
+            <exec
+                executable="${git.exe}"
+                dir="@{dir}"
+                outputproperty="@{property}"
+                failonerror="${exec.failonerror}">
+                <arg value="@{command}"/>
+                <args/>
+            </exec>
+
+            <echo message="[git] output=${@{property}}" if:true="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="git-branch"
+        description="Create a property with the current branch name">
+
+        <attribute
+            name="property"
+            description="Property containing the branch name"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="git-branch" name="property" value="@{property}"/>
+
+            <local name="git.branch.name"/>
+
+            <git command="rev-parse" property="git.branch.name">
+                <args>
+                    <arg value="--abbrev-ref"/>
+                    <arg value="HEAD"/>
+                </args>
+            </git>
+
+            <fail message="[git-branch] current folder is not a git repository">
+                <condition>
+                    <and>
+                        <matches string="${git.branch.name}" pattern="^fatal: Not a git repository*"/>
+                    </and>
+                </condition>
+            </fail>
+
+            <property name="@{property}" value="${git.branch.name}"/>
+
+            <echo message="[git-branch] @{property}=${git.branch.name}" if:true="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="git-status"
+        description="Create a property with current git status">
+
+        <!--
+            NOTE: The "git status" command always creates a property, but it might have a length
+            of 0 if all files are up to date. Therefore desired "property" specified by the
+            attribute is only set if the output of the command has a length greater than 0.
+        -->
+
+        <attribute
+            name="property"
+            description="Property containing the status"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="git-status" name="property" value="@{property}"/>
+
+            <local name="git.status"/>
+            <git command="status" property="git.status">
+                <args>
+                    <arg value="--porcelain"/>
+                </args>
+            </git>
+
+            <condition property="@{property}" value="${git.status}">
+                <and>
+                    <isset property="git.status"/>
+                    <length string="${git.status}" when="greater" length="0"/>
+                </and>
+            </condition>
+
+            <echo message="[git-status] @{property}=${git.status}" if:true="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="git-has-outstanding-commits"
+        description="Fail the build if there are outstanding commits on the current branch">
+
+        <sequential>
+
+            <local name="outstanding.commits"/>
+            <git-status property="outstanding.commits"/>
+
+            <fail message="[git-has-outstanding-commits] current git branch has outstanding commits" if="outstanding.commits"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="git-check-repo"
+        description="Fail the build if not in a git repository">
+
+        <sequential>
+
+            <local name="git.branch.name"/>
+
+            <git command="rev-parse" property="git.branch.name">
+                <args>
+                    <arg value="--abbrev-ref"/>
+                    <arg value="HEAD"/>
+                </args>
+            </git>
+
+            <fail message="[git-check-repo] current folder is not a git repository">
+                <condition>
+                    <matches string="${git.branch.name}" pattern="^fatal: Not a git repository*"/>
+                </condition>
+            </fail>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="git-branch-matches"
+        description="Fail the build if the current branch name does not match the pattern">
+
+        <attribute
+            name="pattern"
+            description="Name of branch to match"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="git-branch-matches" name="pattern" value="@{pattern}"/>
+
+            <local name="git.branch.name"/>
+            <git-branch property="git.branch.name"/>
+
+            <!-- TODO the pattern needs to be a regexp -->
+
+            <fail message="[git-branch-matches] current git branch '${branch.name}' does not match '@{pattern}'">
+                <condition>
+                    <not><equal arg1="${git.branch.name}" arg2="@{pattern}"/></not>
+                </condition>
+            </fail>
+
+        </sequential>
+    </macrodef>
+
+</project>

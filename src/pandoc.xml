@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="pandoc"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        pandoc.xml
+Date:         2018-02-14
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to process files using pandoc
+...
+
+# pandoc.xml
+
+A set of macro definitions to work with *python* modules.
+
+## Usage
+
+
+## Dependencies
+
+*  The *pandoc* executable must be installed and available on the PATH.
+*  ${xpants.dir}/find-exe.xml
+*  ${xpants.dir}/attr-checks.xml
+*  ${xpants.dir}/file-checks.xml
+
+
+## Properties
+
+These macros will set the following (global) properties:
+
+*  *xpants.dir*
+*  *pandoc.exe*
+
+
+## Change Log
+
+##### 2018-02-14 (PH) Initial version
+
+    </description>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.pandoc}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/find-exe.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="pandoc"
+        description="Run pandoc with parameters">
+
+        <attribute
+            name="file"
+            default=""
+            description="Source file"/>
+
+        <attribute
+            name="from"
+            default="markdown+smart"
+            description="Input format"/>
+
+        <attribute
+            name="to"
+            default="html5"
+            description="Output format"/>
+
+        <attribute
+            name="options"
+            default="standalone,self-contained"
+            description="List of options"/>
+
+        <attribute
+            name="datadir"
+            default=""
+            description="Pandoc data directory"/>
+
+        <attribute
+            name="template"
+            default=""
+            description="Template file"/>
+
+        <attribute
+            name="style"
+            default=""
+            description="Style"/>
+
+        <attribute
+            name="filters"
+            default=""
+            description="List of filters"/>
+
+        <attribute
+            name="lua-filters"
+            default=""
+            description="List of lua filters"/>
+
+        <attribute
+            name="output"
+            description="Path for output file(s)"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="pandoc" name="format" value="@{format}"/>
+            <check-attr-set macro="pandoc" name="output" value="@{output}"/>
+
+            <!-- file or dir mode? -->
+            <pandoc-file
+                file="@{file}"
+                format="@{format}"
+                options="@{options}"
+                datadir="@{datadir}"
+                template="@{template}"
+                style="@{style}"
+                filters="@{filters}"
+                lua-filters="@{lua-filters}"
+                output="@{output}"
+                unless:blank="@{file}"/>
+
+            <pandoc-dir
+                format="@{format}"
+                options="@{options}"
+                template="@{template}"
+                style="@{style}"
+                filters="@{filters}"
+                lua-filters="@{lua-filters}"
+                if:blank="@{file}">
+                <input.files/>
+            </pandoc-dir>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="pandoc-file"
+        description="Run pandoc on single file, with parameters">
+
+        <attribute
+            name="file"
+            description="Input file"/>
+
+        <attribute
+            name="from"
+            default="markdown+smart"
+            description="Input format"/>
+
+        <attribute
+            name="to"
+            default="html5"
+            description="Output format"/>
+
+        <attribute
+            name="options"
+            default=""
+            description="List of options"/>
+
+        <attribute
+            name="datadir"
+            default=""
+            description="Pandoc data directory"/>
+
+        <attribute
+            name="template"
+            default=""
+            description="Template file"/>
+
+        <attribute
+            name="style"
+            default=""
+            description="Style"/>
+
+        <attribute
+            name="filters"
+            default=""
+            description="List of filters"/>
+
+        <attribute
+            name="lua-filters"
+            default=""
+            description="List of lua filters"/>
+
+        <attribute
+            name="output"
+            description="Output file"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="pandoc-file" name="file" value="@{file}"/>
+            <check-attr-set macro="pandoc-file" name="format" value="@{format}"/>
+            <check-attr-set macro="pandoc-file" name="output" value="@{output}"/>
+
+            <!-- fail if file does not exist -->
+            <check-file-exists macro="pandoc-file" file="@{file}"/>
+
+            <!-- check if pandoc executable is available -->
+            <find-exe property="pandoc.exe" unless:set="pandoc.exe"/>
+
+            <!-- convert options -->
+            <local name="options.list"/>
+            <propertyregex
+                property="options.list"
+                input="@{options}"
+                regexp=","
+                replace=" --"
+                global="true"/>
+
+            <!-- convert filters -->
+            <local name="filters.list"/>
+            <propertyregex
+                property="filters.list"
+                input="@{filters}"
+                regexp=","
+                replace=" --"
+                global="true"/>
+
+            <!-- convert Lua filters -->
+            <local name="lua-filters.list"/>
+            <propertyregex
+                property="lua-filters.list"
+                input="@{lua-filters}"
+                regexp=","
+                replace=" --"
+                global="true"/>
+
+            <!-- run pandoc -->
+            <exec
+                executable="${pandoc.exe}"
+                searchpath="true"
+                dir=".">
+                <arg line="--${options.list}" unless:blank="@{options}"/>
+                <arg value="--from=@{from}"/>
+                <arg value="--to=@{to}"/>
+                <arg value="--template=@{template}" unless:blank="@{template}"/>
+                <arg value="--css=@{style}" unless:blank="@{style}"/>
+                <arg value="--data-dir=@{datadir}" unless:blank="@{datadir}"/>
+                <arg line="--${filters.list}" unless:blank="@{filters}"/>
+                <arg line="--${lua-filters.list}" unless:blank="@{lua-filters}"/>
+                <arg value="--output=@{output}"/>
+
+                <arg value="@{input}"/>
+            </exec>
+
+        </sequential>
+    </macrodef>
+
+    <macrodef
+        name="pandoc-dir"
+        description="Run pandoc on folder, with parameters">
+
+        <attribute
+            name="from"
+            default="markdown+smart"
+            description="Input format"/>
+
+        <attribute
+            name="to"
+            default="html5"
+            description="Output format"/>
+
+        <attribute
+            name="options"
+            default=""
+            description="List of options"/>
+
+        <attribute
+            name="datadir"
+            default=""
+            description="Pandoc data directory"/>
+
+        <attribute
+            name="template"
+            default=""
+            description="Template file"/>
+
+        <attribute
+            name="style"
+            default=""
+            description="Style"/>
+
+        <attribute
+            name="filters"
+            default=""
+            description="List of filters"/>
+
+        <attribute
+            name="lua-filters"
+            default=""
+            description="List of lua filters"/>
+
+        <attribute
+            name="output"
+            description="Path for converted files"/>
+
+        <element
+            name="input.files"
+            optional="false"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if input fileset is empty -->
+            <check-fileset-empty macro="pandoc-dir">
+                <input.files/>
+            </check-fileset-empty>
+
+            <!-- make output dir if needed -->
+            <mkdir dir="@{output}"/>
+
+            <for param="file" keepgoing="${for.keepgoing}">
+                <input.files/>
+
+                <sequential>
+
+                    <local name="output.file"/>
+                    <basename property="output.file" file="@{file}" suffix=".md"/>
+
+                    <pandoc-file
+                        file="@{file}"
+                        format="@{format}"
+                        options="@{options}"
+                        datadir="@{datadir}"
+                        template="@{template}"
+                        style="@{style}"
+                        filters="@{filters}"
+                        lua-filters="@{lua-filters}"
+                        output="@{output}/${output.file}.@{format}"/>
+
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+
+</project>
