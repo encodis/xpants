@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="minimise-xml"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        minimise-xml.xml
+Date:         2018-02-15
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro to "minimise" an XML file
+...
+
+# minimise-xml.xml
+
+A simple macro to tidy up an XML file by removing whitespace, comments and
+processing instructions. The macro can be tuned to keep each of these
+components.
+
+## Usage
+
+```nohighlight
+&lt;minimise-xml
+&#9;file="source/test.xml"
+&#9;output="build/test-min.xml"
+&#9;remove-processing-instructions="false"/&gt;
+```
+
+## Dependencies
+
+### Stylesheets
+
+This module uses the following stylesheets:
+
+* __${xpants.dir}/xslt/minimise-xml.xsl__ Used to process the input file.
+
+## Properties
+
+The following properties can be set on the command line to override the default behaviour:
+
+* _minimise-xml.stylesheet_ The stylesheet used to process the XML files.
+
+## Change Log
+
+##### 2018-02-15 (PH) Initial version
+
+    </description>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.minimise-xml}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/attr-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="minimise-xml"
+        description="Strip out whitespace, comments and processing instructions from an XML file">
+
+        <attribute
+            name="file"
+            description="Source XML file"/>
+
+        <attribute
+            name="remove-processing-instructions"
+            default="true"
+            description="Remove processing instructions [true,false]"/>
+
+        <attribute
+            name="remove-comments"
+            default="true"
+            description="Remove comments [true,false]"/>
+
+        <attribute
+            name="remove-indentation"
+            default="true"
+            description="Remove indentation [true,false]"/>
+
+        <attribute
+            name="output"
+            description="Path for minimised file"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="minimise-xml" name="file" value="@{file}"/>
+            <check-attr-set macro="minimise-xml" name="output" value="@{output}"/>
+
+            <!-- fail if attributes not correct  -->
+            <check-attr-bool macro="minimise-xml" name="remove-processing-instructions" value="@{remove-processing-instructions}"/>
+            <check-attr-bool macro="minimise-xml" name="remove-comments" value="@{remove-comments}"/>
+            <check-attr-bool macro="minimise-xml" name="remove-indentation" value="@{remove-indentation}"/>
+
+            <property
+                name="minimise-xml.stylesheet"
+                value="${xpants.dir}/xslt/minimise-xml.xsl"/>
+
+            <echo message="[minimise-xml] minimise-xml.stylesheet=${minimise-xml.stylesheet}" if:true="${macro.debug}"/>
+
+            <apply-stylesheet
+                file="@{file}"
+                output="@{output}"
+                stylesheet="${minimise-xml.stylesheet}">
+
+                <param name="remove-processing-instructions" expression="@{remove-processing-instructions}"/>
+                <param name="remove-comments" expression="@{remove-commenst}"/>
+                <param name="remove-indentation" expression="@{remove-indentation}"/>
+
+            </apply-stylesheet>
+
+        </sequential>
+    </macrodef>
+
+</project>

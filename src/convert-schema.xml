@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="convert-schema"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+	<description>
+---
+Project:      XPants
+Title:        convert-schema.xml
+Date:         2018-02-15
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to between schema formats
+...
+
+# convert-schema.xml
+
+Macro definitions to convert between schema formats.
+
+## Generic conversion: _convert-schema_
+
+The generic macro ("convert-schema") will convert a schema to another format:
+
+* The file referred to in the _file_ attribute will be
+converted, using the _output_ attribute (if provided) as the resulting file name.
+
+* If the _output_ attribute is not provided the output format (given via the _out_ attribute) is appended
+to the basename of the input file and that is used as the output file.
+
+* The _from_ attribute must be set to the input format. This must be one of:
+&#9;* dtd
+&#9;* rnc
+&#9;* rng
+
+* The _to_ attribute must be set to the output format required. This must be one of:
+&#9;* xsd
+&#9;* dtd
+&#9;* rng
+&#9;* rnc
+
+&gt; NOTE: It is the responsibility of the calling task to ensure that any output folders are
+&gt; created before running this task.
+
+## Usage
+
+```nohighlight
+&lt;convert-schema
+&#9;file="file.rnc"
+&#9;output="file.xsd"
+&#9;from="rnc"
+&#9;to="xsd"/&gt;
+```
+
+```nohighlight
+&lt;convert-rnc-to-xsd
+&#9;file="file.rnc"
+&#9;output="file.xsd"/&gt;
+```
+
+## Conversion utilities
+
+The additional macros below are simply wrappers around _convert-schema_. They supply default values of the
+_in_ and _out_ attributes appropriately:
+
+* convert-rnc-to-rng
+* convert-rnc-to-dtd
+* convert-rnc-to-xsd
+* convert-rng-to-rnc
+* convert-rng-to-xsd
+* convert-rng-to-dtd
+* convert-dtd-to-rnc
+* convert-dtd-to-xsd
+* convert-dtd-to-rng
+
+## Dependencies
+
+### JAR files
+
+* TRANG
+
+## Change Log
+
+##### 2018-02-15 (PH) Initial version
+
+    </description>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.convert-schema}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="convert-schema"
+        description="Use trang to convert between schema syntaxes">
+
+        <attribute
+            name="file"
+            description="Source file name"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Output file name, if not given uses the input file base name with the appropriate suffix."/>
+
+        <attribute
+            name="from"
+            description="Input format [dtd,rng,rnc]"/>
+
+        <attribute
+            name="to"
+            description="Output format [xsd,dtd,rng,rnc]"/>
+
+        <element
+            name="params.trang"
+            implicit="true"
+            optional="true"
+            description="Trang parameters to be passed to trang input/output modules"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="convert-schema" name="file" value="@{file}"/>
+            <check-attr-set macro="convert-schema" name="output" value="@{output}"/>
+            <check-attr-list macro="convert-schema" name="from" value="@{from}" list="dtd,rng,rnc"/>
+            <check-attr-list macro="convert-schema" name="to" value="@{to}" list="xsd,dtd,rng,rnc"/>
+
+            <!-- check input file exists -->
+            <check-file-exists macro="convert-schema" file="@{file}"/>
+
+            <!-- make sure we can find trang on the classpath -->
+
+            <property name="trang.class" value="com.thaiopensource.relaxng.translate.Driver"/>
+
+            <check-class-path macro="convert-schema" class="${trang.class}"/>
+
+            <echo message="[convert-schema] trang.class=${trang.class}"/>
+
+            <!-- work out final output name -->
+            <local name="input.basename"/>
+            <basename property="input.basename" file="@{file}" suffix="@{from}"/>
+
+            <local name="input.dirname"/>
+            <dirname property="input.dirname" file="@{file}"/>
+
+            <!-- if @{output} is set then use it -->
+            <local name="output.name"/>
+
+            <condition property="output.name" value="@{output}" else="${input.dirname}/${input.basename}.@{to}">
+                <not><equals arg1="@{output}" arg2=""/></not>
+            </condition>
+
+            <echo message="[convert-schema] output: ${output.name}" if:true="${macro.debug}"/>
+
+            <java
+                failonerror="true"
+                classname="${trang.class}">
+
+                <arg value="-I"/>
+                <arg value="@{from}"/>
+                <arg value="-O"/>
+                <arg value="@{to}"/>
+		        <arg value="@{file}"/>
+				<arg value="${output.name}"/>
+
+                <params.trang/>
+            </java>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="convert-rnc-to-xsd"
+        description="Convert an RNC file into an XSD file">
+
+        <attribute
+            name="file"
+            description="Source RNC file"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Output XSD file"/>
+
+        <element
+            name="params.trang"
+            implicit="true"
+            optional="true"
+            description="Trang parameters to be passed to trang input/output modules"/>
+
+        <sequential>
+
+            <echo message="[convert-rnc-to-xsd]" if:true="${macro.debug}"/>
+
+            <convert-schema file="@{file}" output="@{output}" from="rnc" to="xsd">
+                <params.trang/>
+            </convert-schema>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="convert-rng-to-xsd"
+        description="Convert an RNG file into an XSD file">
+
+        <attribute
+            name="file"
+            description="Source RNG file"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Output XSD file"/>
+
+        <element
+            name="params.trang"
+            implicit="true"
+            optional="true"
+            description="Trang parameters to be passed to trang input/output modules"/>
+
+        <sequential>
+
+            <echo message="[convert-rng-to-xsd]" if:true="${macro.debug}"/>
+
+            <convert-schema file="@{file}" output="@{output}" from="rng" to="xsd">
+                <params.trang/>
+            </convert-schema>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="convert-dtd-to-xsd"
+        description="Convert an DTD file into an XSD file">
+
+        <attribute
+            name="file"
+            description="Source DTD file"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Output XSD file"/>
+
+        <element
+            name="params.trang"
+            implicit="true"
+            optional="true"
+            description="Trang parameters to be passed to trang input/output modules"/>
+
+        <sequential>
+
+            <echo message="[convert-dtd-to-xsd]" if:true="${macro.debug}"/>
+
+            <convert-schema file="@{file}" output="@{output}" from="dtd" to="xsd">
+                <params.trang/>
+            </convert-schema>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="convert-dtd-to-rnc"
+        description="Convert an DTD file into an RNC file">
+
+        <attribute
+            name="file"
+            description="Source DTD file"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Output RNC file"/>
+
+        <element
+            name="params.trang"
+            implicit="true"
+            optional="true"
+            description="Trang parameters to be passed to trang input/output modules"/>
+
+        <sequential>
+
+            <echo message="[convert-dtd-to-rnc]" if:true="${macro.debug}"/>
+
+            <convert-schema file="@{file}" output="@{output}" from="dtd" to="rnc">
+                <params.trang/>
+            </convert-schema>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="convert-dtd-to-rng"
+        description="Convert an DTD file into an RNC file">
+
+        <attribute
+            name="file"
+            description="Source DTD file"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Output RNG file"/>
+
+        <element
+            name="params.trang"
+            implicit="true"
+            optional="true"
+            description="Trang parameters to be passed to trang input/output modules"/>
+
+        <sequential>
+
+            <echo message="[convert-dtd-to-rng]" if:true="${macro.debug}"/>
+
+            <convert-schema file="@{file}" output="@{output}" from="dtd" to="rng">
+                <params.trang/>
+            </convert-schema>
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="convert-rnc-to-rng"
+        description="Convert an RNC file into an RNG file">
+
+        <attribute
+            name="file"
+            description="Source RNC file"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Output RNG file"/>
+
+        <element
+            name="params.trang"
+            implicit="true"
+            optional="true"
+            description="Trang parameters to be passed to trang input/output modules"/>
+
+        <sequential>
+
+            <echo message="[convert-rnc-to-rng]" if:true="${macro.debug}"/>
+
+            <convert-schema file="@{file}" output="@{output}" from="rnc" to="rng">
+                <params.trang/>
+            </convert-schema>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="convert-rng-to-rnc"
+        description="Convert an RNG file into an RNC file">
+
+        <attribute
+            name="file"
+            description="Source RNG file"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Output RNC file"/>
+
+        <element
+            name="params.trang"
+            implicit="true"
+            optional="true"
+            description="Trang parameters to be passed to trang input/output modules"/>
+
+        <sequential>
+
+            <echo message="[convert-rng-to-rnc]" if:true="${macro.debug}"/>
+
+            <convert-schema file="@{file}" output="@{output}" from="rng" to="rnc">
+                <params.trang/>
+            </convert-schema>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="convert-rng-to-dtd"
+        description="Convert an RNG file into a DTD file">
+
+        <attribute
+            name="file"
+            description="Source RNG file"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Output DTD file"/>
+
+        <element
+            name="params.trang"
+            implicit="true"
+            optional="true"
+            description="Trang parameters to be passed to trang input/output modules"/>
+
+        <sequential>
+
+            <echo message="[convert-rng-to-dtd]" if:true="${macro.debug}"/>
+
+            <convert-schema file="@{file}" output="@{output}" from="rng" to="dtd">
+                <params.trang/>
+            </convert-schema>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="convert-rnc-to-dtd"
+        description="Convert an RNC file into a DTD file">
+
+        <attribute
+            name="file"
+            description="Source RNC file"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Output DTD file"/>
+
+        <element
+            name="params.trang"
+            implicit="true"
+            optional="true"
+            description="Trang parameters to be passed to trang input/output modules"/>
+
+        <sequential>
+
+            <echo message="[convert-rnc-to-dtd]" if:true="${macro.debug}"/>
+
+            <convert-schema file="@{file}" output="@{output}" from="rnc" to="dtd">
+                <params.trang/>
+            </convert-schema>
+
+        </sequential>
+    </macrodef>
+
+</project>

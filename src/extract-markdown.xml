@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="extract-markdown"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        extract-markdown.xml
+Date:         2018-02-15
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to use extract Markdown documentation from files
+...
+
+# extract-markdown.xml
+
+Macro definitions to extract documentation (as Markdown) embedded in various types
+of files. The user can specifiy a stylesheet to use for the extraction. Alternatively this
+module defines some macros that can be used to extract documentation from standard file
+types. Successful extraction will depend on the source files containing the relevant
+elements with the Markdown documentation.
+
+* If the _file_ attribute is not blank and refers to a file that exists then documentation
+will be extracted from it, using the _output_ attribute as the resulting file name for the report.
+* If the _file_ attribute is not supplied then the macro will extract Markdown from all files
+in a folder determined by the 'input' element.
+
+&gt; NOTE: It is the responsibility of the calling task to ensure that any output folders are
+&gt; created before running this task.
+
+This module defines the macros 'extract-markdown-from-ant' and 'extract-markdown-from-sch'
+which can be used to extract Markdown from ANT build scripts and Schematron files
+respectively.
+
+&gt; WARNING: The stylesheets used by these macros will also extract text node messages
+&gt; embedded in &lt;echo&gt; and &lt;fail&gt; elements. Use the "message" attribute
+&gt; of these elements if possible.
+
+## Usage
+
+```nohighlight
+&lt;extract-markdown
+&#9;file="${models.dir}/sample.xml"
+&#9;stylesheet="./markdown-extract.xsl"
+&#9;output="${docs.dir}/sample.md"/&gt;
+```
+
+```nohighlight
+&lt;extract-markdown-from-ant
+&#9;file="${source.utility.dir}/git.xml"
+&#9;output="${docs.dir}/git.md"/&gt;
+```
+
+## Dependencies
+
+### Stylesheets
+
+These stylesheets are included using the deault stylesheet mechanism described in
+[apply-stylesheet](apply-stylesheet.html)
+
+* __${xpants.dir}/extract-markdown-from-ant.xsl:__ This is the standard stylesheet
+used to extract Markdown from ANT scripts.
+* __${xpants.dir}/extract-markdown-from-sch.xsl:__ This is the standard stylesheet
+used to extract Markdown from Schematron files.
+* __${xpants.dir}/extract-markdown-from-xslt.xsl:__ This is the standard stylesheet
+used to extract Markdown from XSLT files.
+
+### Libraries
+
+* __ant-contrib__ library.
+
+## Properties
+
+* _extract-markdown-from-ant.stylesheet_ When using the 'extract-markdown-from-ant' macro
+this property can be used to override the default stylesheet.
+* _extract-markdown-from-sch.stylesheet_ When using the 'extract-markdown-from-sch' macro
+this property can be used to override the default stylesheet.
+* _extract-markdown-from-xslt.stylesheet_ When using the 'extract-markdown-from-xslt' macro
+this property can be used to override the default stylesheet.
+
+## Change Log
+
+##### 2018-02-15 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.extract-markdown}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/apply-stylesheet.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="extract-markdown"
+        description="Extract Markdown documentation from files">
+
+        <attribute
+            name="file"
+            default=""
+            description="Source file"/>
+
+        <attribute
+            name="stylesheet"
+            description="Stylesheet to use for extraction"/>
+
+        <attribute
+            name="output"
+            description="Path for extracted Markdown file(s)"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="extract-markdown" name="stylesheet" value="@{stylesheet}"/>
+            <check-attr-set macro="extract-markdown" name="output" value="@{output}"/>
+
+            <!-- file or dir mode? -->
+            <extract-markdown-file
+                file="@{file}"
+                stylesheet="@{stylesheet}"
+                output="@{output}"
+                unless:blank="@{file}"/>
+
+            <extract-markdown-dir
+                stylesheet="@{stylesheet}"
+                output="@{output}"
+                if:blank="@{file}">
+                <input.files/>
+            </extract-markdown-dir>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="extract-markdown-file"
+        description="Extract Markdown documentation from a single file">
+
+        <attribute
+            name="file"
+            description="Source file"/>
+
+        <attribute
+            name="stylesheet"
+            description="Stylesheet to use for extraction"/>
+
+        <attribute
+            name="output"
+            description="Path for extracted Markdown file"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="extract-markdown-file" name="file" value="@{file}"/>
+
+            <!-- fail if file does not exist -->
+            <check-file-exists macro="extract-markdown-file" file="@{file}"/>
+
+            <apply-stylesheet
+                file="@{file}"
+                output="@{output}"
+                stylesheet="@{stylesheet}"/>
+
+            <!--
+                Cannot use "<" and ">" in Markdown embedded in XML, so use "&lt;"
+                and "&gt;" and then replace them here. This ensures that code samples in
+                embedded Markdown get displayed correctly. &#9; is replaced by 4 spaces
+                to redo the indentation.
+            -->
+            <replace file="@{output}" token="&lt;" value="&lt;"/>
+            <replace file="@{output}" token="&gt;" value="&gt;"/>
+            <replace file="@{output}" token="&#9;" value="    "/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="extract-markdown-dir"
+        description="Extract Markdown documentation from a set of files">
+
+        <attribute
+            name="stylesheet"
+            description="Stylesheet to use for extraction"/>
+
+        <attribute
+            name="output"
+            description="Path for extracted files"/>
+
+        <element
+            name="input.files"
+            optional="false"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if input fileset is empty -->
+            <check-fileset-empty macro="extract-markdown-dir">
+                <input.files/>
+            </check-fileset-empty>
+
+            <!-- make output dir -->
+            <mkdir dir="@{output}"/>
+
+            <check-dir-exists macro="extract-markdown-dir" dir="@{output}"/>
+
+            <for param="file" keepgoing="${for.keepgoing}">
+                <input.files/>
+
+                <sequential>
+
+                    <local name="output.name"/>
+                    <basename property="output.name" file="@{file}" suffix=".xml"/>
+
+                    <extract-markdown-file
+                        file="@{file}"
+                        stylesheet="@{stylesheet}"
+                        output="@{output}/${output.name}.md"/>
+
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="extract-markdown-from-ant"
+        description="Extract Markdown documentation from ANT script files">
+
+        <attribute
+            name="file"
+            default=""
+            description="Source ANT file"/>
+
+        <attribute
+            name="output"
+            description="Path for extracted Markdown file(s)"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <property
+                name="extract-markdown-from-ant.stylesheet"
+                value="extract-markdown-from-ant"/>
+
+            <echo message="[extract-markdown-from-ant] extract-markdown-from-ant.stylesheet=${extract-markdown-from-ant.stylesheet}" if:true="${macro.debug}"/>
+
+            <extract-markdown
+                file="@{file}"
+                stylesheet="${extract-markdown-from-ant.stylesheet}"
+                output="@{output}">
+                <input.files/>
+            </extract-markdown>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="extract-markdown-from-sch"
+        description="Extract Markdown documentation from Schematron script files">
+
+        <attribute
+            name="file"
+            default=""
+            description="Source Schematron file"/>
+
+        <attribute
+            name="output"
+            description="Path for extracted Markdown file(s)"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <property
+                name="extract-markdown-from-sch.stylesheet"
+                value="extract-markdown-from-sch"/>
+
+            <echo message="[extract-markdown-from-sch] extract-markdown-from-sch.stylesheet=${extract-markdown-from-sch.stylesheet}" if:true="${macro.debug}"/>
+
+            <extract-markdown
+                file="@{file}"
+                stylesheet="${extract-markdown-from-sch.stylesheet}"
+                output="@{output}">
+                <input.files/>
+            </extract-markdown>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="extract-markdown-from-xslt"
+        description="Extract Markdown documentation from XSLT files">
+
+        <attribute
+            name="file"
+            default=""
+            description="Source XSLT file"/>
+
+        <attribute
+            name="output"
+            description="Path for extracted Markdown file(s)"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <property
+                name="extract-markdown-from-xslt.stylesheet"
+                value="extract-markdown-from-xslt"/>
+
+            <echo message="[extract-markdown-from-xslt] extract-markdown-from-xslt.stylesheet=${extract-markdown-from-xslt.stylesheet}" if:true="${macro.debug}"/>
+
+            <extract-markdown
+                file="@{file}"
+                stylesheet="${extract-markdown-from-xslt.stylesheet}"
+                output="@{output}">
+                <input.files/>
+            </extract-markdown>
+
+        </sequential>
+    </macrodef>
+
+</project>

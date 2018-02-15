@@ -26,20 +26,21 @@ Summary:     Build file for XPants
 
     <property name="src.dir" value="src"/>
     <property name="docs.dir" value="docs"/>
-    <property name="dist.dir" value="dist"/>
     <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
     <property name="install.dir" value="/usr/local/lib/${ant.project.name}"/>
 
-    <property name="dist.file" value="${ant.project.name}-{version.number}.zip"/>
+    <property name="dist.file" value="${ant.project.name}-${version.number}.zip"/>
+    <property name="jar.file" value="${ant.project.name}-${version.number}.jar"/>
 
     <!-- use local not deployed versions of macros -->
-    <property name="xpants.dir" value="${src.dir}"/>
+    <!-- <property name="xpants.dir" value="${src.dir}"/> -->
 
     <!-- load default properties -->
-    <property file="${xpants.dir}/xpants.properties"/>
+    <property file="${src.dir}/xpants.properties"/>
 
     <!-- include all macros (locally) -->
-    <include file="${xpants.dir}/xpants.xml"/>
+    <include file="${src.dir}/xpants.xml"/>
 
     <!-- TODO targets for "local-deploy", "build-distribution" and "install"? Also "test" -->
 
@@ -86,23 +87,31 @@ Summary:     Build file for XPants
 
     <target
         name="build"
-        description="Assemble files for deployment"
-        depends="docs">
+        description="Assemble files for deployment">
 
-        <copy
-            todir="${build.deploy.dir}">
+        <mkdir dir="${build.dir}/com/encodis/xpants"/>
+        <mkdir dir="${dist.dir}"/>
+
+        <apply-stylesheet
+            output="${build.dir}//com/encodis/xpants"
+            stylesheet="./src/xslt/extract-macrodef.xsl">
 
             <fileset dir="${src.dir}" includes="*.xml"/>
+        </apply-stylesheet>
+
+        <copy
+            todir="${build.dir}/com/encodis/xpants">
+
             <fileset dir="${src.dir}" includes="*.properties"/>
         </copy>
 
-        <zip
-            zipfile="${build.dir}/${zip.file}">
+        <jar
+            destfile="${dist.dir}/${jar.file}">
 
-            <fileset dir="${build.deploy.dir}">
+            <fileset dir="${build.dir}">
                 <include name="**/*"/>
             </fileset>
-        </zip>
+        </jar>
     </target>
 
 

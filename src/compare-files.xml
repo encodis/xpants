@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="compare-files"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        compare-files.xml
+Date:         2018-02-15
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to compare and difference files.
+...
+
+# compare-files.xml
+
+A set of macro definitions to compare files and perform file differencing.
+
+The intended entry point for this library are the _compare-files_ and _compare-dirs_ macros.
+_compare-files_ will report whether two files are the same or different; if the _output_
+attribute is specified then it is assumed that the user wants a report of the differences.
+In that case (and if the files are different) the _diff-files_ macro will be invoked.
+
+By default file differencing assumes the files are plain text files. However, using the
+_type_ parameter an XML aware difference can be carried out using the DeltaXML software.
+These macro definitions are therefore reliant on DeltaXML being installed (see below).
+
+Directories can also be compared, although nested directories (subfolders) are not currently
+supported. There are two modes available for directory comparison. The first is a "shallow"
+comparison: the macro checks that the two directories contain the same files by name. A "deep"
+comparison is also possible---this checks that each file in the first directory is the same
+as the corresponding file in the second. Differences can also be produced, again by setting
+the _output_ attribute, although in this case the value refers to the root folder for the
+results and this is only available for "deep" comparisons. (A shallow comparison only checks
+file names---so they either match or they don't).
+
+## Usage
+
+The basic usage is straighforward. To compare two normal text files use the following, which
+will set a property called _are-they-the-same_ to "true" if __file1.txt__ is identical
+to __file2.txt__, and to "false" otherwise:
+
+```
+&lt;compare-files
+&#9;fileA="file1.txt"
+&#9;fileB="file2.txt"
+&#9;result="are-they-the-same"/&gt;
+```
+
+This next example will compare two files using the "diff" tool and (if they are different)
+store the output in the __diff-1-2.txt__ file. Note that no property is set:
+
+```
+&lt;compare-files
+&#9;fileA="file1.txt"
+&#9;fileB="file2.txt"
+&#9;output="file-1-2.diff"/&gt;
+```
+
+This example compares two XML files using DeltaXML. Note that the _config_ attribute
+specifies the type of comparison and is passed directly to DeltaXML (so it must conform to
+the DeltaXML specifications):
+
+```
+&lt;compare-files
+&#9;fileA="doc1.xml"
+&#9;fileB="doc2.xml"
+&#9;type="xml"
+&#9;config="delta"
+&#9;params="whitespace"
+&#9;output="diff-1-2.xml"/&gt;
+```
+
+Note that the contents of the _config_ parameter will depend on the value of the _type_.
+When _type_ is "xml" the _config_ parameter must be one of those values supported by
+DeltaXML (see below, these macros adopt a default of "delta"). The _params_ argument is used
+to supply additional configuration options to the selected configuration (see below). When
+_type_ is "txt" this parameter refers to the command line arguments supported by the "diff"
+tool. In _Git Bash_ type `$ diff --help` for more information on the available options.
+
+## DeltaXML
+
+To use the XML differencing macros, DeltaXML must first be installed on your local machine with the
+appropriate license server running
+
+### Configuration
+
+When used in XML mode, the _config_ property can take one of several values, indicating the
+type of comparison to be performed:
+
+* _delta:_ XML Compare, output XML delta
+* _diffreport:_ XML Compare, output HTML folding report
+* _diffreport-sbs:_ XML Compare, output HTML5 Side-by-Side report
+* _raw:_ XML Compare, output recombinable delta
+* _schema:_ Schema Compare, output HTML report
+* _xhtml:_ XHTML Compare, output XHTML
+* _doc-delta:_ XML Compare, output XML delta
+* _doc-diffreport:_ XML Compare, output HTML folding report
+* _doc-diffreport-sbs:_ XML Compare, output HTML Side-by-Side report
+
+Some of these configurations take additional parameters, but these are not yet enabled in
+these macros.
+
+Full documentation can be found on the [DeltaXML web site](https://docs.deltaxml.com/core/current/docs/command-processor.html).
+
+### Parameters
+
+The various DeltaXML comparison options can each be parameterised in a variety of ways. These
+can be be viewed by running the DeltaXML __command.jar__ and using the "describe" option to
+list the options for the chosen configuration. For example: `$ java -jar /c/catools/DeltaXMLCore-8_2_1_j/command.jar describe delta`.
+
+Not all config/param options are supported by these _ant_ macros. The ones that are are listed
+in the table below, together with their default values and their "macro" equivalents.
+
+
+| Delta XML Parameter | Default | Macro name | delta | diffreport |
+| :------------------ | :------ | :--------- | :---: | :--------: |
+| Preserve Whitespace | false   | whitespace | yes   | yes        |
+| Full Context        | true    | context    | yes   | no         |
+| Word By Word        | false   | word       | yes   | yes        |
+| Enhanced Match 1    | true    | match      | yes   | yes        |
+| Indent              | yes     | indent     | yes   | no         |
+
+To turn an option on or off, use the "macro" version of the name (prefixed with "no" to turn
+it off). Parameters that do not work with a particular configuration have no effect (e.g.
+using the "Full Context" option with the "diffreport" config).
+
+For example, the following macro call will compare two files using DeltaXML's "delta" compare
+function with "Preserve Whitespace=false" and "Full Context=false". This will produce quite
+a compact difference file.
+
+```
+&lt;compare-files
+&#9;fileA="doc1.xml"
+&#9;fileB="doc2.xml"
+&#9;type="xml"
+&#9;config="delta"
+&#9;params="nowhitespace,nocontext"
+&#9;output="diff-1-2.xml"/&gt;
+```
+
+
+## Dependencies
+
+### Executables
+
+*  DeltaXML software installed
+*  The *diff* executable must be installed and available on the PATH.
+
+## Properties
+
+* _deltaxml.dir_ Can be used to override the default DeltaXML install location.
+* _diff.exe_ Used to override the default location of the "diff" tool.
+
+## Files
+
+* DeltaXML license file (must be installed in same folder as the **compare.jar** file)
+
+## Change Log
+
+##### 2018-02-15 (PH) Initial version
+
+    </description>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.compare-files}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/find-exe.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="compare-files"
+        description="Compare two files and report on differences">
+
+        <attribute
+            name="fileA"
+            description="Path to first file"/>
+
+        <attribute
+            name="fileB"
+            description="Path to second file"/>
+
+        <attribute
+            name="result"
+            default=""
+            description="Property to store comparison result"/>
+
+        <attribute
+            name="type"
+            default="txt"
+            description="Type of file comparison [txt,xml]"/>
+
+        <attribute
+            name="config"
+            default=""
+            description="Configuration parameters or arguments for the comparison"/>
+
+        <attribute
+            name="params"
+            default=""
+            description="Parameters passed to the DeltaXML pipeline (for type=xml)"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Path to file to store differencing results"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="compare-files" name="fileA" value="@{fileA}"/>
+            <check-attr-set macro="compare-files" name="fileB" value="@{fileB}"/>
+
+            <!-- first, check if files are physically identical (true = the same, false = different) -->
+            <local name="compare.result"/>
+            <condition property="compare.result" value="true">
+                <filesmatch file1="@{fileA}" file2="@{fileB}"/>
+            </condition>
+
+            <!-- update result property -->
+            <condition property="@{result}" value="true" else="false">
+                <isset property="compare.result"/>
+            </condition>
+
+            <echo message="[compare-files] '@{fileA}' and '@{fileB}' are the same" if:true="${compare.result}"/>
+            <echo message="[compare-files] '@{fileA}' and '@{fileB}' are different" unless:true="${compare.result}"/>
+
+            <!-- next, if files are different and if 'output' is set then record diffs -->
+
+            <local name="compare.diff"/>
+            <condition property="compare.diff" value="true" else="false">
+                <and>
+                    <not><isset property="compare.result"/></not>
+                    <not><equals arg1="@{output}" arg2=""/></not>
+                </and>
+            </condition>
+
+            <diff-files
+                fileA="@{fileA}"
+                fileB="@{fileB}"
+                type="@{type}"
+                config="@{config}"
+                params="@{params}"
+                output="@{output}"
+                if:true="${compare.diff}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="compare-dirs"
+        description="Compare two directories and report on the differences">
+
+        <attribute
+            name="dirA"
+            description="Path to first directory"/>
+
+        <attribute
+            name="dirB"
+            description="Path to second directory"/>
+
+        <attribute
+            name="deep"
+            default="false"
+            description="Perform deep or shallow comparison"/>
+
+        <attribute
+            name="result"
+            description="Property to store comparison result"/>
+
+        <attribute
+            name="type"
+            default="txt"
+            description="Type of file comparison [txt,xml]"/>
+
+        <attribute
+            name="config"
+            default=""
+            description="Configuration parameters or arguments for the file comparison"/>
+
+        <attribute
+            name="params"
+            default=""
+            description="Parameters passed to the DeltaXML pipeline (for type=xml)"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Path to file to store differencing results"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="compare-dirs" name="dirA" value="@{dirA}"/>
+            <check-attr-set macro="compare-dirs" name="dirB" value="@{dirB}"/>
+
+            <compare-dirs-shallow
+                dirA="@{dirA}"
+                dirB="@{dirB}"
+                result="@{result}"
+                unless:true="@{deep}"/>
+
+            <compare-dirs-deep
+                dirA="@{dirA}"
+                dirB="@{dirB}"
+                result="@{result}"
+                type="@{type}"
+                config="@{config}"
+                params="@{params}"
+                output="@{output}"
+                if:true="@{deep}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="compare-dirs-shallow"
+        description="Compare two directories and report on the differences (shallow, names only)">
+
+        <attribute
+            name="dirA"
+            description="Path to first directory"/>
+
+        <attribute
+            name="dirB"
+            description="Path to second directory"/>
+
+        <attribute
+            name="result"
+            description="Property to store comparison result"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="compare-dirs-shallow" name="dirA" value="@{dirA}"/>
+            <check-attr-set macro="compare-dirs-shallow" name="dirB" value="@{dirB}"/>
+
+            <!-- see http://ant.1045680.n5.nabble.com/Multiple-fileset-and-filelist-comparisons-td5716217.html -->
+
+            <!-- NOTE <different> means files with diff lengths are diff, <present> uses just file name -->
+
+            <local name="shallow.result"/>
+            <pathconvert property="shallow.result" setonempty="false">
+                <fileset dir="@{dirA}" includes="*">
+                    <different targetdir="@{dirB}" ignoreFileTimes="true"/>
+                </fileset>
+            </pathconvert>
+
+            <!-- update result property (true is directories are the same) -->
+            <condition property="@{result}" value="true" else="false">
+                <not><isset property="shallow.result"/></not>
+            </condition>
+
+            <echo message="[compare-dirs-shallow] '@{dirA}' and '@{dirB}' are the same" unless:set="shallow.result"/>
+            <echo message="[compare-dirs-shallow] '@{dirA}' and '@{dirB}' are different" if:set="shallow.result"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="compare-dirs-deep"
+        description="Compare two directories and report on the differences (deep, compare individual files)">
+
+        <attribute
+            name="dirA"
+            description="Path to first directory"/>
+
+        <attribute
+            name="dirB"
+            description="Path to second directory"/>
+
+        <attribute
+            name="result"
+            description="Property to store comparison result"/>
+
+        <attribute
+            name="type"
+            default="txt"
+            description="Type of file comparison [txt,xml]"/>
+
+        <attribute
+            name="config"
+            default=""
+            description="Configuration parameters or arguments for the file comparison"/>
+
+        <attribute
+            name="params"
+            default=""
+            description="Parameters passed to the DeltaXML pipeline (for type=xml)"/>
+
+        <attribute
+            name="output"
+            default=""
+            description="Path to file to store differencing results"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="compare-dirs-deep" name="dirA" value="@{dirA}"/>
+            <check-attr-set macro="compare-dirs-deep" name="dirB" value="@{dirB}"/>
+
+            <!-- see http://ant.1045680.n5.nabble.com/Multiple-fileset-and-filelist-comparisons-td5716217.html -->
+
+            <!-- check all files are in both directories -->
+
+            <local name="deep.present"/>
+            <pathconvert property="deep.present" setonempty="false">
+                <fileset dir="@{dirA}" includes="*">
+                    <present targetdir="@{dirB}" present="both"/>
+                </fileset>
+            </pathconvert>
+
+            <local name="diff.ext"/>
+            <condition property="diff.ext" value=".diff" else=".xml">
+                <equals arg1="@{type}" arg2="txt"/>
+            </condition>
+
+            <!-- only run deep compare if all files exist in both directories -->
+
+            <!-- keepgoing=false, always stop if there is an error -->
+
+            <for param="file"
+                 keepgoing="false"
+                 if:set="deep.present">
+
+                <fileset dir="@{dirA}" includes="*"/>
+
+                <sequential>
+                    <!-- get file name for @file then append to dirB  -->
+
+                    <local name="file.name"/>
+                    <basename property="file.name" file="@{file}"/>
+
+                    <local name="output.name"/>
+                    <condition property="output.name"
+                        value="@{output}/${file.name}${diff.ext}"
+                        else="">
+                        <not><equals arg1="@{output}" arg2=""/></not>
+                    </condition>
+
+                    <!-- TODO if config is say, diffreport then you get an HTML file output -->
+
+                    <!-- compare files, if @{result} is true then files are the same -->
+
+                    <local name="file.result"/>
+                    <compare-files
+                        fileA="@{dirA}/${file.name}"
+                        fileB="@{dirB}/${file.name}"
+                        result="file.result"
+                        type="@{type}"
+                        config="@{config}"
+                        params="@{params}"
+                        output="${output.name}"/>
+
+                    <!-- set ${deep.result} if @{file.result} is false;
+                         this is not a local property so will only be set once;
+                         if it is set then the directories are different -->
+
+                    <condition property="deep.result" value="true">
+                        <isfalse value="${file.result}"/>
+                    </condition>
+
+                </sequential>
+            </for>
+
+            <!-- update result property (true = same, false = different) -->
+            <condition property="@{result}" value="true" else="false">
+                <not><isset property="deep.result"/></not>
+            </condition>
+
+            <echo message="[compare-dirs-deep] '@{dirA}' and '@{dirB}' are the same" unless:set="deep.result"/>
+            <echo message="[compare-dirs-deep] '@{dirA}' and '@{dirB}' are different" if:set="deep.result"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="diff-files"
+        description="Difference two files">
+
+        <attribute
+            name="fileA"
+            description="Path to first file"/>
+
+        <attribute
+            name="fileB"
+            description="Path to second file"/>
+
+        <attribute
+            name="type"
+            default="txt"
+            description="Type of comparison [txt,xml]"/>
+
+        <attribute
+            name="config"
+            default=""
+            description="Configuration parameters or arguments for the comparison"/>
+
+        <attribute
+            name="params"
+            default=""
+            description="Parameters passed to the DeltaXML pipeline"/>
+
+        <attribute
+            name="output"
+            description="Path to file to store results"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="diff-files" name="fileA" value="@{fileA}"/>
+            <check-attr-set macro="diff-files" name="fileB" value="@{fileB}"/>
+            <check-attr-set macro="diff-files" name="output" value="@{output}"/>
+            <check-attr-set macro="diff-files" name="type" value="@{type}"/>
+
+            <!-- by default always use text compare unless specifically told to use XML -->
+            <local name="use.xml"/>
+            <condition property="use.xml" value="true" else="false">
+                <equals arg1="@{type}" arg2="xml"/>
+            </condition>
+
+            <diff-files-txt
+                fileA="@{fileA}"
+                fileB="@{fileB}"
+                config="@{config}"
+                output="@{output}"
+                unless:true="${use.xml}"/>
+
+            <diff-files-xml
+                fileA="@{fileA}"
+                fileB="@{fileB}"
+                config="@{config}"
+                params="@{params}"
+                output="@{output}"
+                if:true="${use.xml}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="diff-files-txt"
+        description="Difference two files using the diff tool">
+
+        <attribute
+            name="fileA"
+            description="Path to first file"/>
+
+        <attribute
+            name="fileB"
+            description="Path to second file"/>
+
+        <attribute
+            name="config"
+            default="--context"
+            description="Configuration parameters or arguments for the comparison"/>
+
+        <attribute
+            name="output"
+            description="Path to file to store results"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="diff-files-txt" name="fileA" value="@{fileA}"/>
+            <check-attr-set macro="diff-files-txt" name="fileB" value="@{fileB}"/>
+            <check-attr-set macro="diff-files-txt" name="output" value="@{output}"/>
+
+            <!-- check for diff exe -->
+            <find-exe property="diff.exe" unless:set="diff.exe"/>
+
+            <!-- NOTE @{output} will not be created if the files are the same -->
+            <exec
+                executable="${diff.exe}"
+                output="@{output}"
+                failonerror="${exec.failonerror}">
+                <arg value="@{config}"/>
+                <arg value="@{fileA}"/>
+                <arg value="@{fileB}"/>
+            </exec>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="diff-files-xml"
+        description="Difference two files using the DeltaXML tool">
+
+        <attribute
+            name="fileA"
+            description="Path to first file"/>
+
+        <attribute
+            name="fileB"
+            description="Path to second file"/>
+
+        <attribute
+            name="config"
+            default="delta"
+            description="Configuration ID to use for XML comparison [delta,diffreport,diffreport-sbs,raw,schema,xhtml,doc-delta,doc-diffreport,doc-diffreport-sbs]"/>
+
+        <attribute
+            name="params"
+            default=""
+            description="Parameters passed to the DeltaXML pipeline"/>
+
+        <attribute
+            name="output"
+            description="Path to file to store results"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="diff-files-xml" name="fileA" value="@{fileA}"/>
+            <check-attr-set macro="diff-files-xml" name="fileB" value="@{fileB}"/>
+            <check-attr-set macro="diff-files-xml" name="config" value="@{config}"/>
+            <check-attr-set macro="diff-files-xml" name="output" value="@{output}"/>
+
+            <!-- fail if @{config} not specified correctly -->
+            <check-attr-list macro="diff-files-xml" name="config" value="@{config}" list="delta,diffreport,diffreport-sbs,raw,schema,xhtml,doc-delta,doc-diffreport,doc-diffreport-sbs"/>
+
+            <!-- default Delta XML location -->
+            <property name="deltaxml.dir" location="C:\catools\DeltaXMLCore-8_2_1_j"/>
+
+            <echo message="[diff-files-xml] deltaxml.dir=${deltaxml.dir}" if:true="${macro.debug}"/>
+
+            <!-- analyse params -->
+
+            <!-- delta: [no]whitespace,[no]context,[no]word,[no]match,[no]indent -->
+            <!-- diffreport: [no]whitespace,[no]word,[no]match -->
+
+            <!-- default for 'Preserve Whitespace' is false, delta and diffreport only -->
+            <local name="diff.whitespace"/>
+            <condition property="diff.whitespace" value="true">
+                <and>
+                    <contains string="@{params}" substring="whitespace"/>
+                    <not><contains string="@{params}" substring="nowhitespace"/></not>
+                    <or>
+                        <equals arg1="@{config}" arg2="delta"/>
+                        <equals arg1="@{config}" arg2="diffreport"/>
+                    </or>
+                </and>
+            </condition>
+
+            <!-- default for 'Full Context' is true, delta only -->
+            <local name="diff.nocontext"/>
+            <condition property="diff.nocontext" value="true">
+                <and>
+                    <contains string="@{params}" substring="nocontext"/>
+                    <equals arg1="@{config}" arg2="delta"/>
+                </and>
+            </condition>
+
+            <!-- default for 'Word By Word' is false, delta and diffreport only -->
+            <local name="diff.word"/>
+            <condition property="diff.word" value="true">
+                <and>
+                    <contains string="@{params}" substring="word"/>
+                    <not><contains string="@{params}" substring="noword"/></not>
+                    <or>
+                        <equals arg1="@{config}" arg2="delta"/>
+                        <equals arg1="@{config}" arg2="diffreport"/>
+                    </or>
+                </and>
+            </condition>
+
+            <!-- default for 'Enhanced Match 1' is true, delta and diffreport only -->
+            <local name="diff.nomatch"/>
+            <condition property="diff.nomatch" value="true">
+                <and>
+                    <contains string="@{params}" substring="nomatch"/>
+                    <or>
+                        <equals arg1="@{config}" arg2="delta"/>
+                        <equals arg1="@{config}" arg2="diffreport"/>
+                    </or>
+                </and>
+            </condition>
+
+            <!-- default for 'Indent' is yes, delta only -->
+            <local name="diff.noindent"/>
+            <condition property="diff.noindent" value="true">
+                <and>
+                    <contains string="@{params}" substring="noindent"/>
+                    <equals arg1="@{config}" arg2="delta"/>
+                </and>
+            </condition>
+
+            <!-- NOTE @{output} will be created even if the files are the same, just says A=B -->
+
+            <java jar="${deltaxml.dir}/command.jar" failonerror="true" fork="true">
+                <arg value="compare"/>
+                <arg value="@{config}"/>
+                <arg value="@{fileA}"/>
+                <arg value="@{fileB}"/>
+                <arg value="@{output}"/>
+                <arg value="Preserve Whitespace=true" if:set="diff.whitespace"/>
+                <arg value="Full Context=false" if:set="diff.nocontext"/>
+                <arg value="Word By Word=true" if:set="diff.word"/>
+                <arg value="Enhanced Match 1=false" if:set="diff.nomatch"/>
+                <arg value="Indent=no" if:set="diff.noindent"/>
+                <sysproperty key="xml.catalog.files" value="${ca.catalog}"/>
+            </java>
+
+        </sequential>
+    </macrodef>
+
+</project>

@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="deploy-files"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        deploy-files.xml
+Date:         2018-02-15
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to use deploy files to a location
+...
+
+# deploy-files.xml
+
+A set of macro definitions to deploy sets of files to a designated location. The first
+macro ('deploy-file') simply copies a file to a target folder, unless the file
+already exists there. The macro can be told to overwrite the file if necessary.
+
+The second macro ('deploy-files') does the same but for an implicit fileset or a source folder.
+If neither of these is supplied then the macro will fail. This macro can also delete the
+target folder first (_clean=target_) and remove the directory structure of the source files
+(_flatten=true_). The _method_ attribute can be used to get ANT to use the 'sync' task rather
+than 'copy'. This may help with performance in some cases, but cannot be used if either
+the _flatten_ or _clean_ options are used. The _method_ attribute can also be set to 'scp' to
+use the system 'scp' (SSH secure copy), in cases where access to a network file share is
+not possible.
+
+The 'scp' method does __NOT__ use the _root.dir_ property in this way because it is
+copying directly to the host's file system. Instead the _env_ attribute is used
+with the _ssh.root_ property (usually this is "/www" as that is the root of the file system
+once logged in via _ssh_). Note that when deploying to the root of the target environment's
+server the _target_ attribute  must be set to "/" (as it cannot be empty).
+
+## Usage
+
+```
+&lt;property name="deploy.target" value="${deploy.area}/${deploy.type}/${project.name}"/&gt;
+
+&lt;deploy-files
+&#9;env="cape"
+&#9;target="${deploy.target}/docs"&gt;
+&#9;&lt;fileset&gt;
+&#9;&#9;&lt;include name="build/*.html"/&gt;
+&#9;&lt;/fileset&gt;
+&lt;/deploy-files&gt;
+```
+
+Deploy different filesets for 'latest' and 'versioned' files:
+
+```
+&lt;deploy-files
+&#9;env="cape"
+&#9;target="assets/products/content-delivery/common"&gt;
+&#9;&lt;fileset&gt;
+&#9;&#9;&lt;fileset dir="." includes="compiled/*.sch"/&gt;
+&#9;&lt;/fileset&gt;
+&lt;/deploy-files&gt;
+
+&lt;deploy-files
+&#9;env="cape"
+&#9;target="assets/products/content-delivery/common/v1.2"&gt;
+&#9;&lt;fileset dir="."&gt;
+&#9;&#9;&lt;include name="compiled/*.sch"/&gt;
+&#9;&#9;&lt;include name="docs/*.html"/&gt;
+&#9;&#9;&lt;include name="models/instances/*.xml"/&gt;
+&#9;&lt;/fileset&gt;
+&lt;/deploy-files&gt;
+```
+
+Specify the deployment environment on the command line:
+
+```
+$ ant deploy -Ddeploy.env=test
+```
+
+## Dependencies
+
+* ${xpants.dir}/attr-checks.xml
+* ${xpants.dir}/file-checks.xml
+* ${xpants.dir}/ssh.xml
+
+## Properties
+
+None.
+
+## Change Log
+
+##### 2018-02-15 (PH) Initial version
+
+    </description>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.deploy-files}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/ssh.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="deploy-file"
+        description="Deploy a file to a designated location">
+
+        <attribute
+            name="file"
+            description="File to deploy"/>
+
+        <attribute
+            name="target"
+            description="Target destination folder for deployment"/>
+
+        <attribute
+            name="overwrite"
+            default="false"
+            description="Overwrite the target file if it exists [true,false]"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="deploy-file" name="file" value="@{file}"/>
+            <check-attr-set macro="deploy-file" name="target" value="@{target}"/>
+
+            <!-- check that @{file} exists -->
+            <check-file-exists macro="deploy-file" file="@{file}"/>
+
+            <!-- get base filename -->
+            <local name="file.name"/>
+            <basename property="file.name" file="@{file}"/>
+
+            <!-- set target path -->
+            <local name="target.path"/>
+            <property name="target.path" value="@{target}/${file.name}"/>
+
+            <!-- check if target folder exists and can be overwritten -->
+            <local name="target.exists"/>
+            <available property="target.exists" file="${target.path}" type="file"/>
+
+            <fail message="[deploy-file] '@{file}' exists in target folder '@{target}' and will not be overwritten">
+                <condition>
+                    <and>
+                        <istrue value="${target.exists}"/>
+                        <isfalse value="@{overwrite}"/>
+                    </and>
+                </condition>
+            </fail>
+
+            <!-- make target folder if it does not exist -->
+            <mkdir dir="${target.path}" unless:true="${target.exists}"/>
+
+            <!-- copy file -->
+            <copy file="@{file}" tofile="${target.path}" overwrite="true" verbose="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+    <macrodef
+        name="deploy-files"
+        description="Deploy a set of files to a location designated by the deployment environment and target">
+
+        <attribute
+            name="target"
+            description="Root target destination for deployment on designated environment"/>
+
+        <attribute
+            name="source"
+            default=""
+            description="Directory to deploy, if fileset not specified"/>
+
+        <attribute
+            name="flatten"
+            default="false"
+            description="Flatten the input fileset directory structure [true,false]"/>
+
+        <attribute
+            name="clean"
+            default="none"
+            description="Remove target directory before deploying [target,files,none]"/>
+
+        <attribute
+            name="overwrite"
+            default="false"
+            description="Overwrite the target directory if it exists [true,false]"/>
+
+        <attribute
+            name="method"
+            default="${deploy.method}"
+            description="Method to use to copy the fileset to the target folder [copy,sync,scp]"/>
+
+            <!-- TODO method=auto, would work out best method based on @target (e.g. starts wih "\\" or contains "http" etc) -->
+
+        <element
+            name="deploy.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="deploy-file" name="target" value="@{target}"/>
+
+            <!-- check fileset/source combinations -->
+            <check-fileset-empty macro="deploy-files" if:blank="@{source}">
+                <deploy.files/>
+            </check-fileset-empty>
+
+            <check-dir-exists macro="deploy-files" dir="@{source}" unless:blank="@{source}"/>
+
+            <!-- fail if @{clean} not specified correctly -->
+            <check-attr-list macro="deploy-files" name="clean" value="@{clean}" list="target,files,none"/>
+
+            <!-- fail if @{method} is not specified correctly -->
+            <check-attr-list macro="deploy-files" name="method" value="@{method}" list="copy,sync,scp"/>
+
+            <!-- choose deploy method -->
+            <echo message="[deploy-files] method=@{method}, deploy.method=${deploy.method}" if:true="${macro.debug}"/>
+
+            <local name="method.${deploy.method}"/>
+            <property name="method.${deploy.method}" value="true"/>
+
+            <deploy-files-copy
+                target="@{target}"
+                source="@{source}"
+                env="@{env}"
+                flatten="@{flatten}"
+                clean="@{clean}"
+                overwrite="@{overwrite}"
+                if:set="method.copy">
+                <deploy.files/>
+            </deploy-files-copy>
+
+            <deploy-files-sync
+                target="@{target}"
+                source="@{source}"
+                env="@{env}"
+                if:set="method.sync">
+                <deploy.files/>
+            </deploy-files-sync>
+
+            <deploy-files-scp
+                target="@{target}"
+                source="@{source}"
+                env="@{env}"
+                clean="@{clean}"
+                if:set="method.scp">
+                <deploy.files/>
+            </deploy-files-scp>
+
+        </sequential>
+    </macrodef>
+
+    <macrodef
+        name="deploy-files-copy"
+        description="Deploy a set of files to a location designated by the deployment environment and target, using ant copy">
+
+        <attribute
+            name="target"
+            description="Root target destination for deployment on designated environment"/>
+
+        <attribute
+            name="source"
+            default=""
+            description="Directory to deploy, if fileset not specified"/>
+
+        <attribute
+            name="flatten"
+            default="false"
+            description="Flatten the input fileset directory structure [true,false]"/>
+
+        <attribute
+            name="clean"
+            default="false"
+            description="Remove target directory before deploying [target,files,none]"/>
+
+        <attribute
+            name="overwrite"
+            default="false"
+            description="Overwrite the target directory if it exists [true,false]"/>
+
+        <element
+            name="deploy.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if @{target} folder exists and will not be overwritten -->
+            <local name="target.exists"/>
+            <available property="target.exists" file="@{target}" type="dir"/>
+
+            <fail message="[deploy-files] target folder '@{target}' exists and will not be overwritten">
+                <condition>
+                    <and>
+                        <istrue value="${target.exists}"/>
+                        <not><istrue value="@{overwrite}"/></not>
+                    </and>
+                </condition>
+            </fail>
+
+            <!-- determine which targets to clean -->
+            <local name="clean.target"/>
+            <condition property="clean.target" value="true">
+                <equals arg1="@{clean}" arg2="target"/>
+            </condition>
+
+            <local name="clean.files"/>
+            <condition property="clean.files" value="true">
+                <and>
+                    <equals arg1="@{clean}" arg2="files"/>
+                    <available file="${deploy.root}@{target}" type="dir"/>
+                </and>
+            </condition>
+
+            <!-- delete files _in_ target dir, but not target dir itself -->
+            <delete includeEmptyDirs="true" verbose="${macro.debug}" if:true="${clean.files}">
+                <fileset dir="${deploy.root}@{target}" includes="*.*"/>
+            </delete>
+
+            <!-- delete target dir and all children -->
+            <delete dir="${deploy.root}@{target}" verbose="${macro.debug}" if:true="${clean.target}"/>
+
+            <!-- make target folder if it does not exist -->
+            <mkdir dir="${deploy.root}@{target}" unless:true="${target.exists}"/>
+
+            <!-- copy files... -->
+            <copy todir="${deploy.root}@{target}" overwrite="true" flatten="@{flatten}" verbose="${macro.debug}">
+                <deploy.files if:blank="@{source}"/>
+                <fileset dir="@{source}" includes="**/*" unless:blank="@{source}"/>
+            </copy>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="deploy-files-sync"
+        description="Deploy a set of files to a location designated by the deployment environment and target, using ant sync">
+
+        <attribute
+            name="target"
+            description="Root target destination for deployment on designated environment"/>
+
+        <attribute
+            name="source"
+            default=""
+            description="Directory to deploy, if fileset not specified"/>
+
+        <attribute
+            name="overwrite"
+            default="false"
+            description="Overwrite the target directory if it exists [true,false]"/>
+
+        <element
+            name="deploy.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if @{target} folder exists and will not be overwritten -->
+            <local name="target.exists"/>
+            <available property="target.exists" file="@{target}" type="dir"/>
+
+            <fail message="[deploy-files] target folder '@{target}' exists and will not be overwritten">
+                <condition>
+                    <and>
+                        <istrue value="${target.exists}"/>
+                        <not><istrue value="@{overwrite}"/></not>
+                    </and>
+                </condition>
+            </fail>
+
+            <!-- make target folder if it does not exist -->
+            <mkdir dir="@{target}" unless:true="${target.exists}"/>
+
+            <!-- synchronise files... -->
+            <sync todir="@{target}" overwrite="false" verbose="${macro.debug}">
+                <deploy.files if:blank="@{source}"/>
+                <fileset dir="@{source}" includes="**/*" unless:blank="@{source}"/>
+            </sync>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="deploy-files-scp"
+        description="Deploy a source folder to a location designated by the deployment environment and target, using scp">
+
+        <attribute
+            name="target"
+            description="Root target destination for deployment on designated environment"/>
+
+        <attribute
+            name="source"
+            default=""
+            description="Directory to deploy, if fileset not specified"/>
+
+        <attribute
+            name="clean"
+            default="false"
+            description="Remove target directory before deploying [target,files,none]"/>
+
+        <element
+            name="deploy.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- check scp options -->
+            <!-- NOTE have already checked that source/deploy are valid/not empty etc -->
+
+            <!-- if @source is blank create a file list from the deploy fileset, map to unix path conventions -->
+            <local name="source.temp"/>
+            <tempfile property="source.temp" destdir="${temp.dir}" prefix="scp" deleteonexit="${temp.delete}" if:blank="@{source}"/>
+            <mkdir dir="${source.temp}" if:blank="@{source}"/>
+            <copy todir="${source.temp}" if:blank="@{source}">
+                <deploy.files/>
+            </copy>
+
+            <!-- determine which targets to clean -->
+            <local name="clean.target"/>
+            <condition property="clean.target" value="true">
+                <equals arg1="@{clean}" arg2="target"/>
+            </condition>
+
+            <local name="clean.files"/>
+            <condition property="clean.files" value="true">
+                <equals arg1="@{clean}" arg2="files"/>
+            </condition>
+
+            <!-- clean folder ("target") or files ("target/*") -->
+            <ssh-delete dir="@{target}" if:true="${clean.target}"/>
+            <ssh-delete dir="@{target}/*.*" recursive="false" if:true="${clean.files}"/>
+
+            <!-- make target folder (fails silently if already exists) -->
+            <ssh-mkdir dir="@{target}"/>
+
+            <!-- secure copy files... -->
+            <ssh-copy target="@{target}" source="@{source}/*" unless:blank="@{source}"/>
+            <ssh-copy target="@{target}" source="${source.temp}/." if:blank="@{source}"/>
+
+            <!-- change file permissions (even though using "ca" user for this and Samba share?) -->
+            <ssh-chmod dir="@{target}"/>
+        </sequential>
+    </macrodef>
+
+</project>

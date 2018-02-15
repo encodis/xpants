@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="merge-xincludes"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:      XPants
+Title:        merge-xincludes.xml
+Date:         2018-02-15
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to process XInclude elements in an XML file
+...
+
+# merge-xincludes.xml
+
+Macro definition to process an XML file containing XInclude statements to create a
+single result file with the included content merged into it. The top level macro
+("merge-includes") will process either a single file or a folder, depending on the arguments supplied:
+
+* If the _file_ attribute is not blank and refers to a file that exists then it will be
+processed, using the _output_ attribute as the resulting file name for the report.
+* If the _file_ attribute is not supplied then the macro will process all files in a folder.
+By default this will be all files in all folders, starting in the current directory. However,
+a `fileset` element can be supplied.
+
+}}} NOTE: It is the responsibility of the calling task to ensure that any output folders are
+}}} created before running this task.
+
+## Usage
+
+```nohighlight
+&lt;merge-xincludes
+&#9;file="file.xml"
+&#9;output="${build.dir}/file-merged.xml"/&gt;
+```
+
+## Dependencies
+
+### Stylesheets
+
+This module uses the following stylesheets:
+
+* __${xpants.dir}/xslt/identity.xsl:__ Used to process input files
+
+## Properties
+
+The following properties can be set on the command line to override the default behaviour:
+
+* _identity.stylsheet_ The stylesheet used for the "identity" transform
+
+## Change Log
+
+##### 2018-02-15 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.merge-xincludes}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/apply-stylesheet.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="merge-xincludes"
+        description="Process XML file(s) to merge in content contained in XIncludes">
+
+		<attribute
+            name="file"
+            default=""
+            description="Source XML file"/>
+
+        <attribute
+            name="output"
+            description="Path for merged file(s)"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="merge-xincludes" name="output" value="@{output}"/>
+
+            <!-- file or dir mode? -->
+            <merge-xincludes-file
+                file="@{file}"
+                output="@{output}"
+                unless:blank="@{file}"/>
+
+            <merge-xincludes-dir
+                output="@{output}"
+                if:blank="@{file}">
+                <input.files/>
+           </merge-xincludes-dir>
+
+		</sequential>
+	</macrodef>
+
+
+    <macrodef
+        name="merge-xincludes-file"
+        description="Process an XML file to merge in content contained in XIncludes">
+
+        <attribute
+            name="file"
+            description="Source XML file"/>
+
+        <attribute
+            name="output"
+            description="Path for merged file"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="merge-xincludes-file" name="file" value="@{file}"/>
+
+            <!-- fail if file does not exist -->
+            <check-file-exists macro="merge-xincludes-file" file="@{file}"/>
+
+            <property
+                name="identity.stylesheet"
+                value="${xpants.dir}/xslt/identity.xsl"/>
+
+            <echo message="[merge-xincludes-file] identify.stylesheet=${identity.stylesheet}"/>
+
+            <!-- merge -->
+            <apply-stylesheet
+                file="@{file}"
+                output="@{output}"
+                stylesheet="${identity.stylesheet}"/>
+
+        </sequential>
+
+    </macrodef>
+
+    <macrodef
+        name="merge-xincludes-dir"
+        description="Process XML files to merge in content contained in XIncludes">
+
+        <attribute
+            name="output"
+            description="Path for merged files"/>
+
+        <element
+            name="input.files"
+            optional="false"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if input fileset is empty -->
+            <check-fileset-empty macro="merge-xincludes-dir">
+                <input.files/>
+            </check-fileset-empty>
+
+            <mkdir dir="@{output}"/>
+
+            <for param="file" keepgoing="${for.keepgoing}">
+                <input.files/>
+
+                <sequential>
+
+                    <local name="output.file"/>
+                    <basename property="output.file" file="@{file}" suffix=".xml"/>
+
+                    <merge-xincludes-file
+                        file="@{file}"
+                        output="@{output}/${output.file}.xml"/>
+
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+</project>

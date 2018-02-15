@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="xpants"
+<project name="xpants-all"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">
 
@@ -37,10 +37,11 @@ included separately. This may increase load time, as each file loads the environ
     <!-- set properties -->
     <property environment="env"/>
 
-    <dirname property="xpants.dir" file="${ant.file.xpants}"/>
+    <dirname property="xpants.dir" file="${ant.file.xpants-all}"/>
     <property file="${xpants.dir}/xpants.properties"/>
 
     <!-- include macros -->
+    <include file="${xpants.dir}/apply-stylesheet.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/aws.xml"/>
     <include file="${xpants.dir}/file-checks.xml"/>
