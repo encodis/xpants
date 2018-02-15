@@ -89,20 +89,42 @@ Summary:     Build file for XPants
         name="build"
         description="Assemble files for deployment">
 
+        <delete dir="${build.dir}/com/encodis/xpants"/>
         <mkdir dir="${build.dir}/com/encodis/xpants"/>
+
+        <delete dir="${build.dir}/temp"/>
+        <mkdir dir="${build.dir}/temp"/>
+
         <mkdir dir="${dist.dir}"/>
 
         <apply-stylesheet
-            output="${build.dir}//com/encodis/xpants"
+            output="${build.dir}/temp"
             stylesheet="./src/xslt/extract-macrodef.xsl">
 
-            <fileset dir="${src.dir}" includes="*.xml"/>
+            <fileset dir="${src.dir}">
+                <include name="*.xml"/>
+                <exclude name="xpants.xml"/>
+                <exclude name="antlib.xml"/>
+            </fileset>
         </apply-stylesheet>
+
+        <concat
+            destfile="${build.dir}/com/encodis/xpants/xpants.xml">
+            <header>&lt;antlib&gt;</header>
+            <footer>&lt;/antlib&gt;</footer>
+            <fileset dir="${build.dir}/temp" includes="*.xml"/>
+
+        </concat>
+
+        <delete dir="${build.dir}/temp"/>
 
         <copy
             todir="${build.dir}/com/encodis/xpants">
 
-            <fileset dir="${src.dir}" includes="*.properties"/>
+            <fileset dir="${src.dir}">
+                <include name="xpants.properties"/>
+                <!-- <include name="antlib.xml"/> -->
+            </fileset>
         </copy>
 
         <jar

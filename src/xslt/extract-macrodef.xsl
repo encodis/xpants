@@ -30,11 +30,9 @@ This stylesheet extracts `&lt;macrodef&gt;` elements from ANT build files.
     </doc:doc>
 
     <xsl:output omit-xml-declaration="yes" indent="yes"/>
-    
+
     <xsl:template match="/project">
-        <antlib>
             <xsl:apply-templates/>
-        </antlib>
     </xsl:template>
 
     <xsl:template match="macrodef">

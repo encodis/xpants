@@ -38,4 +38,6 @@ look at how antcontrib works... can have properties file in it etc. that might a
 
 So xpants.jar would contain com/encodis/xpants/antlib.xml that defined these things. then build file would do <project ... xmlns:xpants="antlib:com.encodis.xpants"> to include.
 
-look at ANT Unit 
+need to concat all macrodefs into one antlib file 
+
+look at ANT Unit
