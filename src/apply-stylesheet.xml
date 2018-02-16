@@ -251,7 +251,7 @@ None.
                 failonerror="${xslt.failonerror}">
 
                 <style>
-                    <javaresource name="com/encodis/xpants/xslt/@{stylesheet}.xsl" unless:set="given.stylesheet.exists"/>
+                    <javaresource name="${stylesheet.resource.path}/@{stylesheet}.xsl" unless:set="given.stylesheet.exists"/>
                     <file file="@{stylesheet}" if:set="given.stylesheet.exists"/>
                 </style>
 
