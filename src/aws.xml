@@ -56,7 +56,7 @@ The following properties can be set on the command line to override the default 
 
         <attribute
             name="profile"
-            default="${aws.profile}"
+            default=""
             description="AWS profile"/>
 
         <attribute
@@ -95,6 +95,8 @@ The following properties can be set on the command line to override the default 
 
             <!-- run AWS command -->
             <echo message="[aws] command=@{command} @{subcommand}" if:true="${macro.debug}"/>
+
+            <property name="exec.failonerror" value="true"/>
 
             <exec
                 executable="${aws.exe}"

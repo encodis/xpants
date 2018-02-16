@@ -165,6 +165,9 @@ None
             <!-- find tidy.exe -->
             <find-exe property="tidy.exe" unless:set="tidy.exe"/>
 
+            <property name="exec.failonerror" value="true"/>
+
+            <!-- run tidy -->
             <exec
                 executable="${tidy.exe}"
                 output="@{output}"
@@ -209,6 +212,8 @@ None
             <check-fileset-empty macro="tidy-dir">
                 <input.files/>
             </check-fileset-empty>
+
+            <property name="for.keepgoing" value="true"/>
 
             <for param="file" keepgoing="${for.keepgoing}">
                 <input.files/>

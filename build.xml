@@ -113,19 +113,9 @@ Summary:     Build file for XPants
             <header>&lt;antlib&gt;</header>
             <footer>&lt;/antlib&gt;</footer>
             <fileset dir="${build.dir}/temp" includes="*.xml"/>
-
         </concat>
 
         <delete dir="${build.dir}/temp"/>
-
-        <copy
-            todir="${build.dir}/com/encodis/xpants">
-
-            <fileset dir="${src.dir}">
-                <include name="xpants.properties"/>
-                <!-- <include name="antlib.xml"/> -->
-            </fileset>
-        </copy>
 
         <jar
             destfile="${dist.dir}/${jar.file}">

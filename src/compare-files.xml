@@ -581,6 +581,8 @@ a compact difference file.
             <find-exe property="diff.exe" unless:set="diff.exe"/>
 
             <!-- NOTE @{output} will not be created if the files are the same -->
+            <property name="exec.failonerror" value="true"/>
+            
             <exec
                 executable="${diff.exe}"
                 output="@{output}"

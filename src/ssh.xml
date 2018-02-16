@@ -43,7 +43,6 @@ behaviour:
 *  *ssh.host* The DNS name of the SSH server to connect to
 *  *ssh.user* The user on the SSH host to connect as
 *  *ssh.keys* The key file to authorise the connection
-*  *ssh.mode* The default mode for file/folder creation (default: 0777)
 
 
 ## Change Log
@@ -112,6 +111,8 @@ behaviour:
             <find-exe property="ssh.exe" unless:set="ssh.exe"/>
 
             <!-- TODO should be able to set default host etc from user name in env vars -->
+            <property name="exec.failonerror" value="true"/>
+
             <exec
                 executable="${ssh.exe}"
                 outputproperty="@{property}"
@@ -166,6 +167,8 @@ behaviour:
             <find-exe property="scp.exe" unless:set="scp.exe"/>
 
             <!-- run scp with -B (batch mode), -q (quiet), -p (preserve file times), -r (recursive directory copy) -->
+            <property name="exec.failonerror" value="true"/>
+
             <exec
                 executable="${scp.exe}"
                 failonerror="${exec.failonerror}">
@@ -199,7 +202,7 @@ behaviour:
 
         <attribute
             name="mode"
-            default="${ssh.mode}"
+            default="0777"
             description="Permissions to be set (Unix style)"/>
 
         <attribute

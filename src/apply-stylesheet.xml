@@ -235,9 +235,14 @@ None.
             <echo message="[apply-stylesheet-file] use.stylesheet=${use.stylesheet}" if:true="${debug.macro}"/>
 
             <local name="temp.file"/>
+            <property name="temp.dir" value="${java.io.tmpdir}"/>
+            <property name="temp.delete" value="true"/>
             <tempfile property="temp.file" prefix="${ant.project.name}" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
             <echo message="[apply-stylesheet-file] temp.file=${temp.file}" if:true="${debug.macro}"/>
+
+            <property name="xslt.suppresswarnings" value="true"/>
+            <property name="xslt.failonerror" value="true"/>
 
             <xslt
             	style="${use.stylesheet}"
@@ -353,6 +358,8 @@ None.
 
             <!-- make output dir if needed -->
             <mkdir dir="@{output}"/>
+
+            <property name="for.keepgoing" value="true"/>
 
             <for param="file" keepgoing="${for.keepgoing}">
                 <input.files/>

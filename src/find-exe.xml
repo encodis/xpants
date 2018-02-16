@@ -97,6 +97,9 @@ None.
 
         <sequential>
 
+            <!-- get environment variables for PATH -->
+            <property environment="env"/>
+
             <!-- fail if required attributes not set -->
             <check-attr-set macro="find-exe" name="property" value="@{property}"/>
 

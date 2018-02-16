@@ -216,7 +216,7 @@ These macros will set the following (global) properties:
             <check-file-exists macro="pandoc-file" file="@{file}"/>
 
             <!-- check if pandoc executable is available -->
-            <find-exe property="pandoc.exe" unless:set="pandoc.exe"/>
+            <find-exe property="pandoc.exe" windows="pan-doc.exe" unless:set="pandoc.exe"/>
 
             <!-- convert options -->
             <local name="options.list"/>
@@ -330,6 +330,8 @@ These macros will set the following (global) properties:
             <!-- make output dir if needed -->
             <mkdir dir="@{output}"/>
 
+            <property name="for.keepgoing" value="true"/>
+            
             <for param="file" keepgoing="${for.keepgoing}">
                 <input.files/>
 

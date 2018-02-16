@@ -171,6 +171,8 @@ The following properties can be set on the command line to override the default 
 
             <mkdir dir="@{output}"/>
 
+            <property name="for.keepgoing" value="true"/>
+
             <for param="file" keepgoing="${for.keepgoing}">
                 <input.files/>
 

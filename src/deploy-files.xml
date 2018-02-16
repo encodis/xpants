@@ -191,7 +191,7 @@ None.
 
         <attribute
             name="method"
-            default="${deploy.method}"
+            default="copy"
             description="Method to use to copy the fileset to the target folder [copy,sync,scp]"/>
 
             <!-- TODO method=auto, would work out best method based on @target (e.g. starts wih "\\" or contains "http" etc) -->
@@ -424,6 +424,8 @@ None.
 
             <!-- if @source is blank create a file list from the deploy fileset, map to unix path conventions -->
             <local name="source.temp"/>
+            <property name="temp.dir" value="${java.io.tmpdir}"/>
+            <property name="temp.delete" value="true"/>
             <tempfile property="source.temp" destdir="${temp.dir}" prefix="scp" deleteonexit="${temp.delete}" if:blank="@{source}"/>
             <mkdir dir="${source.temp}" if:blank="@{source}"/>
             <copy todir="${source.temp}" if:blank="@{source}">

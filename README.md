@@ -38,6 +38,14 @@ look at how antcontrib works... can have properties file in it etc. that might a
 
 So xpants.jar would contain com/encodis/xpants/antlib.xml that defined these things. then build file would do <project ... xmlns:xpants="antlib:com.encodis.xpants"> to include.
 
-need to concat all macrodefs into one antlib file 
+need to concat all macrodefs into one antlib file
 
 look at ANT Unit
+
+see also https://stackoverflow.com/questions/5159858/access-antlib-resources-from-within-apache-ant-macros
+
+can't get properties file to load - may be set defaults in each macro that uses them.
+may also have to load env property in any macro that needs it (only find-exe needs it?). load properties file from within macro?
+
+if property is T/F then can set in macro, override on command line, but with say deploy.method can't use as default for macro call - just make the default 'copy'. for aws.profile make it blank so forced to choose one. temp.dir/delete set before call... so don't need properties file
+

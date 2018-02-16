@@ -87,6 +87,8 @@ The following properties can be set on the command line to override the default 
             <!-- run git command -->
             <echo message="[git] command=@{command}" if:true="${macro.debug}"/>
 
+            <property name="exec.failonerror" value="true"/>
+
             <exec
                 executable="${git.exe}"
                 dir="@{dir}"

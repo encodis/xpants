@@ -189,6 +189,8 @@ These macros will set the following (global) properties:
 
             <!-- unzip to build -->
             <local name="unzip.dir"/>
+            <property name="temp.dir" value="${java.io.tmpdir}"/>
+            <property name="temp.delete" value="true"/>
             <tempfile property="unzip.dir" prefix="${ant.project.name}" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
             <echo message="[python] temp.file=${temp.file}" if:true="${debug.macro}"/>

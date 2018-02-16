@@ -221,6 +221,8 @@ this property can be used to override the default stylesheet.
 
             <check-dir-exists macro="extract-markdown-dir" dir="@{output}"/>
 
+            <property name="for.keepgoing" value="true"/>
+
             <for param="file" keepgoing="${for.keepgoing}">
                 <input.files/>
 
