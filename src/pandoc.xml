@@ -24,17 +24,14 @@ A set of macro definitions to work with *python* modules.
 ## Dependencies
 
 *  The *pandoc* executable must be installed and available on the PATH.
-*  ${xpants.dir}/find-exe.xml
-*  ${xpants.dir}/attr-checks.xml
-*  ${xpants.dir}/file-checks.xml
 
 
 ## Properties
 
 These macros will set the following (global) properties:
 
-*  *xpants.dir*
-*  *pandoc.exe*
+*  The **find-exe** macro will be used to set the *pandoc.exe* property to the location of the
+*pandoc* executable. Override on the command line if required.
 
 
 ## Change Log
@@ -331,7 +328,7 @@ These macros will set the following (global) properties:
             <mkdir dir="@{output}"/>
 
             <property name="for.keepgoing" value="true"/>
-            
+
             <for param="file" keepgoing="${for.keepgoing}">
                 <input.files/>
 

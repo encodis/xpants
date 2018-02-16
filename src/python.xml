@@ -24,17 +24,17 @@ A set of macro definitions to work with *python* modules.
 ## Dependencies
 
 *  The *python* executable must be installed and available on the PATH.
-*  ${xpants.dir}/find-exe.xml
-*  ${xpants.dir}/attr-checks.xml
-*  ${xpants.dir}/file-checks.xml
 
 
 ## Properties
 
 These macros will set the following (global) properties:
 
-*  *xpants.dir*
-*  *python.exe*
+*  The **find-exe** macro will be used to set the *python.exe* property to the location of the
+*python* executable. Override on the command line if required.
+*  The *python-update-version* macro will set a property with the version number. The name of the
+property will be based on the module name given, e.g. with `module="mycode.py"` the property will
+be called *mycode.py.version.number*.
 
 
 ## Change Log
@@ -127,10 +127,8 @@ These macros will set the following (global) properties:
             <!-- check that setup.py exists -->
             <check-file-exists macro="python-update-version" file="setup.py"/>
 
-            <local name="version.number"/>
-
             <!-- get version number from module -->
-            <loadfile srcFile="@{module}" property="version.number">
+            <loadfile srcFile="@{module}" property="@{module}.version.number">
                 <filterchain>
                     <tokenfilter>
                         <containsregex
@@ -141,7 +139,7 @@ These macros will set the following (global) properties:
                 </filterchain>
             </loadfile>
 
-            <echo message="Updating '@{module}' to version '${version.number}'" if:true="${macro.debug}"/>
+            <echo message="[python-update-version] setting property '@{module}.version.number' to '${@{module}.version.number}'" if:true="${macro.debug}"/>
 
             <!-- insert version number into setup.py -->
             <replaceregexp file="setup.py"
@@ -188,9 +186,10 @@ These macros will set the following (global) properties:
             <check-file-exists macro="python-install-module" file="setup.py"/>
 
             <!-- unzip to build -->
-            <local name="unzip.dir"/>
             <property name="temp.dir" value="${java.io.tmpdir}"/>
             <property name="temp.delete" value="true"/>
+
+            <local name="unzip.dir"/>
             <tempfile property="unzip.dir" prefix="${ant.project.name}" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
             <echo message="[python] temp.file=${temp.file}" if:true="${debug.macro}"/>

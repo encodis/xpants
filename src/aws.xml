@@ -27,7 +27,8 @@ A set of macro definitions to use *aws* CLI commands within a build file.
 
 The following properties can be set on the command line to override the default behaviour:
 
-* _aws.exe_ Used to specify a specific _aws_ CLI binary
+*  The **find-exe** macro will be used to set the *aws.exe* property to the location of the
+*aws* executable. Override on the command line if required.
 
 
 ## Change Log

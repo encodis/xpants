@@ -25,12 +25,10 @@ Summary:     Build file for XPants
     <property file="build.properties"/>
 
     <property name="src.dir" value="src"/>
+    <property name="xslt.dir" value="${src.dir}/xslt"/>
     <property name="docs.dir" value="docs"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
-    <property name="install.dir" value="/usr/local/lib/${ant.project.name}"/>
-
-    <property name="dist.file" value="${ant.project.name}-${version.number}.zip"/>
     <property name="jar.file" value="${ant.project.name}-${version.number}.jar"/>
 
     <!-- use local not deployed versions of macros -->
@@ -117,6 +115,14 @@ Summary:     Build file for XPants
 
         <delete dir="${build.dir}/temp"/>
 
+        <mkdir dir="${build.dir}/com/encodis/xpants/xslt"/>
+
+        <copy
+            todir="${build.dir}/com/encodis/xpants/xslt">
+
+            <fileset dir="${xslt.dir}" includes="**/*.xsl"/>
+        </copy>
+
         <jar
             destfile="${dist.dir}/${jar.file}">
 
@@ -128,40 +134,15 @@ Summary:     Build file for XPants
 
 
     <target
-        name="deploy"
-        description="Copy all deployable items to the production environment"
-        depends="build">
-
-        <!-- deploy all modules to same location -->
-        <deploy-files
-            target="${deploy.target}"
-            overwrite="true"
-            verify="false"
-            flatten="false"
-            source="${build.deploy.dir}"/>
-
-        <deploy-files
-            target="${install.deploy.target}"
-            overwrite="true"
-            verify="false">
-
-            <fileset dir="${build.dir}" includes="${zip.file}"/>
-            <fileset dir="${src.dir}" includes="${install.script}"/>
-        </deploy-files>
-    </target>
-
-    <target
         name="local-install"
-        description="Deploy to local folder">
+        description="Deploy to user's ANT library">
 
-        <copy todir="${install.dir}">
+        <copy todir="${user.home}/.ant/lib">
 
-            <fileset dir="${src.dir}">
-                <include name="**/*"/>
+            <fileset dir="${dist.dir}">
+                <include name="${jar.file}"/>
             </fileset>
         </copy>
-
     </target>
-
 
 </project>

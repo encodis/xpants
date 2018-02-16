@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+    name="xpants"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+Project:     XPants
+Title:       build.xml
+Date:        2018-02-14
+Author:      Philip Hodder
+Contact:     philip.hodder@encodis.com
+Summary:     Build file for XPants test suite
+...
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- load installed xpants -->
+    <taskdef resource="com/encodis/xpants/xpants.xml"/>
+
+    <!-- test apply-stylsheet -->
+    <target name="test-apply-stylesheet">
+
+        <apply-stylesheet
+            file="xslt/input.xml"
+            output="xslt/result.xml"
+            stylesheet="identity"/>
+
+    </target>
+
+</project>

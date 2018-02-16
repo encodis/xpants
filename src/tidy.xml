@@ -56,7 +56,8 @@ Use the _params_ property to set various command line options, e.g.:
 
 ## Properties
 
-None
+*  The **find-exe** macro will be used to set the *tidy.exe* property to the location of the
+*tidy* executable. Override on the command line if required.
 
 ## Change Log
 

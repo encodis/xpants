@@ -16,10 +16,10 @@ Summary:      Macro definitions to apply a standard XSLT library stylesheet
 
 # apply-stylesheet.xml
 
-Macro definitions to apply an XSLT stylesheet (e.g. one in the XSLT library)
-to an XML file. By default the stylesheet is applied in place, i.e. the name of the file is
-not changed. The top level macro ("apply-stylesheet") will transform either a single file
-or a folder, depending on the arguments supplied:
+Macro definitions to apply an XSLT stylesheet to an XML file (of folder of XML files). By default
+the stylesheet is applied in place, i.e. the name of the file is not changed. The top level macro
+("apply-stylesheet") will transform either a single file or a folder, depending on the arguments
+supplied:
 
 * If the *file* attribute is not blank and refers to a file that exists then it will be
 transformed.
@@ -40,7 +40,8 @@ the given output path.
 
 The macro *apply-stylesheet-file* can take an optional *params.xslt* element which contains
 additional parameters to pass to ANT's &lt;xslt&gt; task. This cannot be passed to this macro via
-the main *apply-stylesheet* macro.
+the main *apply-stylesheet* macro, so *apply-stylesheet-file* must be used directly if this is
+the case.
 
 The *stylesheet* attribute can be used in one of two ways:
 
@@ -49,11 +50,10 @@ The *stylesheet* attribute can be used in one of two ways:
 
 * However, it can also be used to specify default stylesheets in the XPants XSLT Library.
 If the attribute value contains no path related information (e.g. `stylesheet="filter-svrl"`)
-then the macro will try to locate a stylesheet of that name at the location given by the
-path created by the property *${xpants.xslt.dir}* and with the extension ".xsl". With the default
-values this would be **${xpants.dir}/xslt/stylesheet.xsl**. In the previous example
-(`stylesheet="filter-svrl"`), the macro will try to use a stylesheet at
-**${xpants.dir}/xslt/filter-svrl.xsl**.
+then the macro will try to locate a stylesheet with that name and the extension ".xsl" in the
+**com/encodis/xpants/xslt** resource (i.e. in the XPants jar file). So specifying
+`stylesheet="filter-svrl"` will make the macro try and load the resource
+**com/encodis/xpants/xslt/filter-svrl.xsl**.
 
 
 ## Usage
@@ -209,14 +209,19 @@ None.
             <!-- fail if file does not exist -->
             <check-file-exists macro="apply-stylesheet-file" file="@{file}"/>
 
+            <!-- set resource path based on how macro was loaded -->
+            <condition property="stylesheet.resource.path" value="${xpants.xslt.dir}" else="com/encodis/xpants/xslt">
+                <isset property="xpants.dir"/>
+            </condition>
+
             <!-- check stylesheet exists, either as given or as a standard library one -->
             <local name="given.stylesheet.exists"/>
             <available file="@{stylesheet}" type="file" property="given.stylesheet.exists"/>
 
             <local name="standard.stylesheet.exists"/>
-            <available file="${xpants.dir}/xslt/@{stylesheet}.xsl" type="file" property="standard.stylesheet.exists"/>
+            <available resource="${stylesheet.resource.path}/@{stylesheet}.xsl" property="standard.stylesheet.exists"/>
 
-            <fail message="[apply-stylesheet-file] stylesheet '@{stylesheet}' does not exist and/or is not in the XSLT library">
+            <fail message="[apply-stylesheet-file] stylesheet '@{stylesheet}' does not exist and/or is not in the XPants library">
                 <condition>
                     <and>
                         <not><isset property="given.stylesheet.exists"/></not>
@@ -224,12 +229,6 @@ None.
                     </and>
                 </condition>
             </fail>
-
-            <!-- which stylesheet to use? -->
-            <local name="use.stylesheet"/>
-            <condition property="use.stylesheet" value="@{stylesheet}" else="${xpants.dir}/xslt/@{stylesheet}.xsl">
-                <isset property="given.stylesheet.exists"/>
-            </condition>
 
             <!-- apply the stylesheet -->
             <echo message="[apply-stylesheet-file] use.stylesheet=${use.stylesheet}" if:true="${debug.macro}"/>
@@ -245,12 +244,16 @@ None.
             <property name="xslt.failonerror" value="true"/>
 
             <xslt
-            	style="${use.stylesheet}"
             	in="@{file}"
             	out="${temp.file}"
             	force="true"
                 suppresswarnings="${xslt.suppresswarnings}"
                 failonerror="${xslt.failonerror}">
+
+                <style>
+                    <javaresource name="com/encodis/xpants/xslt/@{stylesheet}.xsl" unless:set="given.stylesheet.exists"/>
+                    <file file="@{stylesheet}" if:set="given.stylesheet.exists"/>
+                </style>
 
                 <factory name="com.saxonica.config.EnterpriseTransformerFactory">
                     <attribute name="http://saxon.sf.net/feature/ignoreSAXSourceParser" value="true"/>
