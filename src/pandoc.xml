@@ -138,6 +138,7 @@ These macros will set the following (global) properties:
                 from="@{from}"
                 to="@{to}"
                 options="@{options}"
+                datadir="@{datadir}"
                 template="@{template}"
                 style="@{style}"
                 filters="@{filters}"
@@ -196,7 +197,7 @@ These macros will set the following (global) properties:
         <attribute
             name="lua-filters"
             default=""
-            description="List of lua filters"/>
+            description="List of Lua filters"/>
 
         <attribute
             name="output"
@@ -220,7 +221,7 @@ These macros will set the following (global) properties:
             <propertyregex
                 property="options.list"
                 input="@{options}"
-                regexp=","
+                regexp="^|,"
                 replace=" --"
                 global="true"/>
 
@@ -229,8 +230,8 @@ These macros will set the following (global) properties:
             <propertyregex
                 property="filters.list"
                 input="@{filters}"
-                regexp=","
-                replace=" --"
+                regexp="^|,"
+                replace=" --filter="
                 global="true"/>
 
             <!-- convert Lua filters -->
@@ -238,8 +239,8 @@ These macros will set the following (global) properties:
             <propertyregex
                 property="lua-filters.list"
                 input="@{lua-filters}"
-                regexp=","
-                replace=" --"
+                regexp="^|,"
+                replace=" --lua-filter="
                 global="true"/>
 
             <!-- run pandoc -->
@@ -247,14 +248,14 @@ These macros will set the following (global) properties:
                 executable="${pandoc.exe}"
                 searchpath="true"
                 dir=".">
-                <arg line="--${options.list}" unless:blank="@{options}"/>
+                <arg line="${options.list}" unless:blank="@{options}"/>
                 <arg value="--from=@{from}"/>
                 <arg value="--to=@{to}"/>
                 <arg value="--template=@{template}" unless:blank="@{template}"/>
                 <arg value="--css=@{style}" unless:blank="@{style}"/>
                 <arg value="--data-dir=@{datadir}" unless:blank="@{datadir}"/>
-                <arg line="--${filters.list}" unless:blank="@{filters}"/>
-                <arg line="--${lua-filters.list}" unless:blank="@{lua-filters}"/>
+                <arg line="${filters.list}" unless:blank="@{filters}"/>
+                <arg line="${lua-filters.list}" unless:blank="@{lua-filters}"/>
                 <arg value="--output=@{output}"/>
 
                 <arg value="@{file}"/>
@@ -305,7 +306,7 @@ These macros will set the following (global) properties:
         <attribute
             name="lua-filters"
             default=""
-            description="List of lua filters"/>
+            description="List of Lua filters"/>
 
         <attribute
             name="output"
