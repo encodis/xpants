@@ -49,3 +49,9 @@ may also have to load env property in any macro that needs it (only find-exe nee
 
 if property is T/F then can set in macro, override on command line, but with say deploy.method can't use as default for macro call - just make the default 'copy'. for aws.profile make it blank so forced to choose one. temp.dir/delete set before call... so don't need properties file
 
+MUST have xmlresolver.jar from http://www.java2s.com/Code/Jar/x/Downloadxmlresolverjar.htm in ant/lib. Getting warnings about loading XMLResolver.properties
+
+See https://www.saxonica.com/html/documentation/using-xsl/embedding/jaxp-transformation.html for using diff factories for diff Saxon installs. Also must work out how to identify the Saxon installed etc
+
+https://gist.github.com/joewiz/f44a29c61ae23b16b478dfabe0fefbac
+

@@ -255,7 +255,11 @@ None.
                     <file file="@{stylesheet}" if:set="given.stylesheet.exists"/>
                 </style>
 
-                <factory name="com.saxonica.config.EnterpriseTransformerFactory">
+                <classpath>
+                    <pathelement location="/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar"/>
+                </classpath>
+
+                <factory name="net.sf.saxon.TransformerFactoryImpl">
                     <attribute name="http://saxon.sf.net/feature/ignoreSAXSourceParser" value="true"/>
                     <!-- NOTE sourceParserClass always ignored by ANT's xslt task -->
                     <attribute name="http://saxon.sf.net/feature/sourceParserClass" value="org.xmlresolver.tools.ResolvingXMLReader"/>
