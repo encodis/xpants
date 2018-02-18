@@ -99,7 +99,7 @@ be called *mycode.py.version.number*.
             <find-exe property="python.exe" unless:set="python.exe"/>
 
             <!-- check script exists -->
-            <check-file-exists macro="python" file="@{script}" unless:blank="@script"/>
+            <check-file-exists macro="python" file="@{script}" unless:blank="@{script}"/>
 
             <!-- run module or script -->
             <exec
