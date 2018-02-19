@@ -33,7 +33,7 @@ the *unix* and *windows* attributes. For example, setting the *windows* attribut
 This build file fragment ensures that the correct name for the "git" executable is passed
 to the &lt;exec&gt; task. This would be *git* in Unix/MacOS and *git.exe* in Windows.
 
-```nohighlight
+```
 &lt;find-exe property="git.exe"/&gt;
 
 &lt;exec
@@ -48,7 +48,7 @@ This fragment finds the executable name for the "Pandoc" program. The normal Win
 is "pandoc.exe" but as this is sometimes caught by AV software this has been changed to
 "pan-doc.exe":
 
-```nohighlight
+```
 &lt;find-exe property="pandoc.exe" windows="pan-doc.exe"/&gt;
 ```
 

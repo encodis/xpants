@@ -33,7 +33,7 @@ created before running this task.
 
 Basic usage:
 
-```nohighlight
+```
 &gt;tidy
 &#9;file="src/index.html"
 &#9;output="build/index.html"/&lt;
@@ -41,7 +41,7 @@ Basic usage:
 
 Use the _params_ property to set various command line options, e.g.:
 
-```nohighlight
+```
 &gt;tidy
 &#9;file="src/index.html"
 &#9;output="build/index.html"

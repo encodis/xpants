@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="validate-with-rng"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+	<description>
+---
+Project:      XPants
+Title:        validate-with-rng.xml
+Date:         2018-02-19
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to validate using RNG files
+...
+
+# validate-with-rng.xml
+
+A set of macro definitions to validate a file against a RelaxNG schema.
+
+## Usage
+
+```
+&lt;validate-with-rng
+&#9;file="my-file.xml"
+&#9;schema="my-schema.rng"/&gt;
+```
+
+## Dependencies
+
+### Stylesheets
+
+None.
+
+## Properties
+
+None.
+
+## External Libraries
+
+jing.jar
+
+## Change Log
+
+##### 2018-02-19 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.validate-with-rng}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+
+    <!-- macros -->
+
+	<macrodef
+        name="validate-with-rng"
+        description="Validate a file according to a RelaxNG schema">
+
+        <attribute
+            name="file"
+            default=""
+            description="Source XML file"/>
+
+		<attribute
+            name="schema"
+            default=""
+            description="Path for RNG file"/>
+
+        <attribute
+            name="output"
+            description="Path for report file(s)"/>
+
+        <!-- TODO should be able to let output be blank, then would just report -->
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+		<sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="validate-rng" name="schema" value="@{schema}"/>
+            <check-attr-set macro="validate-rng" name="output" value="@{output}"/>
+
+            <!-- fail if schema does not exist -->
+            <check-file-exists macro="validate-rng-file" file="@{schema}"/>
+
+            <!-- file or dir mode? -->
+            <validate-with-rng-file
+                file="@{file}"
+                schema="@{schema}"
+                output="@{output}"
+                unless:blank="@{file}"/>
+
+            <validate-with-rng-dir
+                schema="@{schema}"
+                output="@{output}"
+                if:blank="@{file}">
+                <input.files/>
+            </validate-rng-dir>
+
+		</sequential>
+	</macrodef>
+
+    <macrodef
+        name="validate-with-rng-file"
+        description="Validate an individual RNG schema">
+
+        <attribute
+            name="file"
+            default=""
+            description="Source XML file"/>
+
+        <attribute
+            name="schema"
+            description="RelaxNG schema file"/>
+
+        <attribute
+            name="output"
+            description="Path for report file(s)"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="validate-with-rng-file" name="file" value="@{file}"/>
+
+            <!-- fail if file does not exist -->
+            <check-file-exists macro="validate-with-rng-file" file="@{file}"/>
+
+            <record name="@{output}" action="start"/>
+
+            <property name="jing.jar" value="${user.home}/.ant/lib/jing.jar"/>
+
+            <echo message="[validate-with-rng-file] jing.jar=${jing.jar}"/>
+
+            <java jar="${jing.jar}">
+                <arg value="@{schema}"/>
+                <arg value="@{file}"/>
+            </java>
+
+            <record name="@{output}" action="stop"/>
+
+            <!-- report if validation was successful -->
+            <local name="output.valid"/>
+
+            <check-file-contains property="output.valid" file="@{output}" string="is not a valid RNG document"/>
+
+            <echo message="[validate-with-rng-file] output.valid=${output.valid}" if:true="${macro.debug}"/>
+
+            <!-- <condition property="output.valid">
+                <resourcecontains resource="@{output}" substring="is not a valid RNG document"/>
+            </condition> -->
+
+            <echo message="[validate-with-rng] '@{file}' is NOT RNG schema valid" if:true="${output.valid}"/>
+            <echo message="[validate-with-rng] '@{file}' is RNG schema valid" unless:true="${output.valid}"/>
+
+        </sequential>
+    </macrodef>
+
+    <macrodef
+        name="validate-with-rng-dir"
+        description="Validate a folder of files agains a RelaxNG schema">
+
+        <attribute
+            name="schema"
+            description="RelaxNG schema file"/>
+
+        <attribute
+            name="output"
+            description="Path for report file(s)"/>
+
+        <element
+            name="input.files"
+            optional="false"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if input fileset is empty -->
+            <check-fileset-empty macro="validate-with-rng-dir">
+                <input.files/>
+            </check-fileset-empty>
+
+            <property name="for.keepgoing" value="true"/>
+
+            <for param="file" keepgoing="${for.keepgoing}">
+                <input.files/>
+
+                <sequential>
+
+                    <validate-with-rng-file
+                        file="@{file}"
+                        schema="@{schema}"
+                        output="@{output}"/>
+
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+</project>

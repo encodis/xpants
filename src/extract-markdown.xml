@@ -28,57 +28,44 @@ will be extracted from it, using the _output_ attribute as the resulting file na
 in a folder determined by the 'input' element.
 
 &gt; NOTE: It is the responsibility of the calling task to ensure that any output folders are
-&gt; created before running this task.
+created before running this task.
 
-This module defines the macros 'extract-markdown-from-ant' and 'extract-markdown-from-sch'
-which can be used to extract Markdown from ANT build scripts and Schematron files
-respectively.
+The type of extraction is determined by the *type* attribute. Currently this can be set to anything,
+although if left blank it will try to determine the type from the file extension. This works fine
+for Schematron (".sch") and XSLT (".xsl") files, but for ANT files the type will need to be given
+explicitly.
 
 &gt; WARNING: The stylesheets used by these macros will also extract text node messages
-&gt; embedded in &lt;echo&gt; and &lt;fail&gt; elements. Use the "message" attribute
-&gt; of these elements if possible.
+embedded in &lt;echo&gt; and &lt;fail&gt; elements. Therefore use the "message" attribute
+of these elements if possible.
 
 ## Usage
 
-```nohighlight
+```
 &lt;extract-markdown
-&#9;file="${models.dir}/sample.xml"
-&#9;stylesheet="./markdown-extract.xsl"
+&#9;file="${src.dir}/sample.sch"
 &#9;output="${docs.dir}/sample.md"/&gt;
 ```
 
-```nohighlight
-&lt;extract-markdown-from-ant
-&#9;file="${source.utility.dir}/git.xml"
+```
+&lt;extract-markdown
+&#9;file="${src.dir}/git.xml"
+&#9;type="ant"
 &#9;output="${docs.dir}/git.md"/&gt;
 ```
 
 ## Dependencies
 
-### Stylesheets
-
-These stylesheets are included using the deault stylesheet mechanism described in
+These stylesheets are included using the default stylesheet mechanism described in
 [apply-stylesheet](apply-stylesheet.html)
 
-* __${xpants.dir}/extract-markdown-from-ant.xsl:__ This is the standard stylesheet
+* __extract-markdown-from-ant.xsl:__ This is the standard stylesheet
 used to extract Markdown from ANT scripts.
-* __${xpants.dir}/extract-markdown-from-sch.xsl:__ This is the standard stylesheet
+* __extract-markdown-from-sch.xsl:__ This is the standard stylesheet
 used to extract Markdown from Schematron files.
-* __${xpants.dir}/extract-markdown-from-xslt.xsl:__ This is the standard stylesheet
+* __extract-markdown-from-xslt.xsl:__ This is the standard stylesheet
 used to extract Markdown from XSLT files.
 
-### Libraries
-
-* __ant-contrib__ library.
-
-## Properties
-
-* _extract-markdown-from-ant.stylesheet_ When using the 'extract-markdown-from-ant' macro
-this property can be used to override the default stylesheet.
-* _extract-markdown-from-sch.stylesheet_ When using the 'extract-markdown-from-sch' macro
-this property can be used to override the default stylesheet.
-* _extract-markdown-from-xslt.stylesheet_ When using the 'extract-markdown-from-xslt' macro
-this property can be used to override the default stylesheet.
 
 ## Change Log
 
@@ -111,8 +98,8 @@ this property can be used to override the default stylesheet.
             description="Source file"/>
 
         <attribute
-            name="stylesheet"
-            description="Stylesheet to use for extraction"/>
+            name="type"
+            description="Source file type [ant,sch,xsl]"/>
 
         <attribute
             name="output"
@@ -127,18 +114,17 @@ this property can be used to override the default stylesheet.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="extract-markdown" name="stylesheet" value="@{stylesheet}"/>
             <check-attr-set macro="extract-markdown" name="output" value="@{output}"/>
 
             <!-- file or dir mode? -->
             <extract-markdown-file
                 file="@{file}"
-                stylesheet="@{stylesheet}"
+                type="@{type}"
                 output="@{output}"
                 unless:blank="@{file}"/>
 
             <extract-markdown-dir
-                stylesheet="@{stylesheet}"
+                type="@{type}"
                 output="@{output}"
                 if:blank="@{file}">
                 <input.files/>
@@ -157,8 +143,8 @@ this property can be used to override the default stylesheet.
             description="Source file"/>
 
         <attribute
-            name="stylesheet"
-            description="Stylesheet to use for extraction"/>
+            name="type"
+            description="Source file type [ant,sch,xsl]"/>
 
         <attribute
             name="output"
@@ -172,10 +158,27 @@ this property can be used to override the default stylesheet.
             <!-- fail if file does not exist -->
             <check-file-exists macro="extract-markdown-file" file="@{file}"/>
 
+            <!-- detect stylesheet to use -->
+            <local name="file.ext"/>
+            <propertyregex
+                property="file.ext"
+                input="@{file}"
+                regexp="(.*)\.(.*)"
+                select="\2"/>
+
+            <local name="file.type"/>
+            <condition property="file.type" value="${file.ext}" else="@{type}">
+                <equals arg1="@{type}" arg2=""/>
+            </condition>
+
+            <local name="extract.stylesheet"/>
+            <property name="extract.stylesheet" value="extract-markdown-from-${file.type}"/>
+
+            <!-- extract markdown -->
             <apply-stylesheet
                 file="@{file}"
                 output="@{output}"
-                stylesheet="@{stylesheet}"/>
+                stylesheet="${extract.stylesheet}"/>
 
             <!--
                 Cannot use "<" and ">" in Markdown embedded in XML, so use "&lt;"
@@ -183,6 +186,7 @@ this property can be used to override the default stylesheet.
                 embedded Markdown get displayed correctly. &#9; is replaced by 4 spaces
                 to redo the indentation.
             -->
+            <!-- TODO check this? -->
             <replace file="@{output}" token="&lt;" value="&lt;"/>
             <replace file="@{output}" token="&gt;" value="&gt;"/>
             <replace file="@{output}" token="&#9;" value="    "/>
@@ -196,8 +200,8 @@ this property can be used to override the default stylesheet.
         description="Extract Markdown documentation from a set of files">
 
         <attribute
-            name="stylesheet"
-            description="Stylesheet to use for extraction"/>
+            name="type"
+            description="Source file type [ant,sch,xsl]"/>
 
         <attribute
             name="output"
@@ -233,125 +237,11 @@ this property can be used to override the default stylesheet.
 
                     <extract-markdown-file
                         file="@{file}"
-                        stylesheet="@{stylesheet}"
+                        type="@{type}"
                         output="@{output}/${output.name}.md"/>
 
                 </sequential>
             </for>
-
-        </sequential>
-    </macrodef>
-
-
-    <macrodef
-        name="extract-markdown-from-ant"
-        description="Extract Markdown documentation from ANT script files">
-
-        <attribute
-            name="file"
-            default=""
-            description="Source ANT file"/>
-
-        <attribute
-            name="output"
-            description="Path for extracted Markdown file(s)"/>
-
-        <element
-            name="input.files"
-            optional="true"
-            implicit="true"
-            description="A fileset specification"/>
-
-        <sequential>
-
-            <property
-                name="extract-markdown-from-ant.stylesheet"
-                value="extract-markdown-from-ant"/>
-
-            <echo message="[extract-markdown-from-ant] extract-markdown-from-ant.stylesheet=${extract-markdown-from-ant.stylesheet}" if:true="${macro.debug}"/>
-
-            <extract-markdown
-                file="@{file}"
-                stylesheet="${extract-markdown-from-ant.stylesheet}"
-                output="@{output}">
-                <input.files/>
-            </extract-markdown>
-
-        </sequential>
-    </macrodef>
-
-
-    <macrodef
-        name="extract-markdown-from-sch"
-        description="Extract Markdown documentation from Schematron script files">
-
-        <attribute
-            name="file"
-            default=""
-            description="Source Schematron file"/>
-
-        <attribute
-            name="output"
-            description="Path for extracted Markdown file(s)"/>
-
-        <element
-            name="input.files"
-            optional="true"
-            implicit="true"
-            description="A fileset specification"/>
-
-        <sequential>
-
-            <property
-                name="extract-markdown-from-sch.stylesheet"
-                value="extract-markdown-from-sch"/>
-
-            <echo message="[extract-markdown-from-sch] extract-markdown-from-sch.stylesheet=${extract-markdown-from-sch.stylesheet}" if:true="${macro.debug}"/>
-
-            <extract-markdown
-                file="@{file}"
-                stylesheet="${extract-markdown-from-sch.stylesheet}"
-                output="@{output}">
-                <input.files/>
-            </extract-markdown>
-
-        </sequential>
-    </macrodef>
-
-
-    <macrodef
-        name="extract-markdown-from-xslt"
-        description="Extract Markdown documentation from XSLT files">
-
-        <attribute
-            name="file"
-            default=""
-            description="Source XSLT file"/>
-
-        <attribute
-            name="output"
-            description="Path for extracted Markdown file(s)"/>
-
-        <element
-            name="input.files"
-            optional="true"
-            implicit="true"
-            description="A fileset specification"/>
-
-        <sequential>
-
-            <property
-                name="extract-markdown-from-xslt.stylesheet"
-                value="extract-markdown-from-xslt"/>
-
-            <echo message="[extract-markdown-from-xslt] extract-markdown-from-xslt.stylesheet=${extract-markdown-from-xslt.stylesheet}" if:true="${macro.debug}"/>
-
-            <extract-markdown
-                file="@{file}"
-                stylesheet="${extract-markdown-from-xslt.stylesheet}"
-                output="@{output}">
-                <input.files/>
-            </extract-markdown>
 
         </sequential>
     </macrodef>

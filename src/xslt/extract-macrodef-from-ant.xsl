@@ -10,14 +10,14 @@
         <doc:desc>
 ---
 Project:    XPants
-Title:      extract-macrodef.xsl
+Title:      extract-macrodef-from-ant.xsl
 Date:       2018-02-15
 Author:     Philip Hodder
 Contact:    philip.hodder@encodis.com
-Summary:    Extract macrodefs from build files
+Summary:    Extract macrodefs from ANT build files
 ...
 
-# extract-macrodef.xsl
+# extract-macrodef-from-ant.xsl
 
 This stylesheet extracts `&lt;macrodef&gt;` elements from ANT build files.
         </doc:desc>

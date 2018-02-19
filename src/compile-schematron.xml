@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="compile-schematron"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+	<description>
+---
+Project:      XPants
+Title:        compile-schematron.xml
+Date:         2018-02-19
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to compile Schematron files
+...
+
+# compile-schematron.xml
+
+A set of macro definitions to compile a Schematron file into an XSL file. The top level
+macro ("compile-schematron") will compile either a single file or a folder, depending on
+the arguments supplied:
+
+* If the _file_ attribute is not blank and refers to a file that exists then it will be
+compiled, using the _output_ attribute as the resulting file name for the report.
+* If the _file_ attribute is not supplied then the macro will compile all files in a folder
+determined by the 'input.files' element.
+
+&gt; NOTE: It is the responsibility of the calling task to ensure that any output folders are
+created before running this task.
+
+Only a single output type can be chosen from:
+
+* _sch:_ This is simply the result of merging includes and resolving abstract patterns
+* _xsl:_ The default format, a normal XSLT stylesheet
+* _axsl:_ Effectively the same as for _xsl_ but with an "asxl" namespace prefix
+
+### Enhancement Options
+
+The 'filters' attribute contains a comma separated list of filters that direct
+the macro to apply certain stylesheets to the Schematron after includes have been merged
+and abstract patterns resolved, but before compilation into XSLT.
+
+Each filter is taken in the order it occurs in the _filters_ attribute. This is used
+by the [apply-stylesheet](./apply-stylesheet.html) macro so it assumes that all filters correspond
+to standard XSLTs in the XSLT Library. So, for example, specifying the filter "remove-doc" will
+apply the stylesheet _remove-doc.xsl_.
+
+&gt; IMPORTANT: This mechanism can be used to apply __ANY__ stylesheet in the XSLT Library
+to the Schematron. Take care when specifying filters in case there are unintended
+consequences. The filters (and stylesheets) that are known to be valid are:
+&gt;
+* _remove-doc:_ Removes "doc:*" elements
+* _schematron-display-id:_ Makes sure that Schematron rule IDs are displayed in the output
+* _schematron-remove-empty:_ Remove any Schematron rules with no assert or report elements
+* _minimise-xml:_ Remove comments, processing instructions etc.
+
+The Schematron file is enhanced "in place"---intermediate versions are not kept.
+
+## Usage
+
+```
+&lt;compile-schematron
+&#9;file="file.sch"
+&#9;output="compiled/file.xsl"
+&#9;format="xsl"/&gt;
+```
+
+```
+&lt;compile-schematron
+&#9;output="compiled"
+&#9;&lt;fileset dir="src/schematron"&gt;
+&#9;&#9;&lt;include name="*.sch"/&gt;
+&#9;&lt;fileset/&gt;
+&lt;/compile-schematron&gt;
+```
+
+## Dependencies
+
+### Stylesheets
+
+The following stylesheets are used by this module. They are local copies of the
+[ISO Schematron](http://www.schematron.com/implementation.html) stylesheets:
+
+* **iso/iso_dsdl_include.xsl**
+* **iso/iso_abstract_expand.xsl**
+* **iso/iso_svrl_for_xslt2.xsl**
+* **iso/iso_svrl_for_xslt1.xsl**
+
+Other stylsheets in the XSLT library may be used as dictated by any enhancement
+filters set.
+
+&gt; NOTE: The default stylesheet used to expand abstract patterns is the standard stylesheet
+as distributed by ISO. However, in this stylesheet variables used in an abstract pattern
+[are not replaced](https://code.google.com/archive/p/schematron/issues/6). The
+**iso/iso_abstract_expand_bugfix6.xsl** stylesheet implements a
+[fix](http://itfundamentalist.blogspot.co.uk/2009/03/schematron-stilesheets-wont-work-with.html)
+for this.
+&gt;
+&gt;Projects that need to use the "fixed" version (e.g. the Content Migration project)
+should override the _resolve-schematron-abstracts.stylesheet_ property (as described below)
+_before_ these macros are included, e.g.
+&gt;
+```
+&lt;property
+&#9;name="resolve-schematron-abstracts.stylesheet"
+&#9;value="iso/iso_abstract_expand_bugfix6.xsl"/&gt;
+
+&lt;compile-schematron
+&#9;file="file.sch"
+&#9;output="compiled/file.xsl"
+&#9;format="xsl"/&gt;
+```
+
+## Properties
+
+The following properties can be set on the command line to override the default behaviour:
+
+* _merge-schematron-includes.stylesheet_ Allows replacement of the "iso_dsdl_include.xsl" stylesheet.
+* _resolve-schematron-abstracts.stylesheet_ Allows replacement of the "iso_abstract_expand.xsl" stylesheet.
+* _compile-schematron-to-xsl.stylesheet_ Allows the caller to specify the compilation stylesheet,
+rather than choosing "iso_svrl_for_xslt1.xsl" or "iso_svrl_for_xslt2.xsl" depending on the version
+of XSLT being used.
+* _compile.full-path-notation_ Change format of output XPath messages. Valid values are "1" (the default
+which is rather unreadable for humans but contains position information, allowing errors in instance
+documents to be identified more easily), "2" (easier to read but with less information) or "3"
+(marked as obsolete).
+
+&gt; NOTE: Due to issues with the Windows/Git Bash command line handling of UNC paths
+it may be easier to set the property in the __build.xml__ file that is calling the
+library, rather than on the command line.
+
+## Change Log
+
+##### 2018-02-19 (PH) Initial version
+
+    </description>
+
+    <!-- TODO this could probably be strealined, esp. with regard to output file formats  -->
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.compile-schematron}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/apply-stylesheet.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="compile-schematron"
+        description="Compile Schematron file(s) to the indicated format">
+
+        <attribute
+            name="file"
+            default=""
+            description="Source Schematron file"/>
+
+        <attribute
+            name="encoding"
+            default="utf-8"
+            description="The output encoding"/>
+
+        <attribute
+            name="phase"
+            default="#ALL"
+            description="The phase to restrict the schema to"/>
+
+        <attribute
+            name="foreign"
+            default="false"
+            description="Preserve nodes that are not in the ISO namespace"/>
+
+        <attribute
+            name="filters"
+            default="remove-docs"
+            description="List of optional filters to be applied"/>
+
+        <attribute
+            name="output"
+            description="Path for output file(s)"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="compile-schematron" name="output" value="@{output}"/>
+
+            <!-- file or dir mode? -->
+            <compile-schematron-file
+                file="@{file}"
+                encoding="@{encoding}"
+                phase="@{phase}"
+                foreign="@{foreign}"
+                filters="@{filters}"
+                output="@{output}"
+                unless:blank="@{file}"/>
+
+            <compile-schematron-dir
+                encoding="@{encoding}"
+                phase="@{phase}"
+                foreign="@{foreign}"
+                filters="@{filters}"
+                output="@{output}"
+                if:blank="@{file}">
+                <input.files/>
+            </compile-schematron-dir>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="compile-schematron-file"
+        description="Compile a Schematron file">
+
+        <attribute
+            name="file"
+            description="Source XML file"/>
+
+        <attribute
+            name="encoding"
+            default="utf-8"
+            description="The output encoding"/>
+
+        <attribute
+            name="phase"
+            default="#ALL"
+            description="The phase to restrict the schema to"/>
+
+        <attribute
+            name="foreign"
+            default="false"
+            description="Preserve nodes that are not in the ISO namespace"/>
+
+        <attribute
+            name="filters"
+            default="remove-docs"
+            description="List of optional filters to be applied"/>
+
+        <attribute
+            name="output"
+            description="Path for output file"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="compile-schematron-file" name="file" value="@{file}"/>
+
+            <!-- fail if file does not exist -->
+            <check-file-exists macro="compile-schematron-file" file="@{file}"/>
+
+            <!-- make temporary files for the intermediate stages -->
+            <property name="temp.dir" value="${java.io.tmpdir}"/>
+            <property name="temp.delete" value="true"/>
+
+            <!-- merge includes -->
+            <local name="temp.merged"/>
+            <tempfile property="temp.merged" prefix="merged" suffix=".sch" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+
+            <merge-schematron-includes
+                file="@{file}"
+                output="${temp.merged}"/>
+
+            <!-- resolve abstracts -->
+            <local name="temp.resolved"/>
+            <tempfile property="temp.resolved" prefix="resolved" suffix=".sch" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+
+            <resolve-schematron-abstracts
+                file="${temp.resolved}"
+                output="@{output}"/>
+
+            <!-- apply filtering, overwrites resolved file -->
+            <apply-stylesheets
+                file="${temp.resolved}"
+                filters="@{filters}"
+                unless:blank="@{filters}"/>
+
+            <!-- choose XSLT1/XSLT2 transform based on version in SCH file, can be overridden on command line -->
+            <local name="schematron.querybinding"/>
+            <loadfile srcfile="@{file}" property="schematron.querybinding">
+                <filterchain>
+                    <linecontains>
+                        <contains value="queryBinding"/>
+                    </linecontains>
+                </filterchain>
+            </loadfile>
+
+            <!-- <propertyregex
+                property="schematron.querybinding"
+                input="${schematron.querybinding}"
+                regexp='^.*[queryBinding=\"](.*)[\"]'
+                select="\1"
+                override="true"/> -->
+
+            <!-- FIXME property should be local as it will be set in a for loop but then cannot be overridden -->
+            <!-- <local name="compile-schematron-to-xsl.stylesheet"/> -->
+
+            <condition
+                property="compile-schematron-to-xsl.stylesheet"
+                value="iso/iso_svrl_for_xslt2"
+                else="iso/iso_svrl_for_xslt1">
+                <or>
+                    <contains string="${schematron.querybinding}" substring="xslt2" casesensitive="false"/>
+                    <contains string="${schematron.querybinding}" substring="xpath2" casesensitive="false"/>
+                    <!--
+                    <equals arg1="xslt2" arg2="${schematron.querybinding}" casesensitive="false" trim="true"/>
+                    <equals arg1="xpath2" arg2="${schematron.querybinding}" casesensitive="false" trim="true"/>
+                    -->
+                </or>
+            </condition>
+
+            <echo message="[compile-schematron-file] compile-schematron-to-xsl.stylesheet=${compile-schematron-to-xsl.stylesheet}" if:true="${macro.debuf}"/>
+
+            <!-- set default full-path-notation (can be overridden) -->
+            <!-- setting full-path-notation to "2" gives a more human readable version of XPaths in the location attribute of the SVRL,
+                 see also internal comments in "iso_schematron_skeleton_for_saxon.xsl" in XSLT library -->
+
+            <property name="compile-schematron.full-path-notation" value="1"/>
+
+            <echo message="[compile-schematron-file] compile-schematron.full-path-notation=${compile.full-path-notation}" if:true="${macro.debuf}"/>
+
+            <apply-stylesheet-file
+                file="${temp.resolved}"
+                output="@{output}"
+                stylesheet="${compile-schematron-to-xsl.stylesheet}">
+
+                <params.xslt>
+                    <param name="output-encoding" expression="@{encoding}"/>
+                    <param name="phase" expression="@{phase}"/>
+                    <param name="allow-foreign" expression="@{foreign}"/>
+                    <param name="full-path-notation" expression="${compile-schematron.full-path-notation}"/>
+                </params.xslt>
+            </apply-stylesheet-file>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="compile-schematron-dir"
+        description="Compile a folder of Schematron files">
+
+        <attribute
+            name="encoding"
+            default="utf-8"
+            description="The output encoding"/>
+
+        <attribute
+            name="phase"
+            default="#ALL"
+            description="The phase to restrict the schema to"/>
+
+        <attribute
+            name="foreign"
+            default="false"
+            description="Preserve nodes that are not in the ISO namespace"/>
+
+        <attribute
+            name="filters"
+            default="remove-docs"
+            description="List of optional filters to be applied"/>
+
+        <attribute
+            name="output"
+            description="Folder for compiled files"/>
+
+        <element
+            name="input.files"
+            optional="false"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if input fileset is empty -->
+            <check-fileset-empty macro="compile-schematron-dir">
+                <input.files/>
+            </check-fileset-empty>
+
+            <mkdir dir="@{output}"/>
+
+            <property name="for.keepgoing" value="true"/>
+
+            <for param="file" keepgoing="${for.keepgoing}">
+                <input.files/>
+
+                <sequential>
+
+                    <local name="output.name"/>
+                    <basename property="output.name" file="@{file}" suffix=".sch"/>
+
+                    <compile-schematron-file
+                        file="@{file}"
+                        encoding="@{encoding}"
+                        phase="@{phase}"
+                        foreign="@{foreign}"
+                        filters="@{filters}"
+                        output="@{output}/${output.name}.xsl"/>
+
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="merge-schematron-includes"
+        description="Merge included files into a single Schematron file">
+
+        <attribute
+            name="file"
+            description="Source Schematron file"/>
+
+        <attribute
+            name="output"
+            description="Merged Schematron file"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="merge-schematron-includes" name="file" value="@{file}"/>
+            <check-attr-set macro="merge-schematron-includes" name="output" value="@{output}"/>
+
+            <property
+                name="merge-schematron-includes.stylesheet"
+                value="iso/iso_dsdl_include"/>
+
+            <echo message="[merge-schematron-includes] merge-schematron-includes.stylesheet=${merge-schematron-includes.stylesheet}" if:true="${macro.debuf}"/>
+
+            <apply-stylesheet
+                file="@{file}"
+                output="@{output}"
+                stylesheet="${merge-schematron-includes.stylesheet}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="resolve-schematron-abstracts"
+        description="Resolve abstract patterns in a Schematron file">
+
+        <attribute
+            name="file"
+            description="Source Schematron file"/>
+
+        <attribute
+            name="output"
+            description="Resolved Schematron file"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="resolve-schematron-abstracts" name="file" value="@{file}"/>
+            <check-attr-set macro="resolve-schematron-abstracts" name="output" value="@{output}"/>
+
+            <!-- set property "resolve-schematron-abstracts.stylesheet=iso/iso_abstract_expand_bugfix6" to override -->
+
+            <property
+                name="resolve-schematron-abstracts.stylesheet"
+                value="iso/iso_abstract_expand"/>
+
+            <echo message="[resolve-schematron-abstracts] resolve-schematron-abstracts.stylesheet=${resolve-schematron-abstracts.stylesheet}" if:true="${macro.debuf}"/>
+
+            <apply-stylesheet
+                file="@{file}"
+                output="@{output}"
+                stylesheet="${resolve-schematron-abstracts.stylesheet}"/>
+
+        </sequential>
+    </macrodef>
+
+</project>

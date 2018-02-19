@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="validate-with-sch"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+	<description>
+---
+Project:      XPants
+Title:        validate-with-sch.xml
+Date:         2018-02-19
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to validate using SCH files
+...
+
+# validate-with-sch.xml
+
+A set of macro definitions to validate an XML file using a Schematron file. Essentially this
+is a wrapper around various XSLT stylesheets, but with enhanced reporting and output file
+manipulation. The top level macro ("validate-with-sch") will validate either a single file
+or a folder, depending on the arguments supplied:
+
+* If the _file_ attribute is not blank and refers to a file that exists then it will be
+validated, using the _output_ attribute as the resulting file name for the report.
+* If the _file_ attribute is not supplied then the macro will validate all files in a folder
+determined by the 'input.files' element.
+
+&gt; IMPORTANT: It is assumed that the Schematron has been compiled in a previous task, i.e.
+that the "schematron" file is actually an XSLT.
+
+&gt; NOTE: It is the responsibility of the calling task to ensure that any output folders are
+created before running this task.
+
+## Usage
+
+```
+&lt;validate-with-sch
+&#9;file="file.sch"
+&#9;output="docs/validation/file.svrl"
+&#9;schematron="compiled/test.xsl"
+&#9;format="svrl"/&gt;
+```
+
+```
+&lt;validate-with-sch
+&#9;file="file.sch"
+&#9;output="docs/validation/file.html"
+&#9;schematron="compiled/test.xsl"
+&#9;format="html"/&gt;
+```
+
+## Dependencies
+
+### Stylesheets
+
+This module uses the following stylesheets:
+
+* __convert-svrl-to-html.xsl__ Converts SVRL format into HTML.
+
+## Properties
+
+The following properties can be set on the command line to override the default behaviour:
+
+* _convert-svrl-to-html.stylesheet_
+
+## Change Log
+
+##### 2018-02-19 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.validate-with-sch}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/apply-stylesheet.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+
+    <!-- macros -->
+
+    <!--
+    TODO a compiled option to get the macro to compile the SCH, then apply it?
+    also to apply the filter-svrl.xsl to surpress passed rules
+
+    generally assume not compiled, add compiled=true to stop that step
+    -->
+
+	<macrodef
+        name="validate-with-sch"
+        description="Validate a file according to a Schematron file">
+
+		<attribute
+            name="file"
+            default=""
+            description="Source XML file(s)"/>
+
+        <attribute
+            name="schematron"
+            description="Path for Schematron file"/>
+
+		<attribute
+            name="format"
+            default="svrl"
+            description="Format of the final report [svrl,html]"/>
+
+        <attribute
+            name="output"
+            description="Path for report file(s)"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+		<sequential>
+
+            <!-- TODO add option to compile to temp file and validate that, e.g. "compile=true" -->
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="validate-with-sch" name="output" value="@{output}"/>
+            <check-attr-list macro="validate-with-sch" name="format" value="@{format}" list="svrl,html"/>
+            <check-attr-set macro="validate-with-sch" name="schematron" value="@{schematron}"/>
+
+            <!-- file or dir mode? -->
+            <validate-with-sch-file
+                file="@{file}"
+                output="@{output}"
+                schematron="@{schematron}"
+                format="@{format}"
+                unless:blank="@{file}"/>
+
+            <validate-with-sch-dir
+                output="@{output}"
+                schematron="@{schematron}"
+                format="@{format}"
+                if:blank="@{file}">
+                <input.files/>
+            </validate-with-sch-dir>
+
+		</sequential>
+	</macrodef>
+
+
+    <macrodef
+        name="validate-with-sch-file"
+        description="Validate an individual XML file against a specified Schematron">
+
+        <attribute
+            name="file"
+            description="Source XML file"/>
+
+        <attribute
+            name="format"
+            default="svrl"
+            description="Format of the final report [svrl,html]"/>
+
+        <attribute
+            name="output"
+            description="Name for the result file"/>
+
+        <attribute
+            name="schematron"
+            description="Path for Schematron file"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="validate-with-sch-file" name="file" value="@{file}"/>
+
+            <!-- fail if file does not exist -->
+            <check-file-exists macro="validate-with-sch-file" file="@{file}"/>
+
+            <!-- work out which macros to run -->
+            <local name="output.@{format}"/>
+            <property name="output.@{format}" value="true"/>
+
+            <!-- make output folder, if required -->
+            <local name="output.dir"/>
+			<dirname property="output.dir" file="@{output}"/>
+			<mkdir dir="${output.dir}"/>
+
+            <validate-with-sch-to-svrl
+                file="@{file}"
+                output="@{output}"
+                schematron="@{schematron}"
+                if:set="output.svrl"/>
+
+            <validate-with-sch-to-html
+                file="@{file}"
+                output="@{output}"
+                schematron="@{schematron}"
+                if:set="output.html"/>
+
+            <!-- echo the result back -->
+            <local name="result.valid"/>
+            <check-schematron-validity
+                report="@{output}"
+                property="result.valid"/>
+
+            <echo message="[validate-with-sch] '@{file}' is valid" if:true="${result.valid}"/>
+            <echo message="[validate-with-sch] '@{file}' is NOT valid" unless:true="${result.valid}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="validate-with-sch-dir"
+        description="Validate a folder of XML files against a single Schematron file">
+
+        <attribute
+            name="schematron"
+            description="Path for the Schematron file"/>
+
+		<attribute
+            name="format"
+            default="svrl"
+            description="Format of the final report [svrl,html]"/>
+
+        <attribute
+            name="output"
+            description="Path for extracted files"/>
+
+        <element
+            name="input.files"
+            optional="false"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if input fileset is empty -->
+            <check-fileset-empty macro="validate-with-sch-dir">
+                <input.files/>
+            </check-fileset-empty>
+
+            <mkdir dir="@{output}"/>
+
+            <property name="for.keepgoing" value="true"/>
+
+            <for param="file" keepgoing="${for.keepgoing}">
+                <input.files/>
+
+                <sequential>
+
+                    <local name="output.file.name"/>
+                    <basename property="output.file.name" file="@{file}" suffix=".xml"/>
+
+                    <validate-with-sch-file
+                        file="@{file}"
+                        output="@{output}/${output.file.name}.@{format}"
+                        schematron="@{schematron}"
+                        format="@{format}"/>
+
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+
+	<macrodef
+        name="validate-with-sch-to-svrl"
+        description="Validate an XML file using Schematron and output the validation report as SVRL">
+
+        <attribute
+            name="file"
+            description="Source XML file"/>
+
+		<attribute
+            name="output"
+            description="Output report file"/>
+
+        <attribute
+            name="schematron"
+            description="Path for Schematron file"/>
+
+		<sequential>
+
+            <apply-stylesheet
+                file="@{file}"
+                output="@{output}"
+                stylesheet="@{schematron}"/>
+
+            <!--
+                TODO this looks wrong - are we implying a compiled SCH file here? yes, see comment above for compiled
+                option.
+            -->
+
+		</sequential>
+	</macrodef>
+
+
+    <macrodef
+        name="validate-with-sch-to-html"
+        description="Validate an XML file and output the validation report as HTML">
+
+        <attribute
+            name="file"
+            description="Source XML file"/>
+
+		<attribute
+            name="output"
+            description="Output report file"/>
+
+        <attribute
+            name="schematron"
+            description="Path for Schematron file"/>
+
+		<sequential>
+
+            <property name="temp.dir" value="${java.io.tmpdir}"/>
+            <property name="temp.delete" value="true"/>
+
+            <local name="temp.svrl"/>
+            <tempfile property="temp.svrl" suffix=".svrl" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+
+			<validate-with-sch-to-svrl
+                file="@{file}"
+                output="${temp.svrl}"
+                schematron="@{schematron}"/>
+
+            <!-- filter the SVRL -->
+            <local name="temp.filter"/>
+            <tempfile property="temp.filter" suffix=".filter" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+
+            <property
+                name="filter-svrl.stylesheet"
+                value="filter-svrl"/>
+
+            <echo message="[validate-with-sch-to-html] filter-svrl.stylesheet=${filter-svrl.stylesheet}" if:true="${macro.debug}"/>
+
+            <apply-stylesheet
+                file="${temp.svrl}"
+                output="${temp.filter}"
+                stylesheet="${filter-svrl.stylesheet}"/>
+
+            <!-- convert filtered SVRL to HTML -->
+            <property
+                name="convert-svrl-to-html.stylesheet"
+                value="convert-svrl-to-html"/>
+
+            <echo message="[validate-with-sch-to-html] convert-svrl-to-html.stylesheet=${convert-svrl-to-html.stylesheet}" if:true="${macro.debug}"/>
+
+            <local name="report.name"/>
+            <basename property="report.name" file="@{output}" suffix=".html"/>
+
+            <apply-stylesheet-file
+                file="${temp.filter}"
+                output="@{output}"
+                stylesheet="${convert-svrl-to-html.stylesheet}">
+
+                <param name="filename" expression="${report.name}.xml"/>
+            </apply-stylesheet-file>
+
+		</sequential>
+	</macrodef>
+
+
+    <macrodef
+        name="check-schematron-validity"
+        description="Check the results of a Schematron report file">
+
+        <attribute
+            name="report"
+            description="File containing Schematron report"/>
+
+        <attribute
+            name="property"
+            description="Property to contain result"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="check-schematron-validity" name="report" value="@{report}"/>
+            <check-attr-set macro="check-schematron-validity" name="property" value="@{property}"/>
+
+            <local name="report.suffix"/>
+            <propertyregex
+                property="report.suffix"
+                input="@{report}"
+                regexp="(.*)\.(.*)"
+                select="\2"
+                override="true"/>
+
+            <local name="format.svrl"/>
+            <condition property="format.svrl">
+                <equals arg1="${report.suffix}" arg2="svrl"/>
+            </condition>
+
+            <local name="format.html"/>
+            <condition property="format.html">
+                <equals arg1="${report.suffix}" arg2="html"/>
+            </condition>
+
+            <local name="number.lines"/>
+            <resourcecount property="number.lines" if:set="format.svrl">
+                <tokens>
+                    <concat>
+                        <filterchain>
+                            <linecontains>
+                                <contains value="svrl:failed-assert"/>
+                                <contains value="svrl:successful-report"/>
+                            </linecontains>
+                        </filterchain>
+                        <fileset file="@{report}"/>
+                    </concat>
+                </tokens>
+            </resourcecount>
+
+            <resourcecount property="number.lines" if:set="format.html">
+                <tokens>
+                    <concat>
+                        <filterchain>
+                            <linecontains>
+                                <contains value="This document is valid."/>
+                            </linecontains>
+                        </filterchain>
+                        <fileset file="@{report}"/>
+                    </concat>
+                </tokens>
+            </resourcecount>
+
+            <!-- return true if format = svrl and number = 0, or format = html and number > 0 -->
+
+            <local name="report.valid"/>
+            <condition property="report.valid" value="true" else="false">
+                <or>
+                    <and>
+                        <isset property="format.svrl"/>
+                        <equals arg1="${number.lines}" arg2="0"/>
+                    </and>
+                    <and>
+                        <isset property="format.html"/>
+                        <equals arg1="${number.lines}" arg2="1"/>
+                    </and>
+                </or>
+            </condition>
+
+            <property name="@{property}" value="${report.valid}"/>
+
+            <echo message="[check-schematron-validity] @{property}=${report.valid}" if:true="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+</project>

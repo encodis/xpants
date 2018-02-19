@@ -582,7 +582,7 @@ a compact difference file.
 
             <!-- NOTE @{output} will not be created if the files are the same -->
             <property name="exec.failonerror" value="true"/>
-            
+
             <exec
                 executable="${diff.exe}"
                 output="@{output}"
@@ -712,7 +712,7 @@ a compact difference file.
                 <arg value="Word By Word=true" if:set="diff.word"/>
                 <arg value="Enhanced Match 1=false" if:set="diff.nomatch"/>
                 <arg value="Indent=no" if:set="diff.noindent"/>
-                <sysproperty key="xml.catalog.files" value="${ca.catalog}"/>
+                <sysproperty key="xml.catalog.files" value="${xpants.catalog}"/>
             </java>
 
         </sequential>

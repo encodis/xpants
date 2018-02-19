@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="validate-with-xsd"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+	<description>
+---
+Project:      XPants
+Title:        validate-with-xsd.xml
+Date:         2018-02-19
+Author:       Philip Hodder
+Contact:      philip.hodder@encodis.com
+Summary:      Macro definitions to validate using XSD files
+...
+
+# validate-with-xsd.xml
+
+A set of macro definitions to validate an XML file using an XSD. Essentially this
+is a wrapper around _ant_'s built in 'schemavalidate' task, but with enhanced reporting
+and output file manipulation. The top level macro ("validate-with-xsd") will validate either a
+single file or a folder, depending on the arguments supplied:
+
+* If the _file_ attribute is not blank and refers to a file that exists then it will be
+validated, using the _output_ attribute as the resulting file name for the report.
+* If the _file_ attribute is not supplied then the macro will convert all files in a folder
+determined by the 'input.files' element.
+
+&gt; NOTE: It is the responsibility of the calling task to ensure that any output folders are
+created before running this task.
+
+## Usage
+
+```
+&lt;validate-with-xsd
+&#9;source="file.xml"
+&#9;output="docs/validation/file.svrl"
+&#9;schema="schema/test.xsd"
+&#9;format="svrl"/&gt;
+```
+
+```
+&lt;validate-with-xsd
+&#9;output="docs/validation/"
+&#9;schema="schema/test1.xsd"
+&#9;format="html"/&gt;
+&#9;&lt;fileset dir="models/instances"&gt;
+&#9;&lt;include name="*.xml"/&gt;
+&#9;&lt;fileset/&gt;
+&lt;validate-with-xsd/&gt;
+```
+
+## Dependencies
+
+### Stylesheets
+
+This module uses the following stylesheets:
+
+* __convert-svrl-to-html.xsl__ Converts SVRL format into HTML.
+
+## Properties
+
+The following properties can be set on the command line to override the default behaviour:
+
+* _convert-svrl-to-html.stylesheet_
+
+## Change Log
+
+##### 2018-02-19 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <property environment="env"/>
+
+    <dirname property="xpants.dir" file="${ant.file.validate-with-xsd}"/>
+    <property file="${xpants.dir}/xpants.properties"/>
+
+    <include file="${xpants.dir}/apply-stylesheet.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+
+    <!-- macros -->
+
+	<macrodef
+        name="validate-with-xsd"
+        description="Validate a file according to a XSD">
+
+		<attribute
+            name="file"
+            default=""
+            description="Source XML file"/>
+
+        <attribute
+            name="schema"
+            description="Path for XSD file"/>
+
+        <attribute
+            name="namespace"
+            description="Namespace associated with the XSD file"/>
+
+		<attribute
+            name="format"
+            default="svrl"
+            description="Format of the final report [txt,svrl,html]"/>
+
+        <attribute
+            name="output"
+            description="Path for report file(s)"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+		<sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="validate-with-xsd" name="schema" value="@{schema}"/>
+            <check-attr-set macro="validate-with-xsd" name="namespace" value="@{namespace}"/>
+            <check-attr-set macro="validate-with-xsd" name="output" value="@{output}"/>
+            <check-attr-list macro="validate-with-xsd" name="format" value="@{format}" list="txt,svrl,html"/>
+
+            <!-- file or dir mode? -->
+            <validate-with-xsd-file
+                file="@{file}"
+                output="@{output}"
+                schema="@{schema}"
+                namespace="@{namespace}"
+                format="@{format}"
+                unless:blank="@{file}"/>
+
+            <validate-with-xsd-dir
+                output="@{output}"
+                schema="@{schema}"
+                namespace="@{namespace}"
+                format="@{format}"
+                if:blank="@{file}">
+                <input.files/>
+            </validate-with-xsd-dir>
+
+		</sequential>
+	</macrodef>
+
+    <macrodef
+        name="validate-with-xsd-file"
+        description="Validate an individual XML file against a specified XSD">
+
+        <attribute
+            name="file"
+            description="Source XML file"/>
+
+        <attribute
+            name="output"
+            description="Path for result file"/>
+
+        <attribute
+            name="schema"
+            description="Path for XSD file"/>
+
+        <attribute
+            name="namespace"
+            description="Namespace associated with the XSD file"/>
+
+		<attribute
+            name="format"
+            default="svrl"
+            description="Format of the final report [txt,svrl,html]"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="validate-with-xsd-file" name="file" value="@{file}"/>
+
+            <!-- fail if files does not exist -->
+            <check-file-exists macro="validate-with-xsd-file" file="@{file}"/>
+
+            <!-- work out which macros to run -->
+            <local name="output.@{format}"/>
+            <property name="output.@{format}" value="true"/>
+
+            <validate-with-xsd-to-txt
+                file="@{file}"
+                output="@{output}"
+                schema="@{schema}"
+                namespace="@{namespace}"
+                if:set="output.txt"/>
+
+            <validate-with-xsd-to-svrl
+                file="@{file}"
+                output="@{output}"
+                schema="@{schema}"
+                namespace="@{namespace}"
+                if:set="output.svrl"/>
+
+            <validate-with-xsd-to-html
+                file="@{file}"
+                output="@{output}"
+                schema="@{schema}"
+                namespace="@{namespace}"
+                if:set="output.html"/>
+
+            <!-- TODO echo the result back  -->
+
+        </sequential>
+    </macrodef>
+
+    <macrodef
+        name="validate-with-xsd-dir"
+        description="Validate a folder of XML files against their DTDs">
+
+        <attribute
+            name="schema"
+            description="Path for XSD file"/>
+
+        <attribute
+            name="namespace"
+            description="Namespace associated with the XSD file"/>
+
+		<attribute
+            name="format"
+            default="svrl"
+            description="Format of the final report [txt,svrl,html]"/>
+
+        <attribute
+            name="output"
+            description="Path for extracted files"/>
+
+        <element
+            name="input.files"
+            optional="false"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if input fileset is empty -->
+            <check-fileset-empty macro="validate-with-xsd-dir">
+                <input.files/>
+            </check-fileset-empty>
+
+            <mkdir dir="@{output}"/>
+
+            <property name="for.keepgoing" value="true"/>
+
+            <for param="file" keepgoing="${for.keepgoing}">
+                <input.files/>
+
+                <sequential>
+
+                    <local name="output.name"/>
+                    <basename property="output.name" file="@{file}" suffix=".xml"/>
+
+                    <validate-xsd-file
+                        file="@{file}"
+                        output="@{output}/${output.name}.@{format}"
+                        format="@{format}"/>
+
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+	<macrodef
+        name="validate-with-xsd-to-txt"
+        description="Validate an XML file and output the validation report as text">
+
+		<attribute
+            name="file"
+            description="Source XML file"/>
+
+		<attribute
+            name="output"
+            description="Output report file"/>
+
+        <attribute
+            name="schema"
+            description="Path for XSD file"/>
+
+        <attribute
+            name="namespace"
+            description="Namespace associated with the XSD file"/>
+
+		<sequential>
+
+            <!-- TODO if output is blank then use a temp file and report on that -->
+
+			<record name="@{output}" action="start"/>
+
+            <!-- TODO use Saxon 9 EE as parser?
+            e.g. from this post https://saxonica.plan.io/issues/2192
+
+            java net.sf.saxon.Query -s:source.xml -qs:name(*) -dtd:on
+
+            or, for XSD:
+
+            java -cp saxon9ee.jar com.saxonica.Validate -xsd:<XSD_file> -s:<XML_file> -xsdversion:1.1
+
+            can use -report to write to specific (temp) file
+            -->
+
+            <!--
+            FIXME getting "Warning: XML resolver not found; external catalogs will be ignored"
+            so may need to add in Saxon or something
+            -->
+
+            <!-- <java
+                classname="com.saxonica.Validate">
+
+                <classpath>
+                    <pathelement path="~/.ant/lib/saxon9ee.jar"/>
+                    <pathelement path="~/.ant/lib/resolver.jar"/>
+                </classpath>
+
+                <arg line="-catalog:@{xpants.catalog}"/>
+                <arg line="-report:@{report.temp}"/>
+                <arg line="-s:@{file}"/>
+            </java> -->
+
+
+            <schemavalidate
+                file="@{file}"
+                failonerror="false">
+
+				<schema
+					namespace="@{namespace}"
+					file="@{schema}"/>
+
+                <xmlcatalog>
+                    <catalogpath path="${xpants.catalog}"/>
+                </xmlcatalog>
+			</schemavalidate>
+
+			<record name="@{output}" action="stop"/>
+
+            <!-- report if validation was successful -->
+            <local name="output.valid"/>
+            <check-file-contains property="output.valid" file="@{output}" string="is not a valid XML document"/>
+
+            <echo message="[validate-xsd] output.valid=${output.valid}" if:true="${macro.debug}"/>
+
+            <!-- <condition property="output.valid">
+                <resourcecontains resource="@{output}" substring="is not a valid XML document"/>
+            </condition> -->
+
+            <echo message="[validate-with-xsd] '@{file}' is NOT schema valid" if:true="${output.valid}"/>
+            <echo message="[validate-with-xsd] '@{file}' is schema valid" unless:true="${output.valid}"/>
+
+		</sequential>
+	</macrodef>
+
+	<macrodef
+        name="validate-with-xsd-to-svrl"
+        description="Validate an XML file and output the validation report as SVRL">
+
+        <attribute
+            name="file"
+            description="Source XML file"/>
+
+		<attribute
+            name="output"
+            description="Output report file"/>
+
+        <attribute
+            name="schema"
+            description="Path for XSD file"/>
+
+        <attribute
+            name="namespace"
+            description="Namespace associated with the XSD file"/>
+
+		<sequential>
+
+            <property name="temp.dir" value="${java.io.tmpdir}"/>
+            <property name="temp.delete" value="true"/>
+
+            <local name="temp.txt"/>
+            <tempfile property="temp.txt" suffix=".txt" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+
+            <!-- check validation and report... -->
+			<validate-with-xsd-to-txt
+                file="@{file}"
+                output="${temp.txt}"
+                schema="@{schema}"
+                namespace="@{namespace}"/>
+
+            <!-- TODO check this stylesheet is working ok -->
+
+            <!-- TODO if output is blank then don't do this bit -->
+
+            <!-- ... then carry on and convert to SVRL format -->
+            <property
+                name="convert-xsd-text-to-svrl.stylesheet"
+                value="convert-xsd-text-to-svrl"/>
+
+            <echo message="[validate-with-xsd-to-svrl] convert-xsd-text-to-svrl.stylesheet=${convert-xsd-text-to-svrl.stylesheet}" if:true="${macro.debug}"/>
+
+            <apply-stylesheet
+                file="${temp.txt}"
+                output="@{output}"
+                stylesheet="${convert-xsd-text-to-svrl.stylesheet}"/>
+
+		</sequential>
+	</macrodef>
+
+    <macrodef
+        name="validate-with-xsd-to-html"
+        description="Validate an XML file and output the validation report as HTML">
+
+        <attribute
+            name="file"
+            description="Source XML file"/>
+
+		<attribute
+            name="output"
+            description="Output report file"/>
+
+        <attribute
+            name="schema"
+            description="Path for XSD file"/>
+
+        <attribute
+            name="namespace"
+            description="Namespace associated with the XSD file"/>
+
+		<sequential>
+
+            <property name="temp.dir" value="${java.io.tmpdir}"/>
+            <property name="temp.delete" value="true"/>
+
+            <local name="temp.svrl"/>
+            <tempfile property="temp.svrl" suffix=".svrl" destdir="${temp.dir}" deleteonexist="${temp.delete}"/>
+
+            <!-- check validation and report...  -->
+			<validate-with-xsd-to-svrl
+                file="@{file}"
+                output="${temp.svrl}"
+                schema="@{schema}"
+                namespace="@{namespace}"/>
+
+            <!-- ...then carry on and convert output to HTML -->
+
+            <!-- TODO if output is blank then don't do this bit -->
+
+            <property
+                name="convert-svrl-to-html.stylesheet"
+                value="convert-svrl-to-html"/>
+
+            <echo message="[validate-xsd-to-html] convert-svrl-to-html.stylesheet=${convert-svrl-to-html.stylesheet}" if:true="${macro.debug}"/>
+
+            <apply-stylesheet
+                file="${temp.svrl}"
+                output="@{output}"
+                stylesheet="${convert-svrl-to-html.stylesheet}"/>
+
+		</sequential>
+	</macrodef>
+
+</project>

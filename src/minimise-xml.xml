@@ -22,7 +22,7 @@ components.
 
 ## Usage
 
-```nohighlight
+```
 &lt;minimise-xml
 &#9;file="source/test.xml"
 &#9;output="build/test-min.xml"

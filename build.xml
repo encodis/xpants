@@ -57,11 +57,12 @@ Summary:     Build file for XPants
 
         <mkdir dir="${build.md.dir}"/>
 
-        <extract-markdown-from-ant
+        <extract-markdown
+            type="ant"
             output="${build.md.dir}">
 
             <fileset dir="${src.dir}"/>
-        </extract-markdown-from-ant>
+        </extract-markdown>
 
         <copy
             todir="${build.md.dir}">
@@ -72,14 +73,14 @@ Summary:     Build file for XPants
         <mkdir dir="${build.deploy.dir}"/>
         <mkdir dir="${build.deploy.dir}/${docs.dir}"/>
 
-        <convert-markdown
+        <pandoc
             output="${build.deploy.dir}/${docs.dir}"
             format="html"
             header="${source.dir}/default-header.md">
             <fileset dir="${build.md.dir}">
                 <include name="*.md"/>
             </fileset>
-        </convert-markdown>
+        </pandoc>
     </target>
 
 

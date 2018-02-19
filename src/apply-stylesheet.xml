@@ -155,7 +155,7 @@ None.
             <!-- fail if required attributes not set -->
             <check-attr-set macro="apply-stylesheet" name="stylesheet" value="@{stylesheet}"/>
 
-            <!-- NOTE do not check for blank output, as this indicates @{file} should be overwritten -->
+            <!-- NOTE do not check for @{output} being blank, as this indicates @{file} should be overwritten -->
 
             <!-- file or dir mode? -->
             <apply-stylesheet-file
@@ -209,6 +209,12 @@ None.
             <!-- fail if file does not exist -->
             <check-file-exists macro="apply-stylesheet-file" file="@{file}"/>
 
+            <!-- set debugging properties -->
+            <property name="temp.dir" value="${java.io.tmpdir}"/>
+            <property name="temp.delete" value="true"/>
+            <property name="xslt.suppresswarnings" value="true"/>
+            <property name="xslt.failonerror" value="true"/>
+
             <!-- set resource path based on how macro was loaded -->
             <condition property="stylesheet.resource.path" value="${xpants.xslt.dir}" else="com/encodis/xpants/xslt">
                 <isset property="xpants.dir"/>
@@ -234,14 +240,9 @@ None.
             <echo message="[apply-stylesheet-file] use.stylesheet=${use.stylesheet}" if:true="${debug.macro}"/>
 
             <local name="temp.file"/>
-            <property name="temp.dir" value="${java.io.tmpdir}"/>
-            <property name="temp.delete" value="true"/>
             <tempfile property="temp.file" prefix="${ant.project.name}" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
             <echo message="[apply-stylesheet-file] temp.file=${temp.file}" if:true="${debug.macro}"/>
-
-            <property name="xslt.suppresswarnings" value="true"/>
-            <property name="xslt.failonerror" value="true"/>
 
             <xslt
             	in="@{file}"
@@ -255,9 +256,9 @@ None.
                     <file file="@{stylesheet}" if:set="given.stylesheet.exists"/>
                 </style>
 
-                <classpath>
+                <!-- <classpath>
                     <pathelement location="/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar"/>
-                </classpath>
+                </classpath> -->
 
                 <factory name="net.sf.saxon.TransformerFactoryImpl">
                     <attribute name="http://saxon.sf.net/feature/ignoreSAXSourceParser" value="true"/>
@@ -382,6 +383,38 @@ None.
                         stylesheet="@{stylesheet}"
                         ext="@{ext}"
                         output="@{output}"/>
+
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="apply-stylesheets"
+        description="Apply a series of stylesheets to a file in place">
+
+        <attribute
+            name="file"
+            description="Source file"/>
+
+        <attribute
+            name="stylesheets"
+            default=""
+            description="List of stylesheets to be applied"/>
+
+        <sequential>
+
+            <property name="for.keepgoing" value="true"/>
+
+            <for list="@{stylesheet}" param="stylesheet" keepgoing="${for.keepgoing}">
+                <sequential>
+
+                    <!-- NOTE leaving out @{output} will cause apply-stylesheet to overwrite @{file} -->
+                    <apply-stylesheet
+                        file="@{file}"
+                        stylesheet="@{stylesheet}"/>
 
                 </sequential>
             </for>

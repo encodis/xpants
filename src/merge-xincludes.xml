@@ -31,7 +31,7 @@ a `fileset` element can be supplied.
 
 ## Usage
 
-```nohighlight
+```
 &lt;merge-xincludes
 &#9;file="file.xml"
 &#9;output="${build.dir}/file-merged.xml"/&gt;
@@ -134,7 +134,7 @@ The following properties can be set on the command line to override the default 
 
             <property
                 name="identity.stylesheet"
-                value="${xpants.dir}/xslt/identity.xsl"/>
+                value="identity"/>
 
             <echo message="[merge-xincludes-file] identify.stylesheet=${identity.stylesheet}"/>
 

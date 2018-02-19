@@ -44,7 +44,7 @@ to the basename of the input file and that is used as the output file.
 
 ## Usage
 
-```nohighlight
+```
 &lt;convert-schema
 &#9;file="file.rnc"
 &#9;output="file.xsd"
@@ -52,7 +52,7 @@ to the basename of the input file and that is used as the output file.
 &#9;to="xsd"/&gt;
 ```
 
-```nohighlight
+```
 &lt;convert-rnc-to-xsd
 &#9;file="file.rnc"
 &#9;output="file.xsd"/&gt;
