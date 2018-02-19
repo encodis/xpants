@@ -14,7 +14,7 @@ Alternatively each of the macro files can be copied to a suitable folder (e.g. *
 
 XPants assumes that a number of additional libraries and/or applications are installed:
 
-*   [ANT Contrib](https://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download). XPants uses some tasks defined by ANT Contrib (particuarly the `<for>` and `<propertyregex` tasks).
+*   [ANT Contrib](https://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download). XPants uses some tasks defined by ANT Contrib (particuarly the `<for>` and `<propertyregex>` tasks).
 
 *   [Saxon XSLT and XQuery Processor](https://www.saxonica.com/products/products.xml). XPants uses Saxon for XSLT processing. It's possible to not have Saxon installed, but any use of the `<apply-stylesheet>` macro will fail. XPants should detect and use any installation of Saxon (HE, PE or EE).
 
@@ -77,27 +77,17 @@ Note that in this case, if one macro needs a macro in another file it will autom
 
 XSLTs for:
 
-linearize
-minimize
-remove-docs
+convert-svrl-to-html
+convert-log-to-svrl
+filter-svrl
 
-extract-ant-docs
-extract-xslt-docs
-extract-sch-docs
-
-svrl-to-html
-text-to-svrl
-svrl-filter
+schematron-show-id
+schematron-remove-empty-rules
 
 
-sch-insert-id
-sch-remove-empty
-sch-remove-disabled (combine in sch-filter with params? or keep separate?)
+Macros:
 
-iso/schematron - with ${xpants.xslt.iso.dir}
-
-should we have linearize-xml etc like minimize-xml.xml ??? really this is a "filter XML" - separate
-remove-docs, remove-comments etc? then also a filter-xml macro that will apply a chain of transformations? (like how enhance-schematron did?) - could this be an option in apply-stylesheet, i.e. give a comma sep list? for loop over that? if you are overwriting the file each time then it's ok, else will need to link old temp.file with new temp.file... 
+validate-xml: pick RNG, DTD etc based on... what? declaration in file, type attribute? The loop over dir/file is the same, it's just what kind of validation at the file level.
 
 
 investigate AntLib (see http://www.onjava.com/2006/08/09/ant-1-7-using-antlibs.html for example).
@@ -112,7 +102,7 @@ look at ANT Unit
 
 see also https://stackoverflow.com/questions/5159858/access-antlib-resources-from-within-apache-ant-macros
 
-can't get properties file to load - may be set defaults in each macro that uses them.
+can't get properties file to load - maybe set defaults in each macro that uses them.
 may also have to load env property in any macro that needs it (only find-exe needs it?). load properties file from within macro?
 
 if property is T/F then can set in macro, override on command line, but with say deploy.method can't use as default for macro call - just make the default 'copy'. for aws.profile make it blank so forced to choose one. temp.dir/delete set before call... so don't need properties file
