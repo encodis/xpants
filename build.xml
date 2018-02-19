@@ -98,7 +98,7 @@ Summary:     Build file for XPants
 
         <apply-stylesheet
             output="${build.dir}/temp"
-            stylesheet="./src/xslt/extract-macrodef.xsl">
+            stylesheet="./src/xslt/extract-macrodef-from-ant.xsl">
 
             <fileset dir="${src.dir}">
                 <include name="*.xml"/>

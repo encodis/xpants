@@ -107,7 +107,7 @@ jing.jar
                 output="@{output}"
                 if:blank="@{file}">
                 <input.files/>
-            </validate-rng-dir>
+            </validate-with-rng-dir>
 
 		</sequential>
 	</macrodef>
