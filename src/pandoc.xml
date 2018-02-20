@@ -150,6 +150,7 @@ These macros will set the following (global) properties:
                 filters="@{filters}"
                 lua-filters="@{lua-filters}"
                 variables="@{variables}"
+                output="@{output}"
                 if:blank="@{file}">
                 <input.files/>
             </pandoc-dir>
@@ -219,7 +220,8 @@ These macros will set the following (global) properties:
 
             <!-- fail if required attributes not set -->
             <check-attr-set macro="pandoc-file" name="file" value="@{file}"/>
-            <check-attr-set macro="pandoc-file" name="format" value="@{format}"/>
+            <check-attr-set macro="pandoc-file" name="from" value="@{from}"/>
+            <check-attr-set macro="pandoc-file" name="to" value="@{to}"/>
             <check-attr-set macro="pandoc-file" name="output" value="@{output}"/>
 
             <!-- fail if file does not exist -->
@@ -365,6 +367,7 @@ These macros will set the following (global) properties:
                     <local name="output.file"/>
                     <basename property="output.file" file="@{file}" suffix=".md"/>
 
+                    <!-- TODO get proper extension for output file  -->
                     <pandoc-file
                         file="@{file}"
                         from="@{from}"
@@ -375,7 +378,7 @@ These macros will set the following (global) properties:
                         style="@{style}"
                         filters="@{filters}"
                         lua-filters="@{lua-filters}"
-                        output="@{output}/${output.file}.@{format}"/>
+                        output="@{output}/${output.file}.@{to}"/>
 
                 </sequential>
             </for>

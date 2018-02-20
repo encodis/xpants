@@ -11,7 +11,7 @@ Title:        apply-stylesheet.xml
 Date:         2018-02-14
 Author:       Philip Hodder
 Contact:      philip.hodder@encodis.com
-Summary:      Macro definitions to apply a standard XSLT library stylesheet
+Summary:      Macro definitions to apply an XSLT stylesheet to an XML file
 ...
 
 # apply-stylesheet.xml
@@ -216,7 +216,7 @@ None.
             <property name="xslt.failonerror" value="true"/>
 
             <!-- set resource path based on how macro was loaded -->
-            <condition property="stylesheet.resource.path" value="${xpants.xslt.dir}" else="com/encodis/xpants/xslt">
+            <condition property="stylesheet.resource.path" value="${xpants.dir}/xslt" else="com/encodis/xpants/xslt">
                 <isset property="xpants.dir"/>
             </condition>
 
@@ -224,14 +224,18 @@ None.
             <local name="given.stylesheet.exists"/>
             <available file="@{stylesheet}" type="file" property="given.stylesheet.exists"/>
 
-            <local name="standard.stylesheet.exists"/>
-            <available resource="${stylesheet.resource.path}/@{stylesheet}.xsl" property="standard.stylesheet.exists"/>
+            <local name="standard.stylesheet.file.exists"/>
+            <available file="${stylesheet.resource.path}/@{stylesheet}.xsl" property="standard.stylesheet.file.exists" if:set="xpants.dir"/>
+
+            <local name="standard.stylesheet.resource.exists"/>
+            <available resource="${stylesheet.resource.path}/@{stylesheet}.xsl" property="standard.stylesheet.resource.exists" unless:set="xpants.dir"/>
 
             <fail message="[apply-stylesheet-file] stylesheet '@{stylesheet}' does not exist and/or is not in the XPants library">
                 <condition>
                     <and>
                         <not><isset property="given.stylesheet.exists"/></not>
-                        <not><isset property="standard.stylesheet.exists"/></not>
+                        <not><isset property="standard.stylesheet.file.exists"/></not>
+                        <not><isset property="standard.stylesheet.resource.exists"/></not>
                     </and>
                 </condition>
             </fail>
@@ -252,7 +256,8 @@ None.
                 failonerror="${xslt.failonerror}">
 
                 <style>
-                    <javaresource name="${stylesheet.resource.path}/@{stylesheet}.xsl" unless:set="given.stylesheet.exists"/>
+                    <javaresource name="${stylesheet.resource.path}/@{stylesheet}.xsl" if:set="standard.stylesheet.resource.exists"/>
+                    <file file="${stylesheet.resource.path}/@{stylesheet}.xsl" if:set="standard.stylesheet.file.exists"/>
                     <file file="@{stylesheet}" if:set="given.stylesheet.exists"/>
                 </style>
 

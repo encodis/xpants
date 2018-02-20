@@ -44,12 +44,23 @@ included separately. This may increase load time, as each file loads the environ
     <include file="${xpants.dir}/apply-stylesheet.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/aws.xml"/>
+    <include file="${xpants.dir}/compare-files.xml"/>
+    <include file="${xpants.dir}/compile-schematron.xml"/>
+    <include file="${xpants.dir}/convert-schema.xml"/>
+    <include file="${xpants.dir}/deploy-files.xml"/>
+    <include file="${xpants.dir}/extract-markdown.xml"/>
     <include file="${xpants.dir}/file-checks.xml"/>
     <include file="${xpants.dir}/find-exe.xml"/>
     <include file="${xpants.dir}/git.xml"/>
+    <include file="${xpants.dir}/merge-xincludes.xml"/>
+    <include file="${xpants.dir}/minimise-xml.xml"/>
     <include file="${xpants.dir}/pandoc.xml"/>
     <include file="${xpants.dir}/python.xml"/>
     <include file="${xpants.dir}/ssh.xml"/>
     <include file="${xpants.dir}/tidy.xml"/>
+    <include file="${xpants.dir}/validate-with-dtd.xml"/>
+    <include file="${xpants.dir}/validate-with-rng.xml"/>
+    <include file="${xpants.dir}/validate-with-sch.xml"/>
+    <include file="${xpants.dir}/validate-with-xsd.xml"/>
 
 </project>

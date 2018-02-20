@@ -77,6 +77,8 @@ None.
 
     <!-- macros -->
 
+    <!-- TODO should this be "check-exe-exists" in file-checks.xml  -->
+
     <macrodef
         name="find-exe"
         description="Find the name of the executable">
@@ -107,14 +109,14 @@ None.
             <propertyregex
                 property="property.name"
                 input="@{property}"
-                regexp="(\w+).\w+"
+                regexp="([a-zA-Z0-9_-]+).[a-zA-Z0-9_-]+"
                 replace="\1"/>
 
             <local name="property.ext"/>
             <propertyregex
                 property="property.ext"
                 input="@{property}"
-                regexp="\w+.(\w+)"
+                regexp="[a-zA-Z0-9_-]+.([a-zA-Z0-9_-]+)"
                 replace="\1"/>
 
             <local name="windows.name"/>
@@ -138,7 +140,7 @@ None.
             <fail message="[find-exe] An executable file for '@{property}' cannot be found on the path">
               <condition>
                   <not>
-                      <available file="${@{property}}" filepath="${env.PATH}" />
+                      <available file="${@{property}}" filepath="${env.PATH}"/>
                   </not>
               </condition>
             </fail>

@@ -17,7 +17,7 @@ Summary:     Build file for XPants
     </description>
 
     <!-- load ant-contrib -->
-    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+    <!-- <taskdef resource="net/sf/antcontrib/antlib.xml"/> -->
 
     <!-- include macros/properties -->
     <property environment="env"/>
@@ -29,13 +29,8 @@ Summary:     Build file for XPants
     <property name="docs.dir" value="docs"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
+    <property name="class.path" value="com/encodis/${ant.project.name}"/>
     <property name="jar.file" value="${ant.project.name}-${version.number}.jar"/>
-
-    <!-- use local not deployed versions of macros -->
-    <!-- <property name="xpants.dir" value="${src.dir}"/> -->
-
-    <!-- load default properties -->
-    <property file="${src.dir}/xpants.properties"/>
 
     <!-- include all macros (locally) -->
     <include file="${src.dir}/xpants.xml"/>
@@ -55,29 +50,27 @@ Summary:     Build file for XPants
         name="docs"
         description="Extract Markdown documentation from macro files and create HTML files">
 
-        <mkdir dir="${build.md.dir}"/>
+        <mkdir dir="${build.dir}/md"/>
 
+        <!-- extract Markdown from ANT files -->
         <extract-markdown
             type="ant"
-            output="${build.md.dir}">
+            output="${build.dir}/md">
 
-            <fileset dir="${src.dir}"/>
+            <fileset dir="${src.dir}" includes="*.xml"/>
         </extract-markdown>
 
-        <copy
-            todir="${build.md.dir}">
+        <!-- <copy
+            todir="${build.dir}/md">
             <fileset dir="${docs.dir}" includes="*.md"/>
-        </copy>
+        </copy> -->
 
-        <delete dir="${build.deploy.dir}"/>
-        <mkdir dir="${build.deploy.dir}"/>
-        <mkdir dir="${build.deploy.dir}/${docs.dir}"/>
+        <mkdir dir="${build.dir}/${docs.dir}"/>
 
         <pandoc
-            output="${build.deploy.dir}/${docs.dir}"
-            format="html"
-            header="${source.dir}/default-header.md">
-            <fileset dir="${build.md.dir}">
+            output="${build.dir}/${docs.dir}"
+            to="html">
+            <fileset dir="${build.dir}/md">
                 <include name="*.md"/>
             </fileset>
         </pandoc>
@@ -85,20 +78,19 @@ Summary:     Build file for XPants
 
 
     <target
-        name="build"
-        description="Assemble files for deployment">
+        name="build-distribution"
+        description="Assemble files and build a distribution JAR file"
+        depends="clean">
 
-        <delete dir="${build.dir}/com/encodis/xpants"/>
-        <mkdir dir="${build.dir}/com/encodis/xpants"/>
-
-        <delete dir="${build.dir}/temp"/>
+        <!-- make build dirs -->
+        <mkdir dir="${build.dir}/${class.path}"/>
         <mkdir dir="${build.dir}/temp"/>
-
         <mkdir dir="${dist.dir}"/>
 
+        <!-- extract macrodefs into temp dir -->
         <apply-stylesheet
             output="${build.dir}/temp"
-            stylesheet="./src/xslt/extract-macrodef-from-ant.xsl">
+            stylesheet="${xslt.dir}/extract-macrodef-from-ant.xsl">
 
             <fileset dir="${src.dir}">
                 <include name="*.xml"/>
@@ -107,23 +99,24 @@ Summary:     Build file for XPants
             </fileset>
         </apply-stylesheet>
 
+        <!-- concatenate macrodefs into single antlib file in dist dir -->
         <concat
-            destfile="${build.dir}/com/encodis/xpants/xpants.xml">
+            destfile="${build.dir}/${class.path}/xpants.xml">
             <header>&lt;antlib&gt;</header>
             <footer>&lt;/antlib&gt;</footer>
             <fileset dir="${build.dir}/temp" includes="*.xml"/>
         </concat>
 
-        <delete dir="${build.dir}/temp"/>
-
-        <mkdir dir="${build.dir}/com/encodis/xpants/xslt"/>
+        <!-- copy XSLTs to dist dir -->
+        <mkdir dir="${build.dir}/${class.path}/xslt"/>
 
         <copy
-            todir="${build.dir}/com/encodis/xpants/xslt">
+            todir="${build.dir}/${class.path}/xslt">
 
             <fileset dir="${xslt.dir}" includes="**/*.xsl"/>
         </copy>
 
+        <!-- create dist JAR file -->
         <jar
             destfile="${dist.dir}/${jar.file}">
 
