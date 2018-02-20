@@ -47,6 +47,13 @@ summary:     Build file for XPants
         name="docs"
         description="Extract Markdown documentation from macro files and create HTML files">
 
+        <!-- IDEA concat all MD files into single one (strip YAML?), so docs are a single page, could use for man page -->
+        <!-- IDEA could also put extracted MD in docs folder so that it is exposed in github pages... (but GH pages
+             does not understand YAML metadata...) unless you put index.md in top level and 'published' to docs.
+             can use ant replaceregexp in multi-line mode (c.f. mokuwiki)
+             worth having a concat-markdown macro?
+             -->
+
         <tempfile property="temp.md" destdir="${build.dir}" prefix="md" deleteonexit="true"/>
 
         <mkdir dir="${temp.md}"/>

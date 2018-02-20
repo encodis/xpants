@@ -155,7 +155,7 @@ used to extract Markdown from XSLT files.
             <!-- fail if file does not exist -->
             <check-file-exists macro="extract-markdown-file" file="@{file}"/>
 
-            <!-- detect stylesheet to use -->
+            <!-- detect stylesheet to use, use extension if not specified -->
             <local name="file.ext"/>
             <propertyregex
                 property="file.ext"
@@ -168,6 +168,7 @@ used to extract Markdown from XSLT files.
                 <equals arg1="@{type}" arg2=""/>
             </condition>
 
+            <!-- get stylesheet name -->
             <local name="extract.stylesheet"/>
             <property name="extract.stylesheet" value="extract-markdown-from-${file.type}"/>
 
@@ -218,8 +219,16 @@ used to extract Markdown from XSLT files.
 
                 <sequential>
 
+                    <!-- check for actual extension, might be .xsl -->
+                    <local name="output.ext"/>
+                    <propertyregex
+                        property="output.ext"
+                        input="@{file}"
+                        regexp=".*\.(.*)"
+                        select="\1"/>
+
                     <local name="output.name"/>
-                    <basename property="output.name" file="@{file}" suffix=".xml"/>
+                    <basename property="output.name" file="@{file}" suffix=".${output.ext}"/>
 
                     <extract-markdown-file
                         file="@{file}"

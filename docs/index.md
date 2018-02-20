@@ -26,9 +26,9 @@ XPants assumes that a number of additional libraries and/or applications are ins
 
     > NOTE: Ensure that the relevant Saxon JAR file is in ANT's classpath. Installing Saxon using [Homebrew](brew.sh) on MacOS will place it in a location like **/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar**. The simplest way to fix this is to set up a symbolic link: `$ ln -s /usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar ~/.ant/lib`.
 
-*   XML Resolver
+*   [XML Resolver](http://www.java2s.com/Code/Jar/x/Downloadxmlresolverjar.htm), installed in ANT's classpath. You may get warnings if the corresponding **XMLResolver.properties** file is missing, but these can generally be ignored.
 
-*   A number of macros act as wrappers around command line applications. Obviously these need to be installed to be used. These include: [AWS Command Line Tools](https://aws.amazon.com/cli/), Git, [Pandoc](https://pandoc.org/), [Python](https://www.python.org/), [SSH](https://www.ssh.com/ssh/) and [Tidy](http://www.html-tidy.org/) .
+*   A number of macros act as wrappers around command line applications, which obviously need to be installed to work. These include: [AWS Command Line Tools](https://aws.amazon.com/cli/), Git, [Pandoc](https://pandoc.org/), [Python](https://www.python.org/), [SSH](https://www.ssh.com/ssh/) and [Tidy](http://www.html-tidy.org/).
 
 ## Usage
 
@@ -38,7 +38,7 @@ To use the XPants macros simply include the appropriate task definition at the t
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project
-    name="mybuild"
+    name="myproject"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">
 
@@ -59,7 +59,7 @@ If you have used the alternative installation method (copying individual files t
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project
-    name="mybuild"
+    name="myproject"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">
 

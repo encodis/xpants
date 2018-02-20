@@ -20,9 +20,9 @@ XPants assumes that a number of additional libraries and/or applications are ins
 
     > NOTE: Ensure that the relevant Saxon JAR file is in ANT's classpath. Installing Saxon using [Homebrew](brew.sh) on MacOS will place it in a location like **/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar**. The simplest way to fix this is to set up a symbolic link: `$ ln -s /usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar ~/.ant/lib`.
 
-*   XML Resolver
+*   [XML Resolver](http://www.java2s.com/Code/Jar/x/Downloadxmlresolverjar.htm), installed in ANT's classpath. You may get warnings if the corresponding **XMLResolver.properties** file is missing, but these can generally be ignored.
 
-*   A number of macros act as wrappers around command line applications. Obviously these need to be installed to be used. These include: [AWS Command Line Tools](https://aws.amazon.com/cli/), Git, [Pandoc](https://pandoc.org/), [Python](https://www.python.org/), [SSH](https://www.ssh.com/ssh/) and [Tidy](http://www.html-tidy.org/) .
+*   A number of macros act as wrappers around command line applications, which obviously need to be installed to work. These include: [AWS Command Line Tools](https://aws.amazon.com/cli/), Git, [Pandoc](https://pandoc.org/), [Python](https://www.python.org/), [SSH](https://www.ssh.com/ssh/) and [Tidy](http://www.html-tidy.org/).
 
 ## Usage
 
@@ -75,45 +75,33 @@ Note that in this case, if one macro needs a macro in another file it will autom
 
 ## TODO
 
-XSLTs for:
+### XSLTs
 
 convert-svrl-to-html
+
 convert-log-to-svrl
+
 filter-svrl
 
 schematron-show-id
-schematron-remove-empty-rules
+
+## Notes
+
+### Antlib
+
+See https://stackoverflow.com/questions/5159858/access-antlib-resources-from-within-apache-ant-macros for accessing XSLTs as a resource from the JAR file.
+
+xpants.properties does not get loaded by <taskdef resource="..."/>. This also seems to happen to ANT Contrib itself. So set defaults in each macrodef that uses them---set attribute defaults directly, rather than going through a property (e.g. the <deploy-files> method attribute has a default of "copy" rather than "${deploy.method}" but that property is set, so can be overidden). Also, only load environment variables when needed (e.g. check-exe-exists).
+
+See https://www.saxonica.com/html/documentation/using-xsl/embedding/jaxp-transformation.html for how to use different factories for the various Saxon installs, and how to decide at run time.
 
 
-Macros:
+### AntUnit
 
-validate-xml: pick RNG, DTD etc based on... what? declaration in file, type attribute? The loop over dir/file is the same, it's just what kind of validation at the file level.
+Check this out for testing.
 
 
-investigate AntLib (see http://www.onjava.com/2006/08/09/ant-1-7-using-antlibs.html for example).
-Not clear how to package (in Jar? with manifest?) or if you can use include, set default properties (this could be done in a macro itself, called by each other macro) and so on. Also would the XSLTs  be available from within the Jar? if only macros there are no classes so namespace in awkward. might have to make a xpants.xml using an XSLT to extract all the macrodef's. jar file could live in
-.ant/lib
-
-look at how antcontrib works... can have properties file in it etc. that might also be how you include files: <taskdef resource="com/encodis/xpants/git.xml"/>, but in this case git.xml might need to be structured as an antlib i.e. only macrodef
-
-need to concat all macrodefs into one antlib file
-
-look at ANT Unit
-
-see also https://stackoverflow.com/questions/5159858/access-antlib-resources-from-within-apache-ant-macros
-
-can't get properties file to load - maybe set defaults in each macro that uses them.
-may also have to load env property in any macro that needs it (only find-exe needs it?). load properties file from within macro?
-
-if property is T/F then can set in macro, override on command line, but with say deploy.method can't use as default for macro call - just make the default 'copy'. for aws.profile make it blank so forced to choose one. temp.dir/delete set before call... so don't need properties file
-
-MUST have xmlresolver.jar from http://www.java2s.com/Code/Jar/x/Downloadxmlresolverjar.htm in ant/lib. Getting warnings about loading XMLResolver.properties
-
-See https://www.saxonica.com/html/documentation/using-xsl/embedding/jaxp-transformation.html for using diff factories for diff Saxon installs. Also must work out how to identify the Saxon installed etc
-
-https://gist.github.com/joewiz/f44a29c61ae23b16b478dfabe0fefbac
-
-## XMLResolver.properties
+### XMLResolver.properties
 
 ```
 ########################################################################

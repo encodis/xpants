@@ -82,6 +82,10 @@ Deploy different filesets for 'latest' and 'versioned' files:
 
 ## Properties
 
+Override the following property to force a deployment method:
+
+*   *deploy.method* The default is 'copy'. Alternatives are 'sync', 'ssh' and 'aws'.
+
 The following properties are required when using the 'scp' method:
 
 *   *ssh.host*
@@ -224,16 +228,19 @@ The following properties are required when using the 'aws' method:
             <!-- fail if @{clean} not specified correctly -->
             <check-attr-list macro="deploy-files" name="clean" value="@{clean}" list="target,files,none"/>
 
-            <!-- fail if @{method} is not specified correctly -->
-            <check-attr-list macro="deploy-files" name="method" value="@{method}" list="copy,sync,scp,aws"/>
-
             <!-- choose deploy method -->
-            <echo message="[deploy-files] method=@{method}" if:true="${macro.debug}"/>
-
             <!-- TODO detect best deploy method based on target characteristics -->
 
-            <local name="method.@{method}"/>
-            <property name="method.@{method}" value="true"/>
+            <property name="deploy.method" value="@{method}"/>
+
+            <!-- fail if @{method} or ${deploy.method} is not specified correctly -->
+            <check-attr-list macro="deploy-files" name="method" value="${deploy.method}" list="copy,sync,scp,aws"/>
+
+            <property name="method.${deploy.method}" value="true"/>
+
+            <echo message="[deploy-files] method='@{method}', deploy.method='${deploy.method}'" if:true="${macro.debug}"/>
+
+            <!-- deploy files -->
 
             <deploy-files-copy
                 target="@{target}"
