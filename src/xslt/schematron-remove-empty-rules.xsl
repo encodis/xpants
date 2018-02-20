@@ -11,12 +11,12 @@
     <doc:doc>
         <doc:desc>
 ---
-Project:        XPants
-Title:          schematron-remove-empty-rules.xsl
-Date:           2018-02-20
-Author:         Philip Hodder
-Contact:        philip.hodder@encodis.com
-Summary:        Transform to remove any Schematron rule that does not contain a report or assert
+project:        XML - Practical ANT Scripts
+title:          schematron-remove-empty-rules.xsl
+date:           2018-02-20
+author:         Philip Hodder
+contact:        philip.hodder@encodis.com
+summary:        Transform to remove any Schematron rule that does not contain a report or assert
 ...
 
 # schematron-remove-empty-rules.xsl

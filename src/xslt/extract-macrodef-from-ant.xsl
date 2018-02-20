@@ -9,12 +9,12 @@
     <doc:doc id="markdown">
         <doc:desc>
 ---
-Project:    XPants
-Title:      extract-macrodef-from-ant.xsl
-Date:       2018-02-15
-Author:     Philip Hodder
-Contact:    philip.hodder@encodis.com
-Summary:    Extract macrodefs from ANT build files
+project:    XML - Practical ANT Scripts
+title:      extract-macrodef-from-ant.xsl
+date:       2018-02-15
+author:     Philip Hodder
+contact:    philip.hodder@encodis.com
+summary:    Extract macrodefs from ANT build files
 ...
 
 # extract-macrodef-from-ant.xsl

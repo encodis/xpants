@@ -10,12 +10,12 @@
     <doc:doc>
         <doc:desc>
 ---
-Project:        XPants
-Title:          remove-processing-instructions.xsl
-Date:           2016-04-08
-Author:         Philip Hodder
-Contact:        philip.hodder@encodis.com
-Summary:        Remove processing instruction nodes from an XML instance document
+project:        XML - Practical ANT Scripts
+title:          remove-processing-instructions.xsl
+date:           2016-04-08
+author:         Philip Hodder
+contact:        philip.hodder@encodis.com
+summary:        Remove processing instruction nodes from an XML instance document
 ...
 
 # remove-processing-instructions.xsl

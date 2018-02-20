@@ -6,12 +6,12 @@
 
 	<description>
 ---
-Project:      XPants
-Title:        validate-with-dtd.xml
-Date:         2018-02-19
-Author:       Philip Hodder
-Contact:      philip.hodder@encodis.com
-Summary:      Macro definitions to validate using DTD files
+project:      XML - Practical ANT Scripts
+title:        validate-with-dtd.xml
+date:         2018-02-19
+author:       Philip Hodder
+contact:      philip.hodder@encodis.com
+summary:      Macro definitions to validate using DTD files
 ...
 
 # validate-with-dtd.xml

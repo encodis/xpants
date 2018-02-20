@@ -9,12 +9,12 @@
     <doc:doc>
         <doc:desc>
 ---
-Project:        XPants
-Title:          extract-markdown-from-xsl.xsl
-Date:           2018-02-19
-Author:         Philip Hodder
-Contact:        philip.hodder@encodis.com
-Summary:        Extract Markdown from XSLT files
+project:        XML - Practical ANT Scripts
+title:          extract-markdown-from-xsl.xsl
+date:           2018-02-19
+author:         Philip Hodder
+contact:        philip.hodder@encodis.com
+summary:        Extract Markdown from XSLT files
 ...
 
 # extract-markdown-from-xsl.xsl

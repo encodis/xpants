@@ -9,12 +9,12 @@
     <doc:doc id="markdown">
         <doc:desc>
 ---
-Project:        Xpants
-Title:          identity.xsl
-Date:           2018-02-14
-Author:         Nic Gibson
-Contact:        nic@corbas.com
-Summary:        Default identity transform
+project:        XML - Practical ANT Scripts
+title:          identity.xsl
+date:           2018-02-14
+author:         Nic Gibson
+contact:        nic@corbas.com
+summary:        Default identity transform
 ...
 
 # identity.xsl

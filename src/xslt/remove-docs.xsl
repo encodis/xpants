@@ -10,12 +10,12 @@
     <doc:doc>
         <doc:desc>
 ---
-Project:        XPants
-Title:          remove-docs.xsl
-Date:           2018-02-19
-Author:         Philip Hodder
-Contact:        philip.hodder@encodis.com
-Summary:        Remove documentation elements from XML files
+project:        XML - Practical ANT Scripts
+title:          remove-docs.xsl
+date:           2018-02-19
+author:         Philip Hodder
+contact:        philip.hodder@encodis.com
+summary:        Remove documentation elements from XML files
 ...
 
 # remove-docs.xsl

@@ -8,12 +8,12 @@
     <doc:doc>
         <doc:desc>
 ---
-Project:        XPants
-Title:          extract-markdown-from-ant.xsl
-Date:           2018-02-19
-Author:         Philip Hodder
-Contact:        philip.hodder@encodis.com
-Summary:        Extract Markdown from ANT files
+project:        XML - Practical ANT Scripts
+title:          extract-markdown-from-ant.xsl
+date:           2018-02-19
+author:         Philip Hodder
+contact:        philip.hodder@encodis.com
+summary:        Extract Markdown from ANT files
 ...
 
 # extract-markdown-from-ant.xsl

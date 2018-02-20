@@ -7,12 +7,12 @@
 
     <description>
 ---
-Project:    Xpants
-Title:      attr-checks.xml
-Date:       2018-02-14
-Author:     Philip Hodder
-Contact:    philip.hodder@encodis.com
-Summary:    Macros to check various types of attribute
+project:    XML - Practical ANT Scripts
+title:      attr-checks.xml
+date:       2018-02-14
+author:     Philip Hodder
+contact:    philip.hodder@encodis.com
+summary:    Macros to check various types of attribute
 ...
 
 # attr-checks.xml

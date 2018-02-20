@@ -10,12 +10,12 @@
     <doc:doc>
         <doc:desc>
 ---
-Project:        XPants
-Title:          extract-markdown-from-sch.xsl
-Date:           2018-02-19
-Author:         Philip Hodder
-Contact:        philip.hodder@encodis.com
-Summary:        Extract Markdown from Schematron files
+project:        XML - Practical ANT Scripts
+title:          extract-markdown-from-sch.xsl
+date:           2018-02-19
+author:         Philip Hodder
+contact:        philip.hodder@encodis.com
+summary:        Extract Markdown from Schematron files
 ...
 
 # extract-markdown-from-sch.xsl

@@ -10,12 +10,12 @@
     <doc:doc>
         <doc:desc>
 ---
-Project:        XPants
-Title:          remove-comments.xsl
-Date:           2016-04-08
-Author:         Philip Hodder
-Contact:        philip.hodder@encodis.com
-Summary:        Remove comment nodes from an XML instance document
+project:        XML - Practical ANT Scripts
+title:          remove-comments.xsl
+date:           2016-04-08
+author:         Philip Hodder
+contact:        philip.hodder@encodis.com
+summary:        Remove comment nodes from an XML instance document
 ...
 
 # remove-comments.xsl
