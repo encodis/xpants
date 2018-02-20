@@ -52,12 +52,6 @@ These macros use the following properties:
 
     </description>
 
-    <!-- include macros/properties -->
-    <property environment="env"/>
-
-    <dirname property="xpants.dir" file="${ant.file.attr-checks}"/>
-    <property file="${xpants.dir}/xpants.properties"/>
-
     <!-- macros -->
 
     <macrodef

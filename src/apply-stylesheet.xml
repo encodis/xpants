@@ -109,10 +109,7 @@ None.
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- include macros/properties -->
-    <property environment="env"/>
-
     <dirname property="xpants.dir" file="${ant.file.apply-stylesheet}"/>
-    <property file="${xpants.dir}/xpants.properties"/>
 
     <property name="xpants.xslt.dir" value="${xpants.dir}/xslt"/>
 

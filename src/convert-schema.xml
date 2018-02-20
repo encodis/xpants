@@ -86,10 +86,7 @@ _in_ and _out_ attributes appropriately:
     </description>
 
     <!-- include macros/properties -->
-    <property environment="env"/>
-
     <dirname property="xpants.dir" file="${ant.file.convert-schema}"/>
-    <property file="${xpants.dir}/xpants.properties"/>
 
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-checks.xml"/>

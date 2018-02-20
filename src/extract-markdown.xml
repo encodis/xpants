@@ -77,10 +77,7 @@ used to extract Markdown from XSLT files.
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- include macros/properties -->
-    <property environment="env"/>
-
     <dirname property="xpants.dir" file="${ant.file.extract-markdown}"/>
-    <property file="${xpants.dir}/xpants.properties"/>
 
     <include file="${xpants.dir}/apply-stylesheet.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>

@@ -84,12 +84,6 @@ These macros create the following (global) properties:
 
     </description>
 
-    <!-- include macros/properties -->
-    <property environment="env"/>
-
-    <dirname property="xpants.dir" file="${ant.file.file-checks}"/>
-    <property file="${xpants.dir}/xpants.properties"/>
-
     <!-- macros -->
 
     <macrodef

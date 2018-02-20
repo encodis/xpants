@@ -26,8 +26,8 @@ processed, using the _output_ attribute as the resulting file name for the repor
 By default this will be all files in all folders, starting in the current directory. However,
 a `fileset` element can be supplied.
 
-}}} NOTE: It is the responsibility of the calling task to ensure that any output folders are
-}}} created before running this task.
+&gt; NOTE: It is the responsibility of the calling task to ensure that any output folders are
+created before running this task.
 
 ## Usage
 
@@ -61,10 +61,7 @@ The following properties can be set on the command line to override the default 
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- include macros/properties -->
-    <property environment="env"/>
-
     <dirname property="xpants.dir" file="${ant.file.merge-xincludes}"/>
-    <property file="${xpants.dir}/xpants.properties"/>
 
     <include file="${xpants.dir}/apply-stylesheet.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>

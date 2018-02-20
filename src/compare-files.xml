@@ -165,10 +165,7 @@ a compact difference file.
     </description>
 
     <!-- include macros/properties -->
-    <property environment="env"/>
-
     <dirname property="xpants.dir" file="${ant.file.compare-files}"/>
-    <property file="${xpants.dir}/xpants.properties"/>
 
     <include file="${xpants.dir}/file-checks.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>

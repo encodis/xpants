@@ -41,10 +41,7 @@ The following properties can be set on the command line to override the default 
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- include macros/properties -->
-    <property environment="env"/>
-
     <dirname property="xpants.dir" file="${ant.file.aws}"/>
-    <property file="${xpants.dir}/xpants.properties"/>
 
     <include file="${xpants.dir}/file-checks.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>

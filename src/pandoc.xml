@@ -44,10 +44,7 @@ These macros will set the following (global) properties:
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- include macros/properties -->
-    <property environment="env"/>
-
     <dirname property="xpants.dir" file="${ant.file.pandoc}"/>
-    <property file="${xpants.dir}/xpants.properties"/>
 
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-checks.xml"/>

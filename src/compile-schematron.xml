@@ -141,10 +141,7 @@ library, rather than on the command line.
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- include macros/properties -->
-    <property environment="env"/>
-
     <dirname property="xpants.dir" file="${ant.file.compile-schematron}"/>
-    <property file="${xpants.dir}/xpants.properties"/>
 
     <include file="${xpants.dir}/apply-stylesheet.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>

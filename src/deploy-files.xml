@@ -71,11 +71,6 @@ Deploy different filesets for 'latest' and 'versioned' files:
 &lt;/deploy-files&gt;
 ```
 
-Specify the deployment environment on the command line:
-
-```
-$ ant deploy -Ddeploy.env=test
-```
 
 ## Dependencies
 
@@ -94,10 +89,7 @@ None.
     </description>
 
     <!-- include macros/properties -->
-    <property environment="env"/>
-
     <dirname property="xpants.dir" file="${ant.file.deploy-files}"/>
-    <property file="${xpants.dir}/xpants.properties"/>
 
     <include file="${xpants.dir}/ssh.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
@@ -229,7 +221,6 @@ None.
             <deploy-files-copy
                 target="@{target}"
                 source="@{source}"
-                env="@{env}"
                 flatten="@{flatten}"
                 clean="@{clean}"
                 overwrite="@{overwrite}"
@@ -240,7 +231,6 @@ None.
             <deploy-files-sync
                 target="@{target}"
                 source="@{source}"
-                env="@{env}"
                 if:set="method.sync">
                 <deploy.files/>
             </deploy-files-sync>
@@ -248,7 +238,6 @@ None.
             <deploy-files-scp
                 target="@{target}"
                 source="@{source}"
-                env="@{env}"
                 clean="@{clean}"
                 if:set="method.scp">
                 <deploy.files/>

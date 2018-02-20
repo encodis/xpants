@@ -50,10 +50,7 @@ The following properties can be set on the command line to override the default 
     </description>
 
     <!-- include macros/properties -->
-    <property environment="env"/>
-
     <dirname property="xpants.dir" file="${ant.file.minimise-xml}"/>
-    <property file="${xpants.dir}/xpants.properties"/>
 
     <include file="${xpants.dir}/attr-checks.xml"/>
 
