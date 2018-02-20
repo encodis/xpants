@@ -60,7 +60,7 @@ behaviour:
     <dirname property="xpants.dir" file="${ant.file.ssh}"/>
     <property file="${xpants.dir}/xpants.properties"/>
 
-    <include file="${xpants.dir}/find-exe.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
 
 
@@ -108,7 +108,7 @@ behaviour:
             <check-attr-set macro="ssh" name="command" value="@{command}"/>
 
             <!-- find ssh.exe -->
-            <find-exe property="ssh.exe" unless:set="ssh.exe"/>
+            <check-exe-exists property="ssh.exe" unless:set="ssh.exe"/>
 
             <!-- TODO should be able to set default host etc from user name in env vars -->
             <property name="exec.failonerror" value="true"/>
@@ -164,7 +164,7 @@ behaviour:
             <check-attr-set macro="ssh-copy" name="target" value="@{target}"/>
 
             <!-- find scp.exe -->
-            <find-exe property="scp.exe" unless:set="scp.exe"/>
+            <check-exe-exists property="scp.exe" unless:set="scp.exe"/>
 
             <!-- run scp with -B (batch mode), -q (quiet), -p (preserve file times), -r (recursive directory copy) -->
             <property name="exec.failonerror" value="true"/>

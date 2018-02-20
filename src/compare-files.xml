@@ -170,7 +170,7 @@ a compact difference file.
     <dirname property="xpants.dir" file="${ant.file.compare-files}"/>
     <property file="${xpants.dir}/xpants.properties"/>
 
-    <include file="${xpants.dir}/find-exe.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
 
     <!-- macros -->
@@ -578,7 +578,7 @@ a compact difference file.
             <check-attr-set macro="diff-files-txt" name="output" value="@{output}"/>
 
             <!-- check for diff exe -->
-            <find-exe property="diff.exe" unless:set="diff.exe"/>
+            <check-exe-exists property="diff.exe" unless:set="diff.exe"/>
 
             <!-- NOTE @{output} will not be created if the files are the same -->
             <property name="exec.failonerror" value="true"/>

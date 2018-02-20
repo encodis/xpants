@@ -56,7 +56,7 @@ Use the _params_ property to set various command line options, e.g.:
 
 ## Properties
 
-*  The **find-exe** macro will be used to set the *tidy.exe* property to the location of the
+*  The **check-exe-exists** macro will be used to set the *tidy.exe* property to the location of the
 *tidy* executable. Override on the command line if required.
 
 ## Change Log
@@ -74,7 +74,6 @@ Use the _params_ property to set various command line options, e.g.:
     <dirname property="xpants.dir" file="${ant.file.tidy}"/>
     <property file="${xpants.dir}/xpants.properties"/>
 
-    <include file="${xpants.dir}/find-exe.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-checks.xml"/>
 
@@ -164,7 +163,7 @@ Use the _params_ property to set various command line options, e.g.:
             <check-attr-set macro="tidy-file" name="file" value="@{file}"/>
 
             <!-- find tidy.exe -->
-            <find-exe property="tidy.exe" unless:set="tidy.exe"/>
+            <check-exe-exists property="tidy.exe" unless:set="tidy.exe"/>
 
             <property name="exec.failonerror" value="true"/>
 

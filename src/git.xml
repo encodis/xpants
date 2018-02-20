@@ -47,7 +47,7 @@ The following properties can be set on the command line to override the default 
     <dirname property="xpants.dir" file="${ant.file.git}"/>
     <property file="${xpants.dir}/xpants.properties"/>
 
-    <include file="${xpants.dir}/find-exe.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
 
 
@@ -82,7 +82,7 @@ The following properties can be set on the command line to override the default 
             <check-attr-set macro="git" name="command" value="@{command}"/>
 
             <!-- find git.exe -->
-            <find-exe property="git.exe" unless:set="git.exe"/>
+            <check-exe-exists property="git.exe" unless:set="git.exe"/>
 
             <!-- run git command -->
             <echo message="[git] command=@{command}" if:true="${macro.debug}"/>

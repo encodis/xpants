@@ -30,7 +30,7 @@ A set of macro definitions to work with *python* modules.
 
 These macros will set the following (global) properties:
 
-*  The **find-exe** macro will be used to set the *pandoc.exe* property to the location of the
+*  The **check-exe-exists** macro will be used to set the *pandoc.exe* property to the location of the
 *pandoc* executable. Override on the command line if required.
 
 
@@ -49,7 +49,6 @@ These macros will set the following (global) properties:
     <dirname property="xpants.dir" file="${ant.file.pandoc}"/>
     <property file="${xpants.dir}/xpants.properties"/>
 
-    <include file="${xpants.dir}/find-exe.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-checks.xml"/>
 
@@ -228,7 +227,7 @@ These macros will set the following (global) properties:
             <check-file-exists macro="pandoc-file" file="@{file}"/>
 
             <!-- check if pandoc executable is available -->
-            <find-exe property="pandoc.exe" windows="pan-doc.exe" unless:set="pandoc.exe"/>
+            <check-exe-exists property="pandoc.exe" windows="pan-doc.exe" unless:set="pandoc.exe"/>
 
             <!-- convert options -->
             <local name="options.list"/>

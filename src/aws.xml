@@ -27,7 +27,7 @@ A set of macro definitions to use *aws* CLI commands within a build file.
 
 The following properties can be set on the command line to override the default behaviour:
 
-*  The **find-exe** macro will be used to set the *aws.exe* property to the location of the
+*  The **check-exe-exists** macro will be used to set the *aws.exe* property to the location of the
 *aws* executable. Override on the command line if required.
 
 
@@ -46,7 +46,7 @@ The following properties can be set on the command line to override the default 
     <dirname property="xpants.dir" file="${ant.file.aws}"/>
     <property file="${xpants.dir}/xpants.properties"/>
 
-    <include file="${xpants.dir}/find-exe.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
 
     <!-- macros -->
@@ -92,7 +92,7 @@ The following properties can be set on the command line to override the default 
             <check-attr-set macro="aws" name="dir" value="@{dir}"/>
 
             <!-- find aws.exe -->
-            <find-exe property="aws.exe" unless:set="aws.exe"/>
+            <check-exe-exists property="aws.exe" unless:set="aws.exe"/>
 
             <!-- run AWS command -->
             <echo message="[aws] command=@{command} @{subcommand}" if:true="${macro.debug}"/>

@@ -30,7 +30,7 @@ A set of macro definitions to work with *python* modules.
 
 These macros will set the following (global) properties:
 
-*  The **find-exe** macro will be used to set the *python.exe* property to the location of the
+*  The **check-exe-exists** macro will be used to set the *python.exe* property to the location of the
 *python* executable. Override on the command line if required.
 *  The *python-update-version* macro will set a property with the version number. The name of the
 property will be based on the module name given, e.g. with `module="mycode.py"` the property will
@@ -52,7 +52,6 @@ be called *mycode.py.version.number*.
     <dirname property="xpants.dir" file="${ant.file.python}"/>
     <property file="${xpants.dir}/xpants.properties"/>
 
-    <include file="${xpants.dir}/find-exe.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-checks.xml"/>
 
@@ -96,7 +95,7 @@ be called *mycode.py.version.number*.
             </fail>
 
             <!-- check python exists in path -->
-            <find-exe property="python.exe" unless:set="python.exe"/>
+            <check-exe-exists property="python.exe" unless:set="python.exe"/>
 
             <!-- check script exists -->
             <check-file-exists macro="python" file="@{script}" unless:blank="@{script}"/>
