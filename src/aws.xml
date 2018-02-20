@@ -54,7 +54,7 @@ The following properties can be set on the command line to override the default 
 
         <attribute
             name="profile"
-            default=""
+            default="${aws.profile}"
             description="AWS profile"/>
 
         <attribute
@@ -131,6 +131,7 @@ The following properties can be set on the command line to override the default 
 
         <attribute
             name="bucket"
+            default="${aws.bucket}"
             description="Destination bucket"/>
 
         <attribute

@@ -267,9 +267,9 @@ These macros will set the following (global) properties:
                 executable="${pandoc.exe}"
                 searchpath="true"
                 dir=".">
-                <arg line="${options.list}" unless:blank="@{options}"/>
                 <arg value="--from=@{from}"/>
                 <arg value="--to=@{to}"/>
+                <arg line="${options.list}" unless:blank="@{options}"/>
                 <arg value="--template=@{template}" unless:blank="@{template}"/>
                 <arg value="--css=@{style}" unless:blank="@{style}"/>
                 <arg value="--data-dir=@{datadir}" unless:blank="@{datadir}"/>
@@ -363,7 +363,12 @@ These macros will set the following (global) properties:
                     <local name="output.file"/>
                     <basename property="output.file" file="@{file}" suffix=".md"/>
 
-                    <!-- TODO get proper extension for output file  -->
+                    <!-- @{to} might be "html5" which is not a proper extension  -->
+                    <local name="output.ext"/>
+                    <condition property="output.ext" value="html" else="@{to}">
+                        <contains string="@{to}" substring="html"/>
+                    </condition>
+
                     <pandoc-file
                         file="@{file}"
                         from="@{from}"
@@ -374,7 +379,7 @@ These macros will set the following (global) properties:
                         style="@{style}"
                         filters="@{filters}"
                         lua-filters="@{lua-filters}"
-                        output="@{output}/${output.file}.@{to}"/>
+                        output="@{output}/${output.file}.${output.ext}"/>
 
                 </sequential>
             </for>

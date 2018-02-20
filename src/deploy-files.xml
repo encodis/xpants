@@ -8,7 +8,7 @@
 ---
 project:      XML - Practical ANT Scripts
 title:        deploy-files.xml
-date:         2018-02-15
+date:         2018-02-20
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to use deploy files to a location
@@ -20,28 +20,32 @@ A set of macro definitions to deploy sets of files to a designated location. The
 macro ('deploy-file') simply copies a file to a target folder, unless the file
 already exists there. The macro can be told to overwrite the file if necessary.
 
-The second macro ('deploy-files') does the same but for an implicit fileset or a source folder.
-If neither of these is supplied then the macro will fail. This macro can also delete the
-target folder first (_clean=target_) and remove the directory structure of the source files
-(_flatten=true_). The _method_ attribute can be used to get ANT to use the 'sync' task rather
-than 'copy'. This may help with performance in some cases, but cannot be used if either
-the _flatten_ or _clean_ options are used. The _method_ attribute can also be set to 'scp' to
-use the system 'scp' (SSH secure copy), in cases where access to a network file share is
-not possible.
+The second macro ('deploy-files') does the same but for either an implicit fileset or a source
+folder. This macro can also delete the target folder first (*clean=target*) and remove the directory
+structure of the source files (*flatten=true*).
 
-The 'scp' method does __NOT__ use the _root.dir_ property in this way because it is
-copying directly to the host's file system. Instead the _env_ attribute is used
-with the _ssh.root_ property (usually this is "/www" as that is the root of the file system
-once logged in via _ssh_). Note that when deploying to the root of the target environment's
-server the _target_ attribute  must be set to "/" (as it cannot be empty).
+The *method* attribute can be explicitly set to the following values:
+
+*   'copy' This is the default, and uses the native ANT 'copy' task. This presupposes that the
+*target* is reachable on the local machine or suitable network share etc.
+*   'sync' This uses the native ANT 'sync' task. This presupposes that the *target* is reachable on
+the local machine or suitable network share etc. This may help with performance in some cases (e.g.
+a target needs updating but not many files have changed). The *flatten* and *clean* options are
+ignored.
+*   'scp' This use the SSH secure copy program. In this case the properties *ssh.host*, *ssh.user*
+and *ssh.keys* must also be set as described in the [ssh](ssh.html) macro. Also in this case the
+*target* attribute must start with the root location on the host (e.g. "/www" for a web server). The
+*clean* option can be set to clean the *target* folder.
+*   'aws' This uses the AWS CLI program to synchronise to an S3 bucket. The properties *aws.profile*
+and *aws.bucket* must also be set as described in the [aws](aws.html) macro. The *flatten*, *clean*
+and *overwrite* options are ignored.
 
 ## Usage
 
 ```
-&lt;property name="deploy.target" value="${deploy.area}/${deploy.type}/${project.name}"/&gt;
+&lt;property name="deploy.target" value="${project.deploy.area}/${project.name}"/&gt;
 
 &lt;deploy-files
-&#9;env="cape"
 &#9;target="${deploy.target}/docs"&gt;
 &#9;&lt;fileset&gt;
 &#9;&#9;&lt;include name="build/*.html"/&gt;
@@ -53,20 +57,17 @@ Deploy different filesets for 'latest' and 'versioned' files:
 
 ```
 &lt;deploy-files
-&#9;env="cape"
-&#9;target="assets/products/content-delivery/common"&gt;
+&#9;target="\\myfile.share\${department}\${assets}"&gt;
 &#9;&lt;fileset&gt;
-&#9;&#9;&lt;fileset dir="." includes="compiled/*.sch"/&gt;
+&#9;&#9;&lt;fileset dir="." includes="build/*.dat"/&gt;
 &#9;&lt;/fileset&gt;
 &lt;/deploy-files&gt;
 
 &lt;deploy-files
-&#9;env="cape"
-&#9;target="assets/products/content-delivery/common/v1.2"&gt;
+&#9;target="\\myfile.share\${department}\${assets}\v1.2"&gt;
 &#9;&lt;fileset dir="."&gt;
-&#9;&#9;&lt;include name="compiled/*.sch"/&gt;
+&#9;&#9;&lt;include name="build/*.dat"/&gt;
 &#9;&#9;&lt;include name="docs/*.html"/&gt;
-&#9;&#9;&lt;include name="models/instances/*.xml"/&gt;
 &#9;&lt;/fileset&gt;
 &lt;/deploy-files&gt;
 ```
@@ -74,13 +75,24 @@ Deploy different filesets for 'latest' and 'versioned' files:
 
 ## Dependencies
 
+* ${xpants.dir}/aws.xml
+* ${xpants.dir}/ssh.xml
 * ${xpants.dir}/attr-checks.xml
 * ${xpants.dir}/file-checks.xml
-* ${xpants.dir}/ssh.xml
 
 ## Properties
 
-None.
+The following properties are required when using the 'scp' method:
+
+*   *ssh.host*
+*   *ssh.user*
+*   *ssh.keys*
+
+The following properties are required when using the 'aws' method:
+
+*   *aws.profile*
+*   *aws.bucket*
+
 
 ## Change Log
 
@@ -91,6 +103,7 @@ None.
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.deploy-files}"/>
 
+    <include file="${xpants.dir}/aws.xml"/>
     <include file="${xpants.dir}/ssh.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-checks.xml"/>
@@ -99,7 +112,7 @@ None.
 
     <macrodef
         name="deploy-file"
-        description="Deploy a file to a designated location">
+        description="Deploy a file to a designated target folder">
 
         <attribute
             name="file"
@@ -107,7 +120,7 @@ None.
 
         <attribute
             name="target"
-            description="Target destination folder for deployment"/>
+            description="Destination folder for deployment"/>
 
         <attribute
             name="overwrite"
@@ -150,6 +163,8 @@ None.
             <!-- copy file -->
             <copy file="@{file}" tofile="${target.path}" overwrite="true" verbose="${macro.debug}"/>
 
+            <!-- TODO use/detect alternate deploy methods -->
+
         </sequential>
     </macrodef>
 
@@ -159,7 +174,7 @@ None.
 
         <attribute
             name="target"
-            description="Root target destination for deployment on designated environment"/>
+            description="Root destination folder for deployment"/>
 
         <attribute
             name="source"
@@ -184,9 +199,9 @@ None.
         <attribute
             name="method"
             default="copy"
-            description="Method to use to copy the fileset to the target folder [copy,sync,scp]"/>
+            description="Method to use to copy the fileset to the target folder [copy,sync,scp,aws]"/>
 
-            <!-- TODO method=auto, would work out best method based on @target (e.g. starts wih "\\" or contains "http" etc) -->
+            <!-- TODO method=auto, would work out best method based on @target (e.g. starts with "\\" or contains "http" etc) -->
 
         <element
             name="deploy.files"
@@ -210,13 +225,15 @@ None.
             <check-attr-list macro="deploy-files" name="clean" value="@{clean}" list="target,files,none"/>
 
             <!-- fail if @{method} is not specified correctly -->
-            <check-attr-list macro="deploy-files" name="method" value="@{method}" list="copy,sync,scp"/>
+            <check-attr-list macro="deploy-files" name="method" value="@{method}" list="copy,sync,scp,aws"/>
 
             <!-- choose deploy method -->
-            <echo message="[deploy-files] method=@{method}, deploy.method=${deploy.method}" if:true="${macro.debug}"/>
+            <echo message="[deploy-files] method=@{method}" if:true="${macro.debug}"/>
 
-            <local name="method.${deploy.method}"/>
-            <property name="method.${deploy.method}" value="true"/>
+            <!-- TODO detect best deploy method based on target characteristics -->
+
+            <local name="method.@{method}"/>
+            <property name="method.@{method}" value="true"/>
 
             <deploy-files-copy
                 target="@{target}"
@@ -231,6 +248,7 @@ None.
             <deploy-files-sync
                 target="@{target}"
                 source="@{source}"
+                overwrite="@{overwrite}"
                 if:set="method.sync">
                 <deploy.files/>
             </deploy-files-sync>
@@ -243,16 +261,23 @@ None.
                 <deploy.files/>
             </deploy-files-scp>
 
+            <deploy-files-aws
+                target="@{target}"
+                source="@{source}"
+                if:set="method.aws">
+                <deploy.files/>
+            </deploy-files-aws>
+
         </sequential>
     </macrodef>
 
     <macrodef
         name="deploy-files-copy"
-        description="Deploy a set of files to a location designated by the deployment environment and target, using ant copy">
+        description="Deploy a set of files to a target location folder, using ant copy">
 
         <attribute
             name="target"
-            description="Root target destination for deployment on designated environment"/>
+            description="Root destination folder for deployment"/>
 
         <attribute
             name="source"
@@ -267,7 +292,7 @@ None.
         <attribute
             name="clean"
             default="false"
-            description="Remove target directory before deploying [target,files,none]"/>
+            description="Remove target directory/files before deploying [target,files,none]"/>
 
         <attribute
             name="overwrite"
@@ -310,7 +335,7 @@ None.
             </condition>
 
             <!-- delete files _in_ target dir, but not target dir itself -->
-            <delete includeEmptyDirs="true" verbose="${macro.debug}" if:true="${clean.files}">
+            <delete includeemptydirs="true" verbose="${macro.debug}" if:true="${clean.files}">
                 <fileset dir="${deploy.root}@{target}" includes="*.*"/>
             </delete>
 
@@ -332,11 +357,11 @@ None.
 
     <macrodef
         name="deploy-files-sync"
-        description="Deploy a set of files to a location designated by the deployment environment and target, using ant sync">
+        description="Deploy a set of files to a target location, using ant sync">
 
         <attribute
             name="target"
-            description="Root target destination for deployment on designated environment"/>
+            description="Root destination folder for deployment"/>
 
         <attribute
             name="source"
@@ -384,11 +409,11 @@ None.
 
     <macrodef
         name="deploy-files-scp"
-        description="Deploy a source folder to a location designated by the deployment environment and target, using scp">
+        description="Deploy a set of files to a target location, using scp">
 
         <attribute
             name="target"
-            description="Root target destination for deployment on designated environment"/>
+            description="Root destination folder for deployment"/>
 
         <attribute
             name="source"
@@ -398,7 +423,7 @@ None.
         <attribute
             name="clean"
             default="false"
-            description="Remove target directory before deploying [target,files,none]"/>
+            description="Remove target directory/files before deploying [target,files,none]"/>
 
         <element
             name="deploy.files"
@@ -411,12 +436,15 @@ None.
             <!-- check scp options -->
             <!-- NOTE have already checked that source/deploy are valid/not empty etc -->
 
-            <!-- if @source is blank create a file list from the deploy fileset, map to unix path conventions -->
-            <local name="source.temp"/>
+            <!-- if @{source} is blank copy deploy fileset into temp folder, map to unix path conventions -->
             <property name="temp.dir" value="${java.io.tmpdir}"/>
             <property name="temp.delete" value="true"/>
+
+            <local name="source.temp"/>
             <tempfile property="source.temp" destdir="${temp.dir}" prefix="scp" deleteonexit="${temp.delete}" if:blank="@{source}"/>
+
             <mkdir dir="${source.temp}" if:blank="@{source}"/>
+
             <copy todir="${source.temp}" if:blank="@{source}">
                 <deploy.files/>
             </copy>
@@ -434,7 +462,7 @@ None.
 
             <!-- clean folder ("target") or files ("target/*") -->
             <ssh-delete dir="@{target}" if:true="${clean.target}"/>
-            <ssh-delete dir="@{target}/*.*" recursive="false" if:true="${clean.files}"/>
+            <ssh-delete dir="@{target}/*" recursive="false" if:true="${clean.files}"/>
 
             <!-- make target folder (fails silently if already exists) -->
             <ssh-mkdir dir="@{target}"/>
@@ -445,6 +473,60 @@ None.
 
             <!-- change file permissions (even though using "ca" user for this and Samba share?) -->
             <ssh-chmod dir="@{target}"/>
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="deploy-files-aws"
+        description="Deploy a set of files to a target location, using awscli">
+
+        <attribute
+            name="target"
+            description="Root destination folder for deployment"/>
+
+        <attribute
+            name="source"
+            default=""
+            description="Directory to deploy, if fileset not specified"/>
+
+        <element
+            name="deploy.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- check aws options -->
+            <!-- NOTE have already checked that source/deploy are valid/not empty etc -->
+
+            <!-- if @{source} is blank copy deploy fileset into temp folder, map to unix path conventions -->
+            <property name="temp.dir" value="${java.io.tmpdir}"/>
+            <property name="temp.delete" value="true"/>
+
+            <local name="source.temp"/>
+            <tempfile property="source.temp" destdir="${temp.dir}" prefix="aws" deleteonexit="${temp.delete}" if:blank="@{source}"/>
+
+            <mkdir dir="${source.temp}" if:blank="@{source}"/>
+
+            <copy todir="${source.temp}" if:blank="@{source}">
+                <deploy.files/>
+            </copy>
+
+            <!-- sync source or source.temp, depending on how called -->
+            <aws-s3-sync
+                profile="${aws.profile}"
+                source="@{source}"
+                target="@{target}"
+                bucket="${aws.bucket}" unless:blank="@{source}"/>
+
+            <aws-s3-sync
+                profile="${aws.profile}"
+                source="${source.temp}"
+                target="@{target}"
+                bucket="${aws.bucket}" if:blank="@{source}"/>
+
         </sequential>
     </macrodef>
 

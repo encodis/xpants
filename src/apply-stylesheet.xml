@@ -258,10 +258,6 @@ None.
                     <file file="@{stylesheet}" if:set="given.stylesheet.exists"/>
                 </style>
 
-                <!-- <classpath>
-                    <pathelement location="/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar"/>
-                </classpath> -->
-
                 <factory name="net.sf.saxon.TransformerFactoryImpl">
                     <attribute name="http://saxon.sf.net/feature/ignoreSAXSourceParser" value="true"/>
                     <!-- NOTE sourceParserClass always ignored by ANT's xslt task -->
@@ -269,7 +265,7 @@ None.
                     <attribute name="http://saxon.sf.net/feature/entityResolverClass" value="org.xmlresolver.Resolver"/>
                     <attribute name="http://saxon.sf.net/feature/uriResolverClass" value="org.xmlresolver.Resolver"/>
                     <!-- <attribute name="http://saxon.sf.net/feature/validation" value="false"/> -->
-                    <!-- TODO check that turning this on is OK for regular transforms -->
+                    <!-- TODO check that turning xinclude-aware on is OK for regular transforms -->
                     <attribute name="http://saxon.sf.net/feature/xinclude-aware" value="true"/>
                 </factory>
 
@@ -312,10 +308,7 @@ None.
 
             <!-- if no extension given use existing one, given extension must have leading "." -->
             <local name="file.ext"/>
-            <condition
-                property="file.ext"
-                value=".${suffix.name}"
-                else="@{ext}">
+            <condition property="file.ext" value=".${suffix.name}" else="@{ext}">
                 <equals arg1="@{ext}" arg2=""/>
             </condition>
 
@@ -376,10 +369,7 @@ None.
 
                 <sequential>
 
-                    <!-- if ext isset then replace file ext -->
-                    <!-- TODO set output file name and dir here, not in a-s-file ???
-                         yes scope for simplifying this but need @ext as cannot infer like
-                         for convert-markdown etc -->
+                    <!-- NOTE set file ext in apply-stylesheet-file because it is independant of transform -->
                     <apply-stylesheet-file
                         file="@{file}"
                         stylesheet="@{stylesheet}"

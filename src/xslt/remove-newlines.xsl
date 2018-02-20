@@ -9,12 +9,12 @@
     <doc:doc>
         <doc:desc>
 ---
-project:        XML - Practical ANT Scripts
-title:          remove-newlines.xsl
-date:           2018-02-19
-author:         Philip Hodder
-contact:        philip.hodder@encodis.com
-summary:        Remove line breaks and indentation from an XML document
+project:    XML - Practical ANT Scripts
+title:      remove-newlines.xsl
+date:       2018-02-19
+author:     Philip Hodder
+contact:    philip.hodder@encodis.com
+summary:    Remove line breaks and indentation from an XML document
 ...
 
 # remove-newlines.xsl
