@@ -190,23 +190,11 @@ on the nature of the Schematron file:
     </xsl:template>
 
 	<xsl:template match="doc:desc">
-        <xsl:for-each select="tokenize(., '\n')">
-			<!-- remove indentation -->
-			<xsl:if test="not(position() eq 1 and string-length() eq 0)">
-            	<xsl:value-of select="replace(., '^[ \t]+', '')"/><xsl:text>&#xa;</xsl:text>
-			</xsl:if>
-        </xsl:for-each>
-		<xsl:text>&#xa;</xsl:text>
+    	<xsl:value-of disable-output-escaping="yes" select="."/><xsl:text>&#xa;</xsl:text>
     </xsl:template>
 
 	<xsl:template match="doc:log">
-        <xsl:for-each select="tokenize(., '\n')">
-			<!-- remove indentation -->
-			<xsl:if test="not(position() eq 1 and string-length() eq 0)">
-            	<xsl:value-of select="replace(., '^[ \t]+', '')"/><xsl:text>&#xa;</xsl:text>
-			</xsl:if>
-        </xsl:for-each>
-		<xsl:text>&#xa;</xsl:text>
+    	<xsl:value-of disable-output-escaping="yes" select="."/><xsl:text>&#xa;</xsl:text>
     </xsl:template>
 
 	<!-- NOTE pattern defined within a main Schematron file -->

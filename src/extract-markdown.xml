@@ -177,17 +177,6 @@ used to extract Markdown from XSLT files.
                 output="@{output}"
                 stylesheet="${extract.stylesheet}"/>
 
-            <!--
-                Cannot use "<" and ">" in Markdown embedded in XML, so use "&lt;"
-                and "&gt;" and then replace them here. This ensures that code samples in
-                embedded Markdown get displayed correctly. &#9; is replaced by 4 spaces
-                to redo the indentation.
-            -->
-            <!-- TODO check this? -->
-            <replace file="@{output}" token="&lt;" value="&lt;"/>
-            <replace file="@{output}" token="&gt;" value="&gt;"/>
-            <replace file="@{output}" token="&#9;" value="    "/>
-
         </sequential>
     </macrodef>
 

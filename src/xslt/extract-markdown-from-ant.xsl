@@ -60,7 +60,7 @@ documentation. Individual elements can be documented using the _description_ att
 		 i.e. should not need to do replace in the convert ANT macro
 	-->
     <xsl:template match="project/description">
-        <xsl:value-of select="."/><xsl:text>&#xa;</xsl:text>
+        <xsl:value-of disable-output-escaping="yes" select="."/><xsl:text>&#xa;</xsl:text>
     </xsl:template>
 
     <xsl:template match="target[not(preceding::target)]">
