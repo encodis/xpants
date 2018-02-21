@@ -22,6 +22,8 @@ XPants assumes that a number of additional libraries and/or applications are ins
 
 *   [XML Resolver](http://www.java2s.com/Code/Jar/x/Downloadxmlresolverjar.htm), installed in ANT's classpath. You may get warnings if the corresponding **XMLResolver.properties** file is missing, but these can generally be ignored.
 
+*   One of the macros (`<convert-schema>`) requires [Trang](http://www.thaiopensource.com/relaxng/trang.html) to be installed. 
+
 *   A number of macros act as wrappers around command line applications, which obviously need to be installed to work. These include: [AWS Command Line Tools](https://aws.amazon.com/cli/), Git, [Pandoc](https://pandoc.org/), [Python](https://www.python.org/), [SSH](https://www.ssh.com/ssh/) and [Tidy](http://www.html-tidy.org/).
 
 ## Usage

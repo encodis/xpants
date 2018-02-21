@@ -90,6 +90,24 @@ transformed files in the **updated** folder with an extension of ".upd":
 &lt;/apply-stylesheet&gt;
 ```
 
+Apply a list of stylesheets in the XSLT library to a file, overwriting the file:
+
+```
+&lt;apply-stylesheets
+&#9;file="instance-doc.xml"
+&#9;stylesheets="remove-docs,remove-comments,remove-processing-instructions"/&lt;
+```
+
+Process a Schematron file to include all "xinclude" elements in the output file. Note that as the
+XSLT engine is aware of this the file just needs to be run through the identity transform:
+
+```
+&lt;apply-stylesheet
+&#9;file="doc-with-xincludes.xml"
+&#9;output="expanded-doc.xml"
+&#9;stylesheet="identity"/&lt;
+```
+
 ## Dependencies
 
 None.
@@ -391,21 +409,42 @@ None.
             description="Source file"/>
 
         <attribute
+            name="output"
+            default=""
+            description="Final output file"/>
+
+        <attribute
             name="stylesheets"
             default=""
-            description="List of stylesheets to be applied"/>
+            description="Comma separated list of stylesheets to be applied"/>
 
         <sequential>
 
+            <!-- fail if file does not exist -->
+            <check-file-exists macro="apply-stylesheets" file="@{file}"/>
+
+            <!-- fail if no stylesheets supplied -->
+            <check-attr-set macro="apply-stylesheets" name="stylesheets" value="@{stylesheets}"/>
+
+            <!-- set up output if not blank -->
+            <copy file="@{file}" tofile="@{output}" unless:blank="@{output}"/>
+
+            <!-- apply stylesheets in order -->
             <property name="for.keepgoing" value="true"/>
 
-            <for list="@{stylesheet}" param="stylesheet" keepgoing="${for.keepgoing}">
+            <for list="@{stylesheets}" param="stylesheet" keepgoing="${for.keepgoing}">
                 <sequential>
 
-                    <!-- NOTE leaving out @{output} will cause apply-stylesheet to overwrite @{file} -->
+                    <!-- if @{output} is blank then overwrite @{file}, otherwise overwrite @{output} -->
                     <apply-stylesheet
                         file="@{file}"
-                        stylesheet="@{stylesheet}"/>
+                        stylesheet="@{stylesheet}"
+                        if:blank="@{output}"/>
+
+                    <apply-stylesheet
+                        file="@{output}"
+                        stylesheet="@{stylesheet}"
+                        unless:blank="@{output}"/>
 
                 </sequential>
             </for>

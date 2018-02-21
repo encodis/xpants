@@ -49,7 +49,7 @@ summary:     Build file for XPants
 
         <!-- IDEA concat all MD files into single one (strip YAML?), so docs are a single page, could use for man page -->
         <!-- IDEA could also put extracted MD in docs folder so that it is exposed in github pages... (but GH pages
-             does not understand YAML metadata...) unless you put index.md in top level and 'published' to docs.
+             does not understand YAML metadata...) unless you put index.md in top level (or copied readme?) and 'published' to docs.
              can use ant replaceregexp in multi-line mode (c.f. mokuwiki)
              worth having a concat-markdown macro?
              -->
@@ -119,6 +119,8 @@ summary:     Build file for XPants
         <!-- concatenate macrodefs into single antlib file in dist dir -->
         <!-- IDEA put each macro file in an antlib, so this would go in the XSLT, then xpants.xml
              would use taskdef to include each one separately (and could be auto generated)-->
+        <!-- IDEA have a dummy antlib.xml file with xi:include for each? but that would just
+             include entire files not just macrodefs... -->
         <concat
             destfile="${build.dir}/${class.path}/xpants.xml">
             <header>&lt;antlib&gt;</header>
