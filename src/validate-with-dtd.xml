@@ -17,7 +17,7 @@ summary:      Macro definitions to validate using DTD files
 # validate-with-dtd.xml
 
 A set of macro definitions to validate an XML file using a DTD. Essentially this
-is a wrapper around _ant_'s built in 'xmlvalidate' task, but with enhanced reporting
+is a wrapper around ANT's built in `&lt;xmlvalidate&gt;` task, but with enhanced reporting
 and output file manipulation. The top level macro ("validate-with-dtd") will validate either a
 single file or a folder, depending on the arguments supplied:
 
@@ -54,20 +54,18 @@ created before running this task.
 
 This module uses the following stylesheets:
 
-* __convert-log-to-svrl.xsl__ Converts the _ant_ log to SVRL. (See below)
+* __convert-log-to-svrl.xsl__ Converts the ANT log to SVRL.
 * __convert-svrl-to-html.xsl__ Converts SVRL format into HTML.
 
-
 &gt; NOTE: The 'svrl' output option is not currently functional as the __convert-ant-to-svrl.xsl__
-file has not been written. It was to have been based on a TFS file "dtd-text-to-svrl.xsl"
-but this could not be found.
+file has not been written.
 
 ## Properties
 
 The following properties can be set on the command line to override the default behaviour:
 
-* _convert-log-to-svrl.stylesheet_
-* _convert-svrl-to-html.stylesheet_
+* _convert-log-to-svrl.stylesheet_ The stylesheet to be used to convert ANT log files to SVRL
+* _convert-svrl-to-html.stylesheet_ The stylesheet to be used to convert SVRL to HTML
 
 ## Change Log
 
@@ -238,6 +236,7 @@ The following properties can be set on the command line to override the default 
         </sequential>
     </macrodef>
 
+
 	<macrodef
         name="validate-with-dtd-to-txt"
         description="Validate an XML file and output the validation report as text">
@@ -253,7 +252,7 @@ The following properties can be set on the command line to override the default 
 		<sequential>
 
             <!-- TODO output file should be optional, if not given then use temp file?
-                 but then format is irrelevant, may also wnat property to store true/false result -->
+                 but then format is irrelevant, may also want property to store true/false result -->
 
 			<record name="@{output}" action="start"/>
 
@@ -277,6 +276,15 @@ The following properties can be set on the command line to override the default 
 
             </java> -->
 
+            <!-- TODO look at the various options for xmlvalidate - this might need catalogs to be implemented properly -->
+
+            <!-- TODO a well-formed option? or warning if not? -->
+
+            <!-- see docs on xmlvalidate - using schemavalidate might be better -->
+
+            <!-- validation against ISO/W3C standard schema? -->
+
+            <!-- need a more generic mechanism for catalog specification  -->
 
 			<xmlvalidate
                 file="@{file}"
@@ -311,6 +319,7 @@ The following properties can be set on the command line to override the default 
             <echo message="[validate-with-dtd] '@{file}' is DTD valid" unless:true="${output.valid}"/>
 		</sequential>
 	</macrodef>
+
 
 	<macrodef
         name="validate-with-dtd-to-svrl"
@@ -354,6 +363,7 @@ The following properties can be set on the command line to override the default 
 
 		</sequential>
 	</macrodef>
+
 
     <macrodef
         name="validate-with-dtd-to-html"

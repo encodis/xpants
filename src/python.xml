@@ -28,7 +28,7 @@ distributable Zip file.
 *   *python-install-module* unpacks a Zip file with the given module name and version and runs the
 "install" command of the enclosed **setup.py** script.
 
-&gt: NOTE: "script" refers to a ".py" file (probably local to the build project) while "module"
+&gt; NOTE: "script" refers to a ".py" file (probably local to the build project) while "module"
 refers to an installed module (as would be run with the "-m" option).
 
 ## Usage
@@ -41,7 +41,7 @@ To run a *python* module:
 &#9;&#9;&lt;arg line="--input ${input.dir}"/&gt;
 &#9;&#9;&lt;arg line="--output ${output.dir}"/&gt;
 &#9;&lt;/args&gt;
-<&lt;python>
+&lt;python&gt;
 
 ```
 

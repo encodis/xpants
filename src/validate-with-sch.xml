@@ -89,6 +89,9 @@ The following properties can be set on the command line to override the default 
     generally assume not compiled, add compiled=true to stop that step
     -->
 
+    <!-- is this really compile-schematron | apply-stylesheet | grep for any report/assert ?
+         PLUS error message/list of errors as option? print out or to property/file? -->
+
 	<macrodef
         name="validate-with-sch"
         description="Validate a file according to a Schematron file">

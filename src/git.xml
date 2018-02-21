@@ -25,9 +25,9 @@ of certain *git* commands like "status" and "branch".
 Check the current *git* branch name matches the current version number::
 
 ```
-&lt:property name="version" value="v1.2"/&gt;
+&lt;property name="version" value="v1.2"/&gt;
 
-&lt:git-branch-name pattern="release/${version}"&gt;
+&lt;git-branch-name pattern="release/${version}"&gt;
 ```
 
 ## Dependencies

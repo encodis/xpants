@@ -77,13 +77,13 @@ Note that the contents of the _config_ parameter will depend on the value of the
 When _type_ is "xml" the _config_ parameter must be one of those values supported by
 DeltaXML (see below, these macros adopt a default of "delta"). The _params_ argument is used
 to supply additional configuration options to the selected configuration (see below). When
-_type_ is "txt" this parameter refers to the command line arguments supported by the "diff"
-tool. In _Git Bash_ type `$ diff --help` for more information on the available options.
+_type_ is "txt" this parameter refers to the command line arguments supported by the *diff*
+tool. Run `$ diff --help` for more information on the available options.
 
 ## DeltaXML
 
 To use the XML differencing macros, DeltaXML must first be installed on your local machine with the
-appropriate license server running
+appropriate license server running.
 
 ### Configuration
 
@@ -109,9 +109,10 @@ Full documentation can be found on the [DeltaXML web site](https://docs.deltaxml
 
 The various DeltaXML comparison options can each be parameterised in a variety of ways. These
 can be be viewed by running the DeltaXML __command.jar__ and using the "describe" option to
-list the options for the chosen configuration. For example: `$ java -jar /c/catools/DeltaXMLCore-8_2_1_j/command.jar describe delta`.
+list the options for the chosen configuration. For example:
+`$ java -jar /usr/local/bin/DeltaXMLCore-8_2_1_j/command.jar describe delta`.
 
-Not all config/param options are supported by these _ant_ macros. The ones that are are listed
+Not all config/param options are supported by these macros. The ones that are are listed
 in the table below, together with their default values and their "macro" equivalents.
 
 
@@ -141,22 +142,19 @@ a compact difference file.
 &#9;output="diff-1-2.xml"/&gt;
 ```
 
-
 ## Dependencies
 
-### Executables
-
-*  DeltaXML software installed
-*  The *diff* executable must be installed and available on the PATH.
+*   The *diff* executable must be installed and available on the PATH.
+*   The DeltaXML software must be installed on the system correctly
+*   The DeltaXML license file/server must be installed on the system correctly
 
 ## Properties
 
-* _deltaxml.dir_ Can be used to override the default DeltaXML install location.
-* _diff.exe_ Used to override the default location of the "diff" tool.
+The following properties can be set on the command line to override the default behaviour:
 
-## Files
-
-* DeltaXML license file (must be installed in same folder as the **compare.jar** file)
+*   *diff.exe* The name of the *diff* executable
+*   *deltaxml.dir* The default DeltaXML install location
+(default: **/usr/local/bin/DeltaXMLCore-8_2_1_j**)
 
 ## Change Log
 
@@ -631,7 +629,7 @@ a compact difference file.
             <check-attr-list macro="diff-files-xml" name="config" value="@{config}" list="delta,diffreport,diffreport-sbs,raw,schema,xhtml,doc-delta,doc-diffreport,doc-diffreport-sbs"/>
 
             <!-- default Delta XML location -->
-            <property name="deltaxml.dir" location="C:\catools\DeltaXMLCore-8_2_1_j"/>
+            <property name="deltaxml.dir" location="${user.home}/.ant/lib/DeltaXMLCore-8_2_1_j"/>
 
             <echo message="[diff-files-xml] deltaxml.dir=${deltaxml.dir}" if:true="${macro.debug}"/>
 

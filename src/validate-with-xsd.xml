@@ -206,6 +206,7 @@ The following properties can be set on the command line to override the default 
         </sequential>
     </macrodef>
 
+
     <macrodef
         name="validate-with-xsd-dir"
         description="Validate a folder of XML files against their DTDs">
@@ -262,6 +263,7 @@ The following properties can be set on the command line to override the default 
 
         </sequential>
     </macrodef>
+
 
 	<macrodef
         name="validate-with-xsd-to-txt"
@@ -351,6 +353,7 @@ The following properties can be set on the command line to override the default 
 		</sequential>
 	</macrodef>
 
+
 	<macrodef
         name="validate-with-xsd-to-svrl"
         description="Validate an XML file and output the validation report as SVRL">
@@ -404,6 +407,7 @@ The following properties can be set on the command line to override the default 
 
 		</sequential>
 	</macrodef>
+
 
     <macrodef
         name="validate-with-xsd-to-html"

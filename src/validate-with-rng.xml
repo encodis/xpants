@@ -109,6 +109,7 @@ jing.jar
 		</sequential>
 	</macrodef>
 
+
     <macrodef
         name="validate-with-rng-file"
         description="Validate an individual RNG schema">
@@ -135,6 +136,8 @@ jing.jar
             <check-file-exists macro="validate-with-rng-file" file="@{file}"/>
 
             <record name="@{output}" action="start"/>
+
+            <!-- TODO automate the detection? should be in classpath? look for class? -->
 
             <property name="jing.jar" value="${user.home}/.ant/lib/jing.jar"/>
 
@@ -163,6 +166,7 @@ jing.jar
 
         </sequential>
     </macrodef>
+
 
     <macrodef
         name="validate-with-rng-dir"

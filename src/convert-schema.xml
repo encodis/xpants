@@ -16,11 +16,8 @@ summary:      Macro definitions to between schema formats
 
 # convert-schema.xml
 
-Macro definitions to convert between schema formats.
-
-## Generic conversion: _convert-schema_
-
-The generic macro ("convert-schema") will convert a schema to another format:
+Macro definitions to convert between schema formats. The generic conversion macro is
+*convert-schema*, which will convert a schema to another format as followed:
 
 * The file referred to in the _file_ attribute will be
 converted, using the _output_ attribute (if provided) as the resulting file name.
@@ -29,18 +26,31 @@ converted, using the _output_ attribute (if provided) as the resulting file name
 to the basename of the input file and that is used as the output file.
 
 * The _from_ attribute must be set to the input format. This must be one of:
-&#9;* dtd
-&#9;* rnc
-&#9;* rng
+    * dtd
+    * rnc
+    * rng
 
 * The _to_ attribute must be set to the output format required. This must be one of:
-&#9;* xsd
-&#9;* dtd
-&#9;* rng
-&#9;* rnc
+    * xsd
+    * dtd
+    * rng
+    * rnc
+
+The additional macros listed below are simply wrappers around *convert-schema* which supplies
+default values of the *in* and *out* attributes appropriately:
+
+*   convert-rnc-to-rng
+*   convert-rnc-to-dtd
+*   convert-rnc-to-xsd
+*   convert-rng-to-rnc
+*   convert-rng-to-xsd
+*   convert-rng-to-dtd
+*   convert-dtd-to-rnc
+*   convert-dtd-to-xsd
+*   convert-dtd-to-rng
 
 &gt; NOTE: It is the responsibility of the calling task to ensure that any output folders are
-&gt; created before running this task.
+created before running this task.
 
 ## Usage
 
@@ -58,26 +68,16 @@ to the basename of the input file and that is used as the output file.
 &#9;output="file.xsd"/&gt;
 ```
 
-## Conversion utilities
-
-The additional macros below are simply wrappers around _convert-schema_. They supply default values of the
-_in_ and _out_ attributes appropriately:
-
-* convert-rnc-to-rng
-* convert-rnc-to-dtd
-* convert-rnc-to-xsd
-* convert-rng-to-rnc
-* convert-rng-to-xsd
-* convert-rng-to-dtd
-* convert-dtd-to-rnc
-* convert-dtd-to-xsd
-* convert-dtd-to-rng
-
 ## Dependencies
 
-### JAR files
+*   The [Trang](http://www.thaiopensource.com/relaxng/trang.html) JAR file must be installed on
+ANT's classpath.
 
-* TRANG
+## Properties
+
+Override the following property to change the value of the Trang class being used:
+
+*   *trang.class* (default: "com.thaiopensource.relaxng.translate.Driver")
 
 ## Change Log
 
@@ -104,7 +104,7 @@ _in_ and _out_ attributes appropriately:
         <attribute
             name="output"
             default=""
-            description="Output file name, if not given uses the input file base name with the appropriate suffix."/>
+            description="Output file name"/>
 
         <attribute
             name="from"
@@ -118,7 +118,7 @@ _in_ and _out_ attributes appropriately:
             name="params.trang"
             implicit="true"
             optional="true"
-            description="Trang parameters to be passed to trang input/output modules"/>
+            description="Additional parameters to be passed to Trang's input/output modules"/>
 
         <sequential>
 
@@ -137,21 +137,19 @@ _in_ and _out_ attributes appropriately:
 
             <check-class-path macro="convert-schema" class="${trang.class}"/>
 
-            <echo message="[convert-schema] trang.class=${trang.class}"/>
+            <echo message="[convert-schema] trang.class=${trang.class}" if:true="${macro.debug}"/>
 
             <!-- work out final output name -->
-            <local name="input.basename"/>
-            <basename property="input.basename" file="@{file}" suffix="@{from}"/>
+            <local name="input.name"/>
+            <basename property="input.name" file="@{file}" suffix="@{from}"/>
 
-            <local name="input.dirname"/>
-            <dirname property="input.dirname" file="@{file}"/>
+            <local name="input.path"/>
+            <dirname property="input.path" file="@{file}"/>
 
             <!-- if @{output} is set then use it -->
             <local name="output.name"/>
-
-            <condition property="output.name" value="@{output}" else="${input.dirname}/${input.basename}.@{to}">
-                <not><equals arg1="@{output}" arg2=""/></not>
-            </condition>
+            <property name="output.name" value="@{output}" unless:blank="@{output}"/>
+            <property name="output.name" value="${input.path}/${input.name}.@{to}" if:blank="@{output}"/>
 
             <echo message="[convert-schema] output: ${output.name}" if:true="${macro.debug}"/>
 
@@ -159,10 +157,8 @@ _in_ and _out_ attributes appropriately:
                 failonerror="true"
                 classname="${trang.class}">
 
-                <arg value="-I"/>
-                <arg value="@{from}"/>
-                <arg value="-O"/>
-                <arg value="@{to}"/>
+                <arg line="-I @{from}"/>
+                <arg line="-O @{to}"/>
 		        <arg value="@{file}"/>
 				<arg value="${output.name}"/>
 
@@ -190,7 +186,7 @@ _in_ and _out_ attributes appropriately:
             name="params.trang"
             implicit="true"
             optional="true"
-            description="Trang parameters to be passed to trang input/output modules"/>
+            description="Additional parameters to be passed to Trang's input/output modules"/>
 
         <sequential>
 
@@ -221,7 +217,7 @@ _in_ and _out_ attributes appropriately:
             name="params.trang"
             implicit="true"
             optional="true"
-            description="Trang parameters to be passed to trang input/output modules"/>
+            description="Additional parameters to be passed to Trang's input/output modules"/>
 
         <sequential>
 
@@ -252,7 +248,7 @@ _in_ and _out_ attributes appropriately:
             name="params.trang"
             implicit="true"
             optional="true"
-            description="Trang parameters to be passed to trang input/output modules"/>
+            description="Additional parameters to be passed to Trang's input/output modules"/>
 
         <sequential>
 
@@ -283,7 +279,7 @@ _in_ and _out_ attributes appropriately:
             name="params.trang"
             implicit="true"
             optional="true"
-            description="Trang parameters to be passed to trang input/output modules"/>
+            description="Additional parameters to be passed to Trang's input/output modules"/>
 
         <sequential>
 
@@ -314,7 +310,7 @@ _in_ and _out_ attributes appropriately:
             name="params.trang"
             implicit="true"
             optional="true"
-            description="Trang parameters to be passed to trang input/output modules"/>
+            description="Additional parameters to be passed to Trang's input/output modules"/>
 
         <sequential>
 
@@ -344,7 +340,7 @@ _in_ and _out_ attributes appropriately:
             name="params.trang"
             implicit="true"
             optional="true"
-            description="Trang parameters to be passed to trang input/output modules"/>
+            description="Additional parameters to be passed to Trang's input/output modules"/>
 
         <sequential>
 
@@ -375,7 +371,7 @@ _in_ and _out_ attributes appropriately:
             name="params.trang"
             implicit="true"
             optional="true"
-            description="Trang parameters to be passed to trang input/output modules"/>
+            description="Additional parameters to be passed to Trang's input/output modules"/>
 
         <sequential>
 
@@ -406,7 +402,7 @@ _in_ and _out_ attributes appropriately:
             name="params.trang"
             implicit="true"
             optional="true"
-            description="Trang parameters to be passed to trang input/output modules"/>
+            description="Additional parameters to be passed to Trang's input/output modules"/>
 
         <sequential>
 
@@ -437,7 +433,7 @@ _in_ and _out_ attributes appropriately:
             name="params.trang"
             implicit="true"
             optional="true"
-            description="Trang parameters to be passed to trang input/output modules"/>
+            description="Additional parameters to be passed to Trang's input/output modules"/>
 
         <sequential>
 

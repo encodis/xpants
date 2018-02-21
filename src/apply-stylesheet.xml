@@ -98,8 +98,9 @@ Apply a list of stylesheets in the XSLT library to a file, overwriting the file:
 &#9;stylesheets="remove-docs,remove-comments,remove-processing-instructions"/&lt;
 ```
 
-Process a Schematron file to include all "xinclude" elements in the output file. Note that as the
-XSLT engine is aware of this the file just needs to be run through the identity transform:
+Process a Schematron file to include all "&lt;xi:xinclude&gt;" elements in the output file. Note
+that as the XSLT engine is aware of this the file just needs to be run through the "identity" 
+transform:
 
 ```
 &lt;apply-stylesheet
