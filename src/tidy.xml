@@ -7,7 +7,7 @@
 
     <description>
 ---
-project:    XML - Practical ANT Scripts
+project:    XML Practical ANT Scripts
 title:      tidy.xml
 date:       2018-02-14
 author:     Philip Hodder
@@ -50,14 +50,13 @@ Use the _params_ property to set various command line options, e.g.:
 
 ## Dependencies
 
-### Executables
-
 *  The *tidy* executable must be installed and on the PATH.
 
 ## Properties
 
-*  The **check-exe-exists** macro will be used to set the *tidy.exe* property to the location of the
-*tidy* executable. Override on the command line if required.
+The following properties can be set on the command line to override the default behaviour:
+
+*  *tidy.exe*  The name of the *tidy* executable
 
 ## Change Log
 

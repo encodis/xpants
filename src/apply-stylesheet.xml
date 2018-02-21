@@ -6,7 +6,7 @@
 
     <description>
 ---
-project:    XML - Practical ANT Scripts
+project:    XML Practical ANT Scripts
 title:      apply-stylesheet.xml
 date:       2018-02-14
 author:     Philip Hodder
@@ -48,43 +48,42 @@ The *stylesheet* attribute can be used in one of two ways:
 * Primarily it can be used to specify a relative or absolute path to a stylesheet
 (e.g. `stylesheet="./my-stylesheets/convert.xsl"`).
 
-* However, it can also be used to specify default stylesheets in the XPants XSLT Library.
+* However, it can also be used to specify default stylesheets in the XPantS XSLT Library.
 If the attribute value contains no path related information (e.g. `stylesheet="filter-svrl"`)
 then the macro will try to locate a stylesheet with that name and the extension ".xsl" in the
-**com/encodis/xpants/xslt** resource (i.e. in the XPants jar file). So specifying
+**com/encodis/xpants/xslt** resource (i.e. in the XPantS jar file). So specifying
 `stylesheet="filter-svrl"` will make the macro try and load the resource
 **com/encodis/xpants/xslt/filter-svrl.xsl**.
 
-
 ## Usage
 
-To apply the XPants XSLT standard library stylesheet **remove-doc.xsl** to the **my-schema.xsd**
+To apply the XPantS XSLT standard library stylesheet **remove-docs.xsl** to the **my-schema.xsd**
 file, putting the result into the file **my-schema-nodocs.xsd**:
 
 ```
 &lt;apply-stylesheet
 &#9;file="my-schema.xsd"
 &#9;output="my-schema-nodocs.xsd"
-&#9;stylesheet="remove-doc"/&gt;
+&#9;stylesheet="remove-docs"/&gt;
 ```
 
-To apply the **remove-doc.xsl** stylesheet to the **my-schema.xsd** file in place (so that
+To apply the **remove-docs.xsl** stylesheet to the **my-schema.xsd** file in place (so that
 **my-schema.xsd** is overwritten/updated):
 
 ```
 &lt;apply-stylesheet
 &#9;file="my-schema.xsd"
-&#9;stylesheet="remove-doc"/&gt;
+&#9;stylesheet="remove-docs"/&gt;
 ```
 
-To apply the **remove-doc.xsl** stylesheet to all files in the **schema** folder, putting the
+To apply the **remove-docs.xsl** stylesheet to all files in the **schema** folder, putting the
 transformed files in the **updated** folder with an extension of ".upd":
 
 ```
 &lt;apply-stylesheet
 &#9;output="updated"
 &#9;ext=".upd"
-&#9;stylesheet="remove-doc"&gt;
+&#9;stylesheet="remove-docs"&gt;
 &#9;&lt;fileset dir="schema"&gt;
 &#9;&#9;&lt;include name="*.xml"/&gt;
 &#9;&lt;/fileset&gt;
@@ -227,7 +226,7 @@ None.
             <local name="standard.stylesheet.resource.exists"/>
             <available resource="${stylesheet.resource.path}/@{stylesheet}.xsl" property="standard.stylesheet.resource.exists" unless:set="xpants.dir"/>
 
-            <fail message="[apply-stylesheet-file] stylesheet '@{stylesheet}' does not exist and/or is not in the XPants library">
+            <fail message="[apply-stylesheet-file] stylesheet '@{stylesheet}' does not exist and/or is not in the XPantS library">
                 <condition>
                     <and>
                         <not><isset property="given.stylesheet.exists"/></not>

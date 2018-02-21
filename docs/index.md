@@ -1,14 +1,15 @@
 ---
-project:    XML - Practical ANT Scripts
-title:      XML - Practical ANT Scripts
+project:    XML Practical ANT Scripts
+title:      XML Practical ANT Scripts
 author:     Philip Hodder
 contact:    philip.hodder@lexisnexis.co.uk
 date:       2018-02-20
 ...
 
-# XML - Practical ANT Scripts
+# XML Practical ANT Scripts
 
-XML - Practical ANT Scripts (or "XPants" for short) is a set of ANT macros that can be used to help teams of developers create more robust and repeatable build processes. It has a focus on XML technologies but can be more generally useful.
+XML - Practical ANT Scripts (or "XPantS" for short) is a set of ANT macros that can be used to help teams of developers create more robust and repeatable build processes. It has a focus on XML technologies but can be more generally useful to build, for example, HTML documents from Markdown
+sources and so on.
 
 ## Installation
 
@@ -18,11 +19,11 @@ Alternatively each of the macro files can be copied to a suitable folder (e.g. *
 
 ## Requirements
 
-XPants assumes that a number of additional libraries and/or applications are installed:
+XPantS assumes that a number of additional libraries and/or applications are installed:
 
-*   [ANT Contrib](https://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download). XPants uses some tasks defined by ANT Contrib (particuarly the `<for>` and `<propertyregex>` tasks).
+*   [ANT Contrib](https://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download). XPantS uses some tasks defined by ANT Contrib (particularly the `<for>` and `<propertyregex>` tasks).
 
-*   [Saxon XSLT and XQuery Processor](https://www.saxonica.com/products/products.xml). XPants uses Saxon for XSLT processing. It's possible to not have Saxon installed, but any use of the `<apply-stylesheet>` macro will fail. XPants should detect and use any installation of Saxon (HE, PE or EE).
+*   [Saxon XSLT and XQuery Processor](https://www.saxonica.com/products/products.xml). XPantS uses Saxon for XSLT processing. It's possible to not have Saxon installed, but any use of the `<apply-stylesheet>` macro will fail. XPantS should detect and use any installation of Saxon (HE, PE or EE).
 
     > NOTE: Ensure that the relevant Saxon JAR file is in ANT's classpath. Installing Saxon using [Homebrew](brew.sh) on MacOS will place it in a location like **/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar**. The simplest way to fix this is to set up a symbolic link: `$ ln -s /usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar ~/.ant/lib`.
 
@@ -32,7 +33,7 @@ XPants assumes that a number of additional libraries and/or applications are ins
 
 ## Usage
 
-To use the XPants macros simply include the appropriate task definition at the top of your **build.xml** file, after including the ANT Contrib library. You must also include the "xmlns:if" and "xmlns:unless" declarations in the `<project>` tag.
+To use the XPantS macros simply include the appropriate task definition at the top of your **build.xml** file, after including the ANT Contrib library. You must also include the "xmlns:if" and "xmlns:unless" declarations in the `<project>` tag.
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>

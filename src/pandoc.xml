@@ -6,7 +6,7 @@
 
     <description>
 ---
-project:      XML - Practical ANT Scripts
+project:      XML Practical ANT Scripts
 title:        pandoc.xml
 date:         2018-02-14
 author:       Philip Hodder
@@ -20,19 +20,26 @@ A set of macro definitions to work with *python* modules.
 
 ## Usage
 
+To converts a folder of Markdown files into standalone HTML files:
+
+```
+&lt;pandoc
+&#9;output="${build.dir}/manual"
+&#9;to="html"
+&#9;options="self-contained"&gt;
+&#9;&lt;fileset dir="${docs.dir}" includes="*.md"/&gt;
+&lt;pandoc&gt;
+```
 
 ## Dependencies
 
 *  The *pandoc* executable must be installed and available on the PATH.
 
-
 ## Properties
 
-These macros will set the following (global) properties:
+The following properties can be set on the command line to override the default behaviour:
 
-*  The **check-exe-exists** macro will be used to set the *pandoc.exe* property to the location of the
-*pandoc* executable. Override on the command line if required.
-
+*  *pandoc.exe*  The name of the *pandoc* executable
 
 ## Change Log
 

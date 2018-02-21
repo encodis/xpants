@@ -6,7 +6,7 @@
 
     <description>
 ---
-project:      XML - Practical ANT Scripts
+project:      XML Practical ANT Scripts
 title:        deploy-files.xml
 date:         2018-02-20
 author:       Philip Hodder
@@ -33,12 +33,13 @@ the local machine or suitable network share etc. This may help with performance 
 a target needs updating but not many files have changed). The *flatten* and *clean* options are
 ignored.
 *   'scp' This use the SSH secure copy program. In this case the properties *ssh.host*, *ssh.user*
-and *ssh.keys* must also be set as described in the [ssh](ssh.html) macro. Also in this case the
-*target* attribute must start with the root location on the host (e.g. "/www" for a web server). The
-*clean* option can be set to clean the *target* folder.
+and *ssh.keys* must also be set as described in the [ssh](ssh.html) macro before calling
+*deploy-files* with this method. Also in this case the *target* attribute should start with the root 
+location on the host (e.g. "/www" for a web server). The *clean* option can be set to clean the
+*target* folder.
 *   'aws' This uses the AWS CLI program to synchronise to an S3 bucket. The properties *aws.profile*
-and *aws.bucket* must also be set as described in the [aws](aws.html) macro. The *flatten*, *clean*
-and *overwrite* options are ignored.
+and *aws.bucket* must also be set as described in the [aws](aws.html) macro before calling
+*deploy-files* with this method. The *flatten*, *clean* and *overwrite* options are ignored.
 
 ## Usage
 

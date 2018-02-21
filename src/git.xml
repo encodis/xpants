@@ -6,7 +6,7 @@
 
     <description>
 ---
-project:      XML - Practical ANT Scripts
+project:      XML Practical ANT Scripts
 title:        git.xml
 date:         2018-02-14
 author:       Philip Hodder
@@ -20,16 +20,25 @@ A set of macro definitions to use *git* commands within a build file. The basic
 'git' macro is defined, along with others that set properties using the results
 of certain *git* commands like "status" and "branch".
 
+## Usage
+
+Check the current *git* branch name matches the current version number::
+
+```
+&lt:property name="version" value="v1.2"/&gt;
+
+&lt:git-branch-name pattern="release/${version}"&gt;
+```
+
 ## Dependencies
 
 *  The *git* executable must be installed and available on the PATH.
-
 
 ## Properties
 
 The following properties can be set on the command line to override the default behaviour:
 
-*  *git.exe* Used to specify a specific _git_ binary
+*  *git.exe*  The name of the *git* executable
 
 
 ## Change Log

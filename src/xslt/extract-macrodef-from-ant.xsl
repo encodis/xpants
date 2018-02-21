@@ -9,7 +9,7 @@
     <doc:doc id="markdown">
         <doc:desc>
 ---
-project:    XML - Practical ANT Scripts
+project:    XML Practical ANT Scripts
 title:      extract-macrodef-from-ant.xsl
 date:       2018-02-15
 author:     Philip Hodder
@@ -19,7 +19,8 @@ summary:    Extract macrodefs from ANT build files
 
 # extract-macrodef-from-ant.xsl
 
-This stylesheet extracts `&lt;macrodef&gt;` elements from ANT build files.
+This stylesheet extracts `&lt;macrodef&gt;` elements from ANT build files. This is primarily used to
+build the XPantS distribution.
         </doc:desc>
         <doc:log>
 ## Change Log

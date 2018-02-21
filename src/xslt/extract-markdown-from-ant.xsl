@@ -8,7 +8,7 @@
     <doc:doc>
         <doc:desc>
 ---
-project:        XML - Practical ANT Scripts
+project:        XML Practical ANT Scripts
 title:          extract-markdown-from-ant.xsl
 date:           2018-02-19
 author:         Philip Hodder

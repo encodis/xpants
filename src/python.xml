@@ -6,7 +6,7 @@
 
     <description>
 ---
-project:      XML - Practical ANT Scripts
+project:      XML Practical ANT Scripts
 title:        python.xml
 date:         2018-02-14
 author:       Philip Hodder
@@ -16,26 +16,50 @@ summary:      Macro definitions to run, build and install python modules or scri
 
 # python.xml
 
-A set of macro definitions to work with *python* modules.
+A set of macro definitions to work with *python* modules. The *python* macro is probably the most
+generally useful, but three others have been included to help in the creation of installable
+modules:
+
+*   *python-update-version* looks in the designated script for a string similar to
+"__version__ = '1.0'" and sets a property with that version number (e.g. *my_script.version.number).
+It also updates the relevant field in the **setup.py** file with this number.
+*   *python-build-distribution* runs the "sdist" command of the **setup.py** script to create a
+distributable Zip file.
+*   *python-install-module* unpacks a Zip file with the given module name and version and runs the
+"install" command of the enclosed **setup.py** script.
+
+&gt: NOTE: "script" refers to a ".py" file (probably local to the build project) while "module"
+refers to an installed module (as would be run with the "-m" option).
 
 ## Usage
 
+To run a *python* module:
+
+```
+&lt;python module="my_module"&gt;
+&#9;&lt;args&gt;
+&#9;&#9;&lt;arg line="--input ${input.dir}"/&gt;
+&#9;&#9;&lt;arg line="--output ${output.dir}"/&gt;
+&#9;&lt;/args&gt;
+<&lt;python>
+
+```
 
 ## Dependencies
 
-*  The *python* executable must be installed and available on the PATH.
-
+*   The *python* executable must be installed and available on the PATH.
+*   A **setup.py** module must exist in the root of the project to use the distribution macros.
 
 ## Properties
 
-These macros will set the following (global) properties:
+The following properties can be set on the command line to override the default behaviour:
 
-*  The **check-exe-exists** macro will be used to set the *python.exe* property to the location of the
-*python* executable. Override on the command line if required.
-*  The *python-update-version* macro will set a property with the version number. The name of the
-property will be based on the module name given, e.g. with `module="mycode.py"` the property will
-be called *mycode.py.version.number*.
+*  *python.exe*  The name of the *python* executable
 
+The *python-update-version* macro will set a property with the version number. The name of the
+property will be based on the script name given in the attribute:
+
+*   *@{script}.version.number* For example, "my_module.version.number"
 
 ## Change Log
 
@@ -112,11 +136,11 @@ be called *mycode.py.version.number*.
 
     <macrodef
         name="python-update-version"
-        description="Update the setup config with a version number taken from the source module">
+        description="Update the setup config with a version number taken from the source script">
 
         <attribute
-            name="module"
-            description="Python module name"/>
+            name="script"
+            description="Python script name"/>
 
         <sequential>
 
@@ -124,7 +148,7 @@ be called *mycode.py.version.number*.
             <check-file-exists macro="python-update-version" file="setup.py"/>
 
             <!-- get version number from module -->
-            <loadfile srcFile="@{module}" property="@{module}.version.number">
+            <loadfile srcFile="@{script}" property="@{script}.version.number">
                 <filterchain>
                     <tokenfilter>
                         <containsregex
@@ -135,12 +159,12 @@ be called *mycode.py.version.number*.
                 </filterchain>
             </loadfile>
 
-            <echo message="[python-update-version] setting property '@{module}.version.number' to '${@{module}.version.number}'" if:true="${macro.debug}"/>
+            <echo message="[python-update-version] setting property '@{script}.version.number' to '${@{script}.version.number}'" if:true="${macro.debug}"/>
 
             <!-- insert version number into setup.py -->
             <replaceregexp file="setup.py"
                            match="version='[0-9\.]*'"
-                           replace="version='${version.number}'"
+                           replace="version='${@{script}.version.number}'"
                            byline="true"/>
 
         </sequential>

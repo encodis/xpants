@@ -6,17 +6,17 @@
 
     <description>
 ---
-project:      XML - Practical ANT Scripts
+project:      XML Practical ANT Scripts
 title:        xpants.xml
 date:         2018-02-14
 author:       Philip Hodder
 sontact:      philip.hodder@encodis.com
-summary:      Single file to include all XPants macros
+summary:      Single file to include all XPantS macros
 ...
 
 # xpants.xml
 
-A single file to include that then includes all XPants macros, so they don't have to be
+A single file to include that then includes all XPantS macros, so they don't have to be
 included separately. This may increase load time, as each file loads the environment properties
 (and ANT-contrib, if required) separately.
 

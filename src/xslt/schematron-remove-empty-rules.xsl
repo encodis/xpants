@@ -11,7 +11,7 @@
     <doc:doc>
         <doc:desc>
 ---
-project:        XML - Practical ANT Scripts
+project:        XML Practical ANT Scripts
 title:          schematron-remove-empty-rules.xsl
 date:           2018-02-20
 author:         Philip Hodder

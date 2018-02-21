@@ -10,7 +10,7 @@
     <doc:doc>
         <doc:desc>
 ---
-project:        XML - Practical ANT Scripts
+project:        XML Practical ANT Scripts
 title:          remove-processing-instructions.xsl
 date:           2016-04-08
 author:         Philip Hodder
