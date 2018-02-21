@@ -104,7 +104,6 @@ summary:     Build file for XPants
         <mkdir dir="${temp.dist}"/>
 
         <mkdir dir="${build.dir}/${class.path}"/>
-        <mkdir dir="${dist.dir}"/>
 
         <!-- extract macrodefs into temp dir -->
         <apply-stylesheet
@@ -137,8 +136,10 @@ summary:     Build file for XPants
         </copy>
 
         <!-- create dist JAR file -->
+        <mkdir dir="${build.dir}/${dist.dir}"/>
+
         <jar
-            destfile="${dist.dir}/${jar.file}">
+            destfile="${build.dir}/${dist.dir}/${jar.file}">
 
             <fileset dir="${build.dir}">
                 <include name="${class.path}/**/*"/>
@@ -150,11 +151,28 @@ summary:     Build file for XPants
 
 
     <target
+        name="update-distribution"
+        description="Update the distribution archive with latest build">
+
+        <mkdir dir="${dist.dir}"/>
+
+        <!-- if JAR file exists, do not overwrite (i.e. update version number) -->
+        <fail message="[update-distribution] file '${jar.file}' exists, update version number">
+            <condition>
+                <available file="${dist.dir}/${jar.file}" type="file"/>
+            </condition>
+        </fail>
+
+        <copy todir="${dist.dir}" file="${build.dir}/${dist.dir}/${jar.file}"/>
+    </target>
+
+
+    <target
         name="local-install"
-        description="Deploy to user's ANT library">
+        description="Deploy local build to user's ANT library">
 
         <deploy-file
-            file="${dist.dir}/${jar.file}"
+            file="${build.dir}/${dist.dir}/${jar.file}"
             target="${user.home}/.ant/lib"
             overwrite="true"/>
 
