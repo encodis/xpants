@@ -90,7 +90,7 @@ The following properties can be set on the command line to override the default 
     -->
 
     <!-- is this really compile-schematron | apply-stylesheet | grep for any report/assert ?
-         PLUS error message/list of errors as option? print out or to property/file? -->
+         PLUS error message/list of errors as option? print out or report to property/file? -->
 
 	<macrodef
         name="validate-with-sch"
