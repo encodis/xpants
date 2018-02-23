@@ -216,7 +216,7 @@ These macros create the following (global) properties:
             <fail message="[check-file-contains] attribute '@{string}' is blank or not set" if:blank="@{string}"/>
 
             <!-- if property exists then set it if file contains the string -->
-            <condition property="@{property}" value="true" unless:blank="@{property}">
+            <condition property="@{property}" value="true" else="false" unless:blank="@{property}">
                 <resourcecontains resource="@{file}" substring="@{string}"/>
             </condition>
 
