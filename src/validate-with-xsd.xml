@@ -116,6 +116,20 @@ The following properties can be set on the command line to override the default 
 
 		<sequential>
 
+
+            <!--
+                IDEA want two attributes, an output property (for T/F) and a report file.
+                only print result here if macro.debug is on and property not set?
+                then remove @format, using extension to detemine if svrl, html or txt (anything else)
+
+                might not need all the sub-macros - just validate-gen-report which runs
+                the various apply-stylesheet conditionally
+
+                don't think RNG has versions of the report though
+
+
+            -->
+
             <!-- fail if required attributes not set -->
             <check-attr-set macro="validate-with-xsd" name="schema" value="@{schema}"/>
             <check-attr-set macro="validate-with-xsd" name="namespace" value="@{namespace}"/>
@@ -289,6 +303,10 @@ The following properties can be set on the command line to override the default 
 
             <!-- TODO if output is blank then use a temp file and report on that -->
 
+            <!-- set xpants.catalog if required, can override on command line -->
+            <property environment="env"/>
+            <property name="xpants.catalog" value="${env.XPANTS_CATALOG}" if:set="env.XPANTS_CATALOG"/>
+
 			<record name="@{output}" action="start"/>
 
             <!-- TODO use Saxon 9 EE as parser?
@@ -321,6 +339,13 @@ The following properties can be set on the command line to override the default 
                 <arg line="-s:@{file}"/>
             </java> -->
 
+            <!-- IDEA combine with validate-with-dtd and switch xmlvalidate or schemavalidate here based on
+                 attribute or file extension, maybe even add RNG (validate-with-schema)
+
+                 or have swithc to call validate-with-xsd/dtd/rng here 
+
+                 adding validate-with-schematron is a bit different
+              -->
 
             <schemavalidate
                 file="@{file}"
@@ -331,7 +356,7 @@ The following properties can be set on the command line to override the default 
 					file="@{schema}"/>
 
                 <xmlcatalog>
-                    <catalogpath path="${xpants.catalog}"/>
+                    <catalogpath location="${xpants.catalog}" if:set="xpants.catalog"/>
                 </xmlcatalog>
 			</schemavalidate>
 

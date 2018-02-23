@@ -254,27 +254,11 @@ The following properties can be set on the command line to override the default 
             <!-- TODO output file should be optional, if not given then use temp file?
                  but then format is irrelevant, may also want property to store true/false result -->
 
+            <!-- set xpants.catalog if required, can override on command line -->
+            <property environment="env"/>
+            <property name="xpants.catalog" value="${env.XPANTS_CATALOG}" if:set="env.XPANTS_CATALOG"/>
+
 			<record name="@{output}" action="start"/>
-
-            <!-- TODO use Saxon 9 EE as parser?
-            e.g. from this post https://saxonica.plan.io/issues/2192
-
-            java net.sf.saxon.Query -s:source.xml -qs:name(*) -dtd:on
-            -->
-
-            <!--
-            FIXME getting "Warning: XML resolver not found; external catalogs will be ignored"
-            so may need to add in Saxon or something
-            -->
-            <!--
-            <java
-                classname="net.sf.saxon.Query">
-
-                <arg line="-s:@{file}"/>
-                <arg line="-qs:."/>
-                <arg line="-dtd:on"/>
-
-            </java> -->
 
             <!-- TODO look at the various options for xmlvalidate - this might need catalogs to be implemented properly -->
 
@@ -290,18 +274,15 @@ The following properties can be set on the command line to override the default 
                 file="@{file}"
                 failonerror="false">
 
-                <classpath>
-                    <!-- FIXME define ANT_HOME (or XML_RESOLVER) as ~/.ant/lib and use ${env.ANT_HOME} for this? -->
-
+                <!-- <classpath>
                     <pathelement location="${user.home}/.ant/lib/resolver.jar"/>
-                    <!-- <pathelement location="${env.HOME}/.ant/lib"/> -->
-                </classpath>
+                </classpath> -->
 
-                <!-- <xmlcatalog>
+                <xmlcatalog>
                     <catalogpath>
-                        <pathelement path="${xpants.catalog}"/>
+                        <pathelement location="${xpants.catalog}" if:set="xpants.catalog"/>
                     </catalogpath>
-                </xmlcatalog> -->
+                </xmlcatalog>
 
 			</xmlvalidate>
 

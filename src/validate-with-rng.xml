@@ -137,7 +137,9 @@ jing.jar
 
             <record name="@{output}" action="start"/>
 
-            <!-- TODO automate the detection? should be in classpath? look for class? -->
+            <!-- TODO automate the detection? should be in classpath? look for class? check-class macro etc  -->
+
+            <!-- TODO are catalogs a thing here? -->
 
             <property name="jing.jar" value="${user.home}/.ant/lib/jing.jar"/>
 
