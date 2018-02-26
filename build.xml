@@ -45,23 +45,18 @@ summary:     Build file for XPants
 
     <target
         name="docs"
-        description="Extract Markdown documentation from macro files and create HTML files">
+        description="Extract Markdown documentation from macro/XSLT files">
 
+        <!-- NOTE Markdown created in docs folder so that GitHub will display it -->
         <!-- IDEA concat all MD files into single one (strip YAML?), so docs are a single page, could use for man page -->
-        <!-- IDEA could also put extracted MD in docs folder so that it is exposed in github pages... (but GH pages
-             does not understand YAML metadata...) unless you put index.md in top level (or copied readme?) and 'published' to docs.
-             can use ant replaceregexp in multi-line mode (c.f. mokuwiki)
-             worth having a concat-markdown macro?
-             -->
 
-        <tempfile property="temp.md" destdir="${build.dir}" prefix="md" deleteonexit="true"/>
-
-        <mkdir dir="${temp.md}"/>
+        <!-- FIXME doing this still produces HTML tables - will these be displayed in GitHub ok? -->
 
         <!-- extract Markdown from ANT files -->
         <extract-markdown
             type="ant"
-            output="${temp.md}">
+            remove-yaml="true"
+            output="${docs.dir}">
 
             <fileset dir="${src.dir}" includes="*.xml"/>
         </extract-markdown>
@@ -69,28 +64,11 @@ summary:     Build file for XPants
         <!-- extract Markdown from XSLT files -->
         <extract-markdown
             type="xsl"
-            output="${temp.md}">
+            remove-yaml="true"
+            output="${docs.dir}">
 
             <fileset dir="${xslt.dir}" includes="*.xsl"/>
         </extract-markdown>
-
-        <!-- copy main docs -->
-        <copy
-            todir="${temp.md}">
-            <fileset dir="${docs.dir}" includes="*.md"/>
-        </copy>
-
-        <mkdir dir="${build.dir}/${docs.dir}"/>
-
-        <pandoc
-            output="${build.dir}/${docs.dir}"
-            to="html">
-            <fileset dir="${temp.md}">
-                <include name="*.md"/>
-            </fileset>
-        </pandoc>
-
-        <delete dir="${temp.md}"/>
 
     </target>
 

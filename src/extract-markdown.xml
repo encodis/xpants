@@ -99,6 +99,11 @@ used to extract Markdown from XSLT files.
             description="Source file type [ant,sch,xsl]"/>
 
         <attribute
+            name="remove-yaml"
+            default="false"
+            description="Remove YAML metadata block [true,false]"/>
+
+        <attribute
             name="output"
             description="Path for extracted Markdown file(s)"/>
 
@@ -112,6 +117,8 @@ used to extract Markdown from XSLT files.
 
             <!-- fail if required attributes not set -->
             <check-attr-set macro="extract-markdown" name="output" value="@{output}"/>
+            <check-attr-list macro="extract-markdown" name="type" value="@{type}" list="ant,sch,xsl"/>
+            <check-attr-bool macro="extract-markdown" name="remove-yaml" value="@{remove-yaml}"/>
 
             <!-- file or dir mode? -->
             <extract-markdown-file
@@ -144,6 +151,11 @@ used to extract Markdown from XSLT files.
             description="Source file type [ant,sch,xsl]"/>
 
         <attribute
+            name="remove-yaml"
+            default="false"
+            description="Remove YAML metadata block [true,false]"/>
+
+        <attribute
             name="output"
             description="Path for extracted Markdown file"/>
 
@@ -172,11 +184,28 @@ used to extract Markdown from XSLT files.
             <local name="extract.stylesheet"/>
             <property name="extract.stylesheet" value="extract-markdown-from-${file.type}"/>
 
+            <!-- create temp file for output of apply stylesheet -->
+            <property name="temp.dir" value="${java.io.tmpdir}"/>
+            <property name="temp.delete" value="true"/>
+
+            <local name="output.temp"/>
+            <tempfile property="output.temp" destdir="${temp.dir}" prefix="ext" deleteonexit="${temp.delete}"/>
+
             <!-- extract markdown -->
             <apply-stylesheet
                 file="@{file}"
-                output="@{output}"
+                output="${output.temp}"
                 stylesheet="${extract.stylesheet}"/>
+
+            <copy file="${output.temp}" tofile="@{output}" overwrite="true">
+                <filterchain>
+                    <tokenfilter>
+                        <filetokenizer/>
+                        <replaceregex pattern="[\r\n|\r|\n]---[\r\n|\r|\n].*[\r\n|\r|\n]\.\.\." replace="" flags="s"/>
+                    </tokenfilter>
+                    <headfilter lines="-1" skip="2"/>
+                </filterchain>
+            </copy>
 
         </sequential>
     </macrodef>
@@ -189,6 +218,11 @@ used to extract Markdown from XSLT files.
         <attribute
             name="type"
             description="Source file type [ant,sch,xsl]"/>
+
+        <attribute
+            name="remove-yaml"
+            default="false"
+            description="Remove YAML metadata block [true,false]"/>
 
         <attribute
             name="output"
@@ -233,6 +267,7 @@ used to extract Markdown from XSLT files.
                     <extract-markdown-file
                         file="@{file}"
                         type="@{type}"
+                        remove-yaml="@{remove-yaml}"
                         output="@{output}/${output.name}.md"/>
 
                 </sequential>

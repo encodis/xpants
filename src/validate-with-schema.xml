@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="validate-with-schema"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+	<description>
+---
+project:      XML Practical ANT Scripts
+title:        validate-with-schema.xml
+date:         2018-02-26
+author:       Philip Hodder
+contact:      philip.hodder@encodis.com
+summary:      Macro definitions to validate XML instances using schema (XSD, DTD or RNG)
+...
+
+# validate-with-schema.xml
+
+A set of macro definitions to validate an XML file using a DTD. Essentially this is a wrapper around
+ANT's built in `&lt;xmlvalidate&gt;` and `&lt;schemavalidate&gt;`task, but with enhanced reporting
+and output file manipulation. The top level macro ("validate-with-dtd") will validate either a
+single file or a folder, depending on the arguments supplied:
+
+* If the _file_ attribute is not blank and refers to a file that exists then it will be
+validated, using the _output_ attribute as the resulting file name for the report.
+* If the _file_ attribute is not supplied then the macro will convert all files in a folder
+determined by the 'input.files' element.
+
+&gt; NOTE: It is the responsibility of the calling task to ensure that any output folders are
+created before running this task.
+
+## Usage
+
+```
+&lt;validate-with-schema
+&#9;file="file.xml"
+&#9;type="xsd"
+&#9;report="docs/validation/file.log"/&gt;
+```
+
+```
+&lt;validate-with-schema
+&#9;report="docs/validation/"
+&#9;type="dtd"&gt;
+&#9;&lt;fileset dir="models/instances"&gt;
+&#9;&#9;&lt;include name="*test*.xml"/&gt;
+&#9;&lt;fileset/&gt;
+&lt;validate-with-schema/&gt;
+```
+
+## Dependencies
+
+The following JAR files must be on the classpath:
+
+*   **saxon.jar** (or the HE, PE, or EE equivalents) in order to use the Saxon parser
+*   **jing.jar** in order to validate RelaxNG files
+
+## Properties
+
+The following properties can be set on the command line to override the default behaviour:
+
+*   *xpants.catalog* can be used to set a base XML catalog for resolving entities. The default is
+the value of the *XPANTS_CATALOG* environment variable (if set).
+
+## Change Log
+
+##### 2018-02-19 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <dirname property="xpants.dir" file="${ant.file.validate-with-schema}"/>
+
+    <include file="${xpants.dir}/apply-stylesheet.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+
+    <!-- macros -->
+
+    <!--
+        so, if report is not blank, save report. if fileset given then default filename is "file.log"
+        schema is optional, if not given then use file info
+        property is optional, if given is t/f. if fileset given then true if all in fileset pass
+        if macro.debug or no report and no property then report each on as you do it.
+
+        TODO is there a way you can
+    -->
+
+
+	<macrodef
+        name="validate-with-schema"
+        description="Validate a file according to a schema">
+
+		<attribute
+            name="file"
+            default=""
+            description="Source XML file"/>
+
+        <attribute
+            name="type"
+            default=""
+            description="Type of schema validation [dtd,xsd,rng]"/>
+
+        <attribute
+            name="schema"
+            default=""
+            description="Schema file"/>
+
+        <attribute
+            name="report"
+            default=""
+            description="Path for report file(s)"/>
+
+        <attribute
+            name="property"
+            default=""
+            description="Property to update with result"/>
+
+            <!-- NOTE only for single file, or t/f if ALL are valid in fileset ? -->
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+		<sequential>
+
+            <!-- file or dir mode? -->
+            <validate-with-schema-file
+                file="@{file}"
+                type="@{type}"
+                schema="@{schema}"
+                report="@{report}"
+                property="@{property}"
+                unless:blank="@{file}"/>
+
+            <validate-with-schema-dir
+                type="@{type}"
+                schema="@{schema}"
+                report="@{report}"
+                property="@{property}"
+                if:blank="@{file}">
+                <input.files/>
+            </validate-with-schema-dir>
+
+		</sequential>
+	</macrodef>
+
+
+    <macrodef
+        name="validate-with-schema-file"
+        description="Validate an XML instance document against a schema">
+
+        <attribute
+            name="file"
+            description="Source XML file"/>
+
+        <attribute
+            name="type"
+            default=""
+            description="Type of schema validation [dtd,xsd,rnc,rng]"/>
+
+        <attribute
+            name="schema"
+            default=""
+            description="Schema file"/>
+
+        <attribute
+            name="report"
+            default=""
+            description="Path for report file(s)"/>
+
+        <attribute
+            name="property"
+            default=""
+            description="Property to update with result"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="validate-with-schema-file" name="file" value="@{file}"/>
+            <check-attr-list macro="validate-with-schema-file" name="type" value="@{type}" list="dtd,xsd,rnc,rng"/>
+
+            <!-- fail if file does not exist -->
+            <check-file-exists macro="validate-with-schema-file" file="@{file}"/>
+
+            <!-- fail if schema given but does not exist -->
+            <check-file-exists macro="validate-with-schema-file" file="@{schema}" unless:blank="@{schema}"/>
+
+            <!-- set schema type -->
+            <local name="schema.@{type}"/>
+            <property name="schema.@{type}" value="true"/>
+
+            <!-- if validating with RNG must supply schema explicitly -->
+            <check-attr-set macro="validate-with-schema-file" name="schema" value="@{schema}" if:set="${schema.rng}"/>
+
+            <!-- set up properties for catalog use, can override on command line -->
+            <property environment="env"/>
+            <property name="xpants.catalog" value="${env.XPANTS_CATALOG}" if:set="env.XPANTS_CATALOG"/>
+
+            <!-- create temp file for output of command -->
+            <property name="temp.dir" value="${java.io.tmpdir}"/>
+            <property name="temp.delete" value="true"/>
+
+            <local name="output.temp"/>
+            <tempfile property="output.temp" destdir="${temp.dir}" prefix="val" deleteonexit="${temp.delete}"/>
+
+			<record name="${output.temp}" action="start"/>
+
+            <!-- validate DTD -->
+            <xmlvalidate
+                file="@{file}"
+                failonerror="false"
+                if:set="${schema.dtd}">
+
+                <xmlcatalog>
+                    <catalogpath>
+                        <pathelement location="${xpants.catalog}" if:set="xpants.catalog"/>
+                    </catalogpath>
+                </xmlcatalog>
+			</xmlvalidate>
+
+            <!-- validate XSD -->
+            <schemavalidate
+                file="@{file}"
+                failonerror="false"
+                if:set="${schema.xsd}">
+
+                <!-- TODO need to pass in namespace -->
+				<schema namespace="@{namespace}" file="@{schema}" unless:blank="@{schema}"/>
+
+                <xmlcatalog>
+                    <catalogpath location="${xpants.catalog}" if:set="xpants.catalog"/>
+                </xmlcatalog>
+			</schemavalidate>
+
+            <!-- validate RNC -->
+            <java
+                classpath="com.thaiopensource.relaxng.util.Driver"
+                if:set="${schema.rnc}">
+                <arg value="-c"/>
+                <arg value="@{schema}"/>
+                <arg value="@{file}"/>
+            </java>
+
+            <!-- validate RNG -->
+            <java
+                classpath="com.thaiopensource.relaxng.util.Driver"
+                if:set="${schema.rng}">
+                <arg value="@{schema}"/>
+                <arg value="@{file}"/>
+            </java>
+
+			<record name="${output.temp}" action="stop"/>
+
+            <!-- valid or not? -->
+            <local name="output.valid"/>
+            <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid XML document" unless:set="schema.rng"/>
+            <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid RNG document" if:set="schema.rng"/>
+
+            <!-- save report, if required -->
+            <copy tofile="@{report}" file="${output.temp}" unless:blank="@{report}"/>
+
+            <!-- set property to t/f, if required -->
+            <condition property="@{property}" value="true" else="false" unless:blank="@{property}">
+                <istrue value="${output.valid}"/>
+            </condition>
+
+            <!-- if report and property are blank, or macro.debug is true, then report result -->
+            <local name="echo.result"/>
+            <condition property="echo.result" value="true" else="false">
+                <or>
+                    <and>
+                        <equals arg1="@{report}" arg2=""/>
+                        <equals arg1="@{property}" arg2=""/>
+                    </and>
+                    <equals arg1="${macro.debug}" arg2="true"/>
+                </or>
+            </condition>
+
+            <!-- report if validation was successful -->
+            <local name="result.type"/>
+            <condition property="result.type" value="" else="NOT">
+                <istrue value="${output.valid}"/>
+            </condition>
+
+            <echo message="[validate-with-schema] '@{file}' is ${result.type} schema valid" if:true="${echo.result}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="validate-with-schema-dir"
+        description="Validate a folder of XML instance documents against a schema">
+
+        <attribute
+            name="schema"
+            default=""
+            description="Schema file"/>
+
+        <attribute
+            name="type"
+            default=""
+            description="Type of schema validation [dtd,xsd,rng]"/>
+
+        <attribute
+            name="report"
+            default=""
+            description="Path for report file(s)"/>
+
+        <attribute
+            name="property"
+            default=""
+            description="Property to update with final result over all files"/>
+
+        <element
+            name="input.files"
+            optional="false"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if input fileset is empty -->
+            <check-fileset-empty macro="validate-with-schema-dir">
+                <input.files/>
+            </check-fileset-empty>
+
+            <mkdir dir="@{report}" unless:blank="@{report}"/>
+
+            <!-- assume all files valid unless proved otherwise -->
+            <property name="@{property}" value="true" unless:blank="@{property}"/>
+
+            <!-- process all files in fileset -->
+            <property name="for.keepgoing" value="true"/>
+
+            <for param="file" keepgoing="${for.keepgoing}">
+                <input.files/>
+
+                <sequential>
+
+                    <local name="file.name"/>
+                    <basename property="file.name" file="@{file}" suffix=".xml"/>
+
+                    <local name="report.file"/>
+                    <condition property="report.file" value="@{report}/${file.name}.log" else="">
+                        <equals arg1="@{report}" arg2=""/>
+                    </condition>
+
+                    <local name="property.temp"/>
+
+                    <validate-with-schema-file
+                        file="@{file}"
+                        type="@{type}"
+                        schema="@{schema}"
+                        report="${report.file}"
+                        property="property.temp"/>
+
+                    <!-- override property if false -->
+                    <!-- NOTE this might not work, depends on how local properties propagate -->
+                    <propertyregex
+                        property="@{property}"
+                        override="true"
+                        input="${property.temp}"
+                        regexp="false"
+                        select="false"
+                        unless:blank="@{property}"/>
+
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+</project>
