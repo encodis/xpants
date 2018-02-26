@@ -181,9 +181,21 @@ These macros create the following (global) properties:
             name="class"
             description="Class to check"/>
 
+        <attribute
+            name="property"
+            default=""
+            description="Property to update with result"/>
+
         <sequential>
 
-            <fail message="[@{macro}] class '@{class}' not available on the classpath">
+            <fail message="[check-class-path] attribute '@{class}' is blank or not set" if:blank="@{class}"/>
+
+            <!-- if property exists then set it if file contains the string -->
+            <condition property="@{property}" value="true" else="false" unless:blank="@{property}">
+                <available classname="@{class}"/>
+            </condition>
+
+            <fail message="[@{macro}] class '@{class}' not available on the classpath" if:blank="@{property}">
                 <condition>
                     <not><available classname="@{class}"/></not>
                 </condition>
@@ -223,9 +235,7 @@ These macros create the following (global) properties:
             <!-- if property does not exist then fail the build if the file does not contain the string -->
             <fail message="[check-file-contains] '@file' does not contain '@{string}'" if:blank="@{property}">
                 <condition>
-                    <not>
-                        <resourcecontains resource="@{file}" substring="@{string}"/>
-                    </not>
+                    <not><resourcecontains resource="@{file}" substring="@{string}"/></not>
                 </condition>
             </fail>
 

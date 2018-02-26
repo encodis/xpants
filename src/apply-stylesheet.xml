@@ -99,7 +99,7 @@ Apply a list of stylesheets in the XSLT library to a file, overwriting the file:
 ```
 
 Process a Schematron file to include all "&lt;xi:xinclude&gt;" elements in the output file. Note
-that as the XSLT engine is aware of this the file just needs to be run through the "identity" 
+that as the XSLT engine is aware of this the file just needs to be run through the "identity"
 transform:
 
 ```
@@ -255,6 +255,10 @@ None.
                 </condition>
             </fail>
 
+            <!-- detect XSLT processor (use Saxon if possible) -->
+            <local name="saxon.processor"/>
+            <check-class-path macro="apply-stylesheet" class="net.sf.saxon.TransformerFactoryImpl" property="saxon.processor"/>
+
             <!-- apply the stylesheet -->
             <echo message="[apply-stylesheet-file] use.stylesheet=${use.stylesheet}" if:true="${debug.macro}"/>
 
@@ -276,7 +280,8 @@ None.
                     <file file="@{stylesheet}" if:set="given.stylesheet.exists"/>
                 </style>
 
-                <factory name="net.sf.saxon.TransformerFactoryImpl">
+                <!-- use Saxon if possible -->
+                <factory name="net.sf.saxon.TransformerFactoryImpl" if:true="${saxon.processor}">
                     <attribute name="http://saxon.sf.net/feature/ignoreSAXSourceParser" value="true"/>
                     <!-- NOTE sourceParserClass always ignored by ANT's xslt task -->
                     <attribute name="http://saxon.sf.net/feature/sourceParserClass" value="org.xmlresolver.tools.ResolvingXMLReader"/>
@@ -285,6 +290,10 @@ None.
                     <!-- <attribute name="http://saxon.sf.net/feature/validation" value="false"/> -->
                     <!-- TODO check that turning xinclude-aware on is OK for regular transforms -->
                     <attribute name="http://saxon.sf.net/feature/xinclude-aware" value="true"/>
+                </factory>
+
+                <!-- otherwise use Xalan -->
+                <factory name="org.apache.xalan.processor.TransformerFactoryImpl" unless:true="${saxon.processor}">
                 </factory>
 
                 <sysproperty key="xml.catalog.files" value="${xpants.catalog}"/>

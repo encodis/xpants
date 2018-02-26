@@ -342,7 +342,10 @@ The following properties can be set on the command line to override the default 
             <!-- IDEA combine with validate-with-dtd and switch xmlvalidate or schemavalidate here based on
                  attribute or file extension, maybe even add RNG (validate-with-schema)
 
-                 or have swithc to call validate-with-xsd/dtd/rng here 
+                 or have swithc to call validate-with-xsd/dtd/rng here
+
+                 cannot do this as we don't know what the type of schema is unless actually given OR we
+                 look in the file so HAVE to have a type 
 
                  adding validate-with-schematron is a bit different
               -->
