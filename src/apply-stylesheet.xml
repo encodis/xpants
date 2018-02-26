@@ -99,7 +99,7 @@ Apply a list of stylesheets in the XSLT library to a file, overwriting the file:
 ```
 
 Process a Schematron file to include all "&lt;xi:xinclude&gt;" elements in the output file. Note
-that as the XSLT engine is aware of this the file just needs to be run through the "identity" 
+that as the XSLT engine is aware of this the file just needs to be run through the "identity"
 transform:
 
 ```
@@ -262,6 +262,9 @@ None.
             <tempfile property="temp.file" prefix="${ant.project.name}" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
             <echo message="[apply-stylesheet-file] temp.file=${temp.file}" if:true="${debug.macro}"/>
+
+            <!-- TODO use of Saxon should really be optional, can we add unless:set="noSaxon" or something?
+                 xincludes might not work then -->
 
             <xslt
             	in="@{file}"
