@@ -39,15 +39,15 @@ to the basename of the input file and that is used as the output file.
 The additional macros listed below are simply wrappers around *convert-schema* which supplies
 default values of the *in* and *out* attributes appropriately:
 
-*   convert-rnc-to-rng
-*   convert-rnc-to-dtd
-*   convert-rnc-to-xsd
-*   convert-rng-to-rnc
-*   convert-rng-to-xsd
-*   convert-rng-to-dtd
-*   convert-dtd-to-rnc
-*   convert-dtd-to-xsd
-*   convert-dtd-to-rng
+*   [convert-rnc-to-rng](#convert-rnc-to-rng)
+*   [convert-rnc-to-dtd](#convert-rnc-to-dtd)
+*   [convert-rnc-to-xsd](#convert-rnc-to-xsd)
+*   [convert-rng-to-rnc](#convert-rng-to-rnc)
+*   [convert-rng-to-xsd](#convert-rng-to-xsd)
+*   [convert-rng-to-dtd](#convert-rng-to-dtd)
+*   [convert-dtd-to-rnc](#convert-dtd-to-rnc)
+*   [convert-dtd-to-xsd](#convert-dtd-to-xsd)
+*   [convert-dtd-to-rng](#convert-dtd-to-rng)
 
 &gt; NOTE: It is the responsibility of the calling task to ensure that any output folders are
 created before running this task.
@@ -95,7 +95,7 @@ Override the following property to change the value of the Trang class being use
 
     <macrodef
         name="convert-schema"
-        description="Use trang to convert between schema syntaxes">
+        description="Use Trang to convert between schema syntaxes (DTD, RNC, RNG and XSD)">
 
         <attribute
             name="file"

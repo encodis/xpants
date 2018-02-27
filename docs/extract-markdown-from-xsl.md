@@ -18,12 +18,17 @@ parameters and other information.
         
 
 
+
 ### Output Format
 
 <table><thead><tr><th>method</th><th>encoding</th><th>version</th><th>omit-xml-declaration</th><th>standalone</th><th>doctype-public</th><th>doctype-system</th><th>cdata-section-elements</th><th>indent</th><th>media-type</th></tr></thead><tbody><tr><td>xhtml</td><td>UTF-8</td><td>-</td><td>yes</td><td>-</td><td>-</td><td>-</td><td>-</td><td>no</td><td>-</td></tr></tbody></table>
+
 ## Templates
 
 <table><thead><tr><th width="35%">name</th><th>type</th><th>mode</th><th>parameters</th><th width="35%">description</th></tr></thead><tbody><tr><td>/</td><td>match</td><td>-</td><td>-</td><td>-</td></tr><tr><td>doc:desc</td><td>match</td><td>-</td><td>-</td><td>-</td></tr><tr><td>doc:doc</td><td>match</td><td>-</td><td>-</td><td>-</td></tr><tr><td>doc:log</td><td>match</td><td>-</td><td>-</td><td>-</td></tr><tr><td>xsl:import</td><td>match</td><td>-</td><td>-</td><td>-</td></tr><tr><td>xsl:import[not(preceding-sibling::xsl:import)]</td><td>match</td><td>-</td><td>-</td><td>-</td></tr><tr><td>xsl:include</td><td>match</td><td>-</td><td>-</td><td>-</td></tr><tr><td>xsl:include[not(preceding-sibling::xsl:include)]</td><td>match</td><td>-</td><td>-</td><td>-</td></tr><tr><td>xsl:output</td><td>match</td><td>-</td><td>-</td><td>-</td></tr><tr><td>xsl:param</td><td>match</td><td>-</td><td>-</td><td>-</td></tr><tr><td>xsl:stylesheet | xsl:transform</td><td>match</td><td>-</td><td>-</td><td>-</td></tr><tr><td>xsl:template</td><td>match</td><td>-</td><td>-</td><td>-</td></tr></tbody></table>
+
+
+
 
 
 
@@ -32,3 +37,4 @@ parameters and other information.
 ##### 2018-02-19 (PH) Initial version
 
         
+

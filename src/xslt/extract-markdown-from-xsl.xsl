@@ -79,11 +79,11 @@ parameters and other information.
             </table>
         </xsl:if>
 
-        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>&#xa;&#xa;</xsl:text>
 
         <xsl:apply-templates select="xsl:output"/>
 
-        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>&#xa;&#xa;</xsl:text>
 
         <xsl:text>## Templates</xsl:text><xsl:text>&#xa;&#xa;</xsl:text>
         <table>
@@ -106,15 +106,15 @@ parameters and other information.
             </tbody>
         </table>
 
-        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>&#xa;&#xa;</xsl:text>
 
         <xsl:apply-templates select="xsl:include"/>
 
-        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>&#xa;&#xa;</xsl:text>
 
         <xsl:apply-templates select="xsl:import"/>
 
-        <xsl:text>&#xa;</xsl:text>
+        <xsl:text>&#xa;&#xa;</xsl:text>
 
         <xsl:apply-templates select="doc:doc[1]/doc:log"/>
     </xsl:template>
@@ -126,12 +126,11 @@ parameters and other information.
     <!-- TODO: add templates for doc:p, doc:ul etc, to convert Oxygen markup into Markdown -->
 
     <xsl:template match="doc:desc">
-        <xsl:value-of disable-output-escaping="yes" select="."/><xsl:text>&#xa;</xsl:text>
-        <xsl:text>&#xa;</xsl:text>
+        <xsl:value-of disable-output-escaping="yes" select="."/><xsl:text>&#xa;&#xa;</xsl:text>
     </xsl:template>
 
     <xsl:template match="doc:log">
-        <xsl:value-of disable-output-escaping="yes" select="."/><xsl:text>&#xa;</xsl:text>
+        <xsl:value-of disable-output-escaping="yes" select="."/><xsl:text>&#xa;&#xa;</xsl:text>
     </xsl:template>
 
     <xsl:template match="xsl:template">
