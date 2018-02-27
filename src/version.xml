@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+    name="version"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+project:    XML Practical ANT Scripts
+title:      version.xml
+date:       2018-02-27
+author:     Philip Hodder
+contact:    philip.hodder@encodis.com
+summary:    Macros to manipulate version number
+...
+
+# version.xml
+
+This module defines macros for retrieving and manipulating version and build numbers stored in a
+properties file (by default "build.properties").
+
+Assumes semantic versioning.
+
+
+## Usage
+
+To update the **build.properties** file by incrementing the "major" version number:
+
+```
+&gt;version-inc-major/&lt;
+```
+
+To update the **build.properties** file by incrementing the "minor" version number by 2:
+
+```
+&gt;version-inc-minor increment="2"/&lt;
+```
+
+
+## Dependencies
+
+*   **build.properties** (or equivalent specification)
+
+## Properties
+
+
+## Change Log
+
+##### 2018-02-14 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <dirname property="xpants.dir" file="${ant.file.version}"/>
+
+    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/file-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="version-inc"
+        description="Update a version number">
+
+        <attribute
+            name="file"
+            default="build.properties"
+            description="Properties file for version information"/>
+
+        <attribute
+            name="increment"
+            default="1"
+            description="Amount to increment version number"/>
+
+        <attribute
+            name="number"
+            default="patch"
+            description="Version number element to increment [major,minor,patch,build]"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="version-inc" name="increment" value="@{increment}"/>
+            <check-attr-set macro="version-inc" name="number" value="@{number}" list="major,minor,patch,build"/>
+
+            <!-- check properties file exists -->
+            <check-file-exists macro="version-inc" file="@{file}"/>
+
+            <!-- get version properties from file -->
+            <property file="@{file}"/>
+
+            <!-- fail if version.number not set (e.g. not in build.properties file) -->
+            <fail message="[version-inc] property 'version.number' not set">
+                <not><isset property="version.number"/></not>
+            </fail>
+
+            <!-- split into major, minor, patch or get build -->
+            <local name="version.number.major"/>
+            <propertyregex
+                property="version.number.major"
+                input="${version.number}"
+                regexp="([0-9]+)\.([0-9]+)\.([0-9]+)"
+                select="\1"
+                defaultvalue="X"/>
+
+            <local name="version.number.minor"/>
+            <propertyregex
+                property="version.number.minor"
+                input="${version.number}"
+                regexp="([0-9]+)\.([0-9]+)\.([0-9]+)"
+                select="\2"
+                defaultvalue="X"/>
+
+            <local name="version.number.patch"/>
+            <propertyregex
+                property="version.number.patch"
+                input="${version.number}"
+                regexp="([0-9]+)\.([0-9]+)\.([0-9]+)"
+                select="\3"
+                defaultvalue="X"/>
+
+            <!-- increment depending on @{number} -->
+            <local name="increment.@{number}"/>
+            <property name="increment.@{number}" value="true"/>
+
+            <math result="version.number.major"
+                operation="add"
+                operand1="${version.number.major}"
+                operand2="@{increment}"
+                datatype="int"
+                if:set="increment.major">
+
+            <math result="version.number.minor"
+                operation="add"
+                operand1="${version.number.minor}"
+                operand2="@{increment}"
+                datatype="int"
+                if:set="increment.minor">
+
+            <math result="version.number.patch"
+                operation="add"
+                operand1="${version.number.patch}"
+                operand2="@{increment}"
+                datatype="int"
+                if:set="increment.patch">
+
+            <math result="build.number"
+                operation="add"
+                operand1="${build.number}"
+                operand2="@{increment}"
+                datatype="int"
+                if:set="increment.build">
+
+            <!-- update version.number (build.number is update in math task, above) -->
+            <var name="version.number" unset="true" unless:set="increment.build"/>
+            <property name="version.number" value="${version.number.major}.${version.number.minor}.${version.number.patch}" unless:set="increment.build"/>
+
+            <!-- update properties file -->
+            <replaceregex
+                file="@{file}"
+                match="version.number=[0-9.]+"
+                replace="${version.number}"
+                byline="true"
+                unless:set="increment.build"/>
+
+            <replaceregex
+                file="@{file}"
+                match="build.number=[0-9]+"
+                replace="${build.number}"
+                byline="true"
+                if:set="increment.build"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="version-inc-major"
+        description="Increment the major version number">
+
+        <attribute
+            name="file"
+            default="build.properties"
+            description="Properties file for version information"/>
+
+        <attribute
+            name="increment"
+            default="1"
+            description="Amount to increment version number"/>
+
+        <sequential>
+
+            <version-inc
+                file="@{file}"
+                increment="@{increment}"
+                number="major"/>
+
+        </sequential>
+    </macrodef>
+
+    <macrodef
+        name="version-inc-minor"
+        description="Increment the minor version number">
+
+        <attribute
+            name="file"
+            default="build.properties"
+            description="Properties file for version information"/>
+
+        <attribute
+            name="increment"
+            default="1"
+            description="Amount to increment version number"/>
+
+        <sequential>
+
+            <version-inc
+                file="@{file}"
+                increment="@{increment}"
+                number="minor"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="version-inc-patch"
+        description="Increment the patch version number">
+
+        <attribute
+            name="file"
+            default="build.properties"
+            description="Properties file for version information"/>
+
+        <attribute
+            name="increment"
+            default="1"
+            description="Amount to increment version number"/>
+
+        <sequential>
+
+            <version-inc
+                file="@{file}"
+                increment="@{increment}"
+                number="patch"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="version-inc-build"
+        description="Increment the build number">
+
+        <attribute
+            name="file"
+            default="build.properties"
+            description="Properties file for version information"/>
+
+        <attribute
+            name="increment"
+            default="1"
+            description="Amount to increment version number"/>
+
+        <sequential>
+
+            <version-inc
+                file="@{file}"
+                increment="@{increment}"
+                number="build"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="version-number-set"
+        description="Set the version number">
+
+        <attribute
+            name="file"
+            default="build.properties"
+            description="Properties file for version information"/>
+
+        <attribute
+            name="version"
+            description="New version number"/>
+
+        <sequential>
+
+            <!-- use var and replaceregex -->
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="build-number-set"
+        description="Set the build number">
+
+        <attribute
+            name="file"
+            default="build.properties"
+            description="Properties file for version information"/>
+
+        <attribute
+            name="build"
+            description="New build number"/>
+
+        <sequential>
+
+            <!-- use var and replaceregex -->
+
+        </sequential>
+    </macrodef>
+
+</project>
