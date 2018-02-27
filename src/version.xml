@@ -83,6 +83,8 @@ To update the **build.properties** file by incrementing the "minor" version numb
 
         <sequential>
 
+            <!-- TODO add a pattern attribute, so can change other files? -->
+
             <!-- fail if required attributes not set -->
             <check-attr-set macro="version-inc" name="increment" value="@{increment}"/>
             <check-attr-set macro="version-inc" name="number" value="@{number}" list="major,minor,patch,build"/>
