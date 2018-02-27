@@ -94,7 +94,7 @@ documentation. Individual elements can be documented using the _description_ att
 
 	<xsl:template match="attribute[not(preceding-sibling::attribute)]">
         <xsl:text>#### Attributes</xsl:text><xsl:text>&#xa;&#xa;</xsl:text>
-		<xsl:text>| name | description | allowed | default | required |&#xa;</xsl:text>
+		<xsl:text>| Name | Description | Allowed | Default | Required |&#xa;</xsl:text>
 		<xsl:text>| :--- | :---------- | :------ | :-----: | :------: |&#xa;</xsl:text>
 		<xsl:next-match/>
 	</xsl:template>
@@ -131,7 +131,7 @@ documentation. Individual elements can be documented using the _description_ att
 
 	<xsl:template match="element[not(preceding-sibling::element)]">
         <xsl:text>#### Elements</xsl:text><xsl:text>&#xa;&#xa;</xsl:text>
-        <xsl:text>| name | description | implicit | required |&#xa;</xsl:text>
+        <xsl:text>| Name | Description | Implicit | Required |&#xa;</xsl:text>
         <xsl:text>| :--- | :---------- | :------: | :------: |&#xa;</xsl:text>
 		<xsl:next-match/>
     </xsl:template>

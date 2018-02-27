@@ -2,7 +2,6 @@
 
 XPantS is a set of ANT macros that can be used to help teams of developers create more robust and repeatable build processes. It has a focus on XML technologies but can be more generally useful.
 
-
 ## Installation
 
 Simply copy the JAR file to a folder in ANT's classpath. Typically this will be **$ANT_HOME/lib** or **~/.ant/lib**.
@@ -72,20 +71,17 @@ If you have used the alternative installation method (copying individual files t
 </project>
 ```
 
-Note that in this case, if one macro needs a macro in another file it will automatically include it.
+Note that in this case the macros have been configured to include any other macros that they need.
 
 
 ## TODO
 
-### XSLTs
+- [ ] See if we can build the readme by extracting from build.xml or docs/index.md
 
-convert-svrl-to-html
+- [ ] Any more stylesheets needed?
 
-convert-log-to-svrl
+- [ ] Add testing (see also AntUnit)
 
-filter-svrl
-
-schematron-show-id
 
 ## Notes
 
@@ -93,13 +89,10 @@ schematron-show-id
 
 See https://stackoverflow.com/questions/5159858/access-antlib-resources-from-within-apache-ant-macros for accessing XSLTs as a resource from the JAR file.
 
-xpants.properties does not get loaded by <taskdef resource="..."/>. This also seems to happen to ANT Contrib itself. So set defaults in each macrodef that uses them---set attribute defaults directly, rather than going through a property (e.g. the <deploy-files> method attribute has a default of "copy" rather than "${deploy.method}" but that property is set, so can be overidden). Also, only load environment variables when needed (e.g. check-exe-exists).
+A properties file within the JAR will not get loaded by <taskdef resource="..."/>. This also seems to happen to ANT Contrib itself. So default (global) properties are set in each macrodef that uses them. Attribute defaults are also set directly, rather than indirectly through a property (e.g. the <deploy-files> "method" attribute has a default value of "copy" rather than "${deploy.method}" but that property is still set in the body of the macro, so it can be overidden). Macros also load
+en variables when needed, using the prefix "env".
+
+### Saxon
 
 See https://www.saxonica.com/html/documentation/using-xsl/embedding/jaxp-transformation.html for how to use different factories for the various Saxon installs, and how to decide at run time.
-
-
-### AntUnit
-
-Check this out for testing.
-
 

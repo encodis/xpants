@@ -153,8 +153,8 @@ on the nature of the Schematron file:
 		<table>
 			<thead>
 				<tr>
-					<th>name</th>
-					<th>value</th>
+					<th>Name</th>
+					<th>Value</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -223,8 +223,8 @@ on the nature of the Schematron file:
 		<table>
 			<thead>
 				<tr>
-					<th>name</th>
-					<th>value</th>
+					<th>Name</th>
+					<th>Value</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -270,8 +270,8 @@ on the nature of the Schematron file:
 			<table>
 				<thead>
 					<tr>
-						<th>name</th>
-						<th>value</th>
+						<th>Name</th>
+						<th>Value</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -287,11 +287,11 @@ on the nature of the Schematron file:
 		<table>
 			<thead>
 				<tr>
-					<th>id</th>
-					<th>type</th>
-					<th>role</th>
-					<th>test</th>
-					<th>message</th>
+					<th>ID</th>
+					<th>Type</th>
+					<th>Role</th>
+					<th>Test</th>
+					<th>Message</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -344,8 +344,8 @@ on the nature of the Schematron file:
 		<table>
 			<thead>
 				<tr>
-					<th>id</th>
-					<th>message</th>
+					<th>ID</th>
+					<th>Message</th>
 				</tr>
 			</thead>
 			<tbody>

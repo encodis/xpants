@@ -13,9 +13,9 @@ sources and so on.
 
 ## Installation
 
-Simply copy the JAR file to a folder in ANT's classpath. Typically this will be **$ANT_HOME/lib** or **~/.ant/lib**.
+Simply copy the latest JAR file in the **dist** folder in the repository to a folder in ANT's classpath. Typically this will be **$ANT_HOME/lib** or **~/.ant/lib**.
 
-Alternatively each of the macro files can be copied to a suitable folder (e.g. **/usr/local/lib/xpants**). Then individual files can be included as needed.
+Alternatively each of the macro files in the **src** folder can be copied to a suitable folder on the target machine (e.g. **/usr/local/lib/xpants**). Then individual files can be included as needed in a build file.
 
 ## Requirements
 
@@ -23,17 +23,21 @@ XPantS assumes that a number of additional libraries and/or applications are ins
 
 *   [ANT Contrib](https://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download). XPantS uses some tasks defined by ANT Contrib (particularly the `<for>` and `<propertyregex>` tasks).
 
-*   [Saxon XSLT and XQuery Processor](https://www.saxonica.com/products/products.xml). XPantS uses Saxon for XSLT processing. It's possible to not have Saxon installed, but any use of the `<apply-stylesheet>` macro will fail. XPantS should detect and use any installation of Saxon (HE, PE or EE).
+*   [Saxon XSLT and XQuery Processor](https://www.saxonica.com/products/products.xml). It is recommended that Saxon is used for XSLT processing. It's possible to not have Saxon installed, but the `<apply-stylesheet>` macro will then fall back to use the Xalan processor. XPantS should detect and use any installation of Saxon (HE, PE or EE).
 
     > NOTE: Ensure that the relevant Saxon JAR file is in ANT's classpath. Installing Saxon using [Homebrew](brew.sh) on MacOS will place it in a location like **/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar**. The simplest way to fix this is to set up a symbolic link, viz.: `$ ln -s /usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar ~/.ant/lib`.
 
 *   [XML Resolver](http://www.java2s.com/Code/Jar/x/Downloadxmlresolverjar.htm), installed in ANT's classpath. You may get warnings if the corresponding **XMLResolver.properties** file is missing, but these can generally be ignored. Alternatively, use the **resolver.jar** available from [DeltaXML](https://docs.deltaxml.com/core/current/samples/FilesWithCatalog/ReadMe.html) which contains a number of fixes to the Apache version.
 
-*   A number of macros act as wrappers around command line applications, which obviously need to be installed to work. These include: [AWS Command Line Tools](https://aws.amazon.com/cli/), Git, [Pandoc](https://pandoc.org/), [Python](https://www.python.org/), [SSH](https://www.ssh.com/ssh/) and [Tidy](http://www.html-tidy.org/).
+*   The *convert-schema* macros use the [Trang](http://www.thaiopensource.com/relaxng/trang.html) converter.
+
+*   The *validate-with-schematron* macro uses the [Jing](http://www.thaiopensource.com/relaxng/jing.html) validator.
+
+*   A number of macros act as wrappers around command line applications, which obviously need to be installed to work. These include: [AWS Command Line Tools](https://aws.amazon.com/cli/), [Git](https://github.com/git/git), [Pandoc](https://pandoc.org/), [Python](https://www.python.org/), [SSH](https://www.ssh.com/ssh/) and [Tidy](http://www.html-tidy.org/).
 
 ## Usage
 
-To use the XPantS macros simply include the appropriate task definition at the top of your **build.xml** file, after including the ANT Contrib library. You must also include the "xmlns:if" and "xmlns:unless" declarations in the `<project>` tag.
+To use the XPantS macros simply include the appropriate task definition at the top of your **build.xml** file, *after* including the ANT Contrib library. You must also include the "xmlns:if" and "xmlns:unless" declarations in the `<project>` tag.
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -82,65 +86,65 @@ Note that in this case, if one macro needs a macro in another file it will autom
 
 ## Macro Definitions
 
-[apply-stylesheet](./apply-stylesheet.html)
+[apply-stylesheet](apply-stylesheet.md)
 
-[attr-checks](./attr-checks.html)
+[attr-checks](attr-checks.md)
 
-[aws](./aws.html)
+[aws](aws.md)
 
-[compare-files](./compare-files.html)
+[compare-files](compare-files.md)
 
-[compile-schematron](./compile-schematron.html)
+[compile-schematron](compile-schematron.md)
 
-[convert-schema](./convert-schema.html)
+[convert-schema](convert-schema.md)
 
-[deploy-files](./deploy-files.html)
+[deploy-files](deploy-files.md)
 
-[extract-markdown](./extract-markdown.html)
+[extract-markdown](extract-markdown.md)
 
-[file-checks](./file-checks.html)
+[file-checks](file-checks.md)
 
-[git](./git.html)
+[git](git.md)
 
-[merge-xincludes](./merge-xincludes.html)
+[merge-xincludes](merge-xincludes.md)
 
-[minimise-xml](./minimise-xml.html)
+[minimise-xml](minimise-xml.md)
 
-[pandoc](./pandoc.html)
+[pandoc](pandoc.md)
 
-[python](./python.html)
+[python](python.md)
 
-[ssh](./ssh.html)
+[ssh](ssh.md)
 
-[tidy](./tidy.html)
+[tidy](tidy.md)
 
-[validate-with-dtd](./validate-with-dtd.html)
+[validate-with-dtd](validate-with-dtd.md)
 
-[validate-with-rng](./validate-with-rng.html)
+[validate-with-rng](validate-with-rng.md)
 
-[validate-with-sch](./validate-with-sch.html)
+[validate-with-sch](validate-with-sch.md)
 
-[validate-with-xsd](./validate-with-xsd.html)
+[validate-with-xsd](validate-with-xsd.md)
 
 
 ## XSLT Stylesheets
 
-[extract-macrodef-from-ant](./extract-macrodef-from-ant.html)
+[extract-macrodef-from-ant](extract-macrodef-from-ant.md)
 
-[extract-markdown-from-ant](./extract-markdown-from-ant.html)
+[extract-markdown-from-ant](extract-markdown-from-ant.md)
 
-[extract-markdown-from-sch](./extract-markdown-from-sch.html)
+[extract-markdown-from-sch](extract-markdown-from-sch.md)
 
-[extract-markdown-from-xsl](./extract-markdown-from-xsl.html)
+[extract-markdown-from-xsl](extract-markdown-from-xsl.md)
 
-[identity](./identity.html)
+[identity](identity.md)
 
-[remove-comments](./remove-comments.html)
+[remove-comments](remove-comments.md)
 
-[remove-docs](./remove-docs.html)
+[remove-docs](remove-docs.md)
 
-[remove-newlines](./remove-newlines.html)
+[remove-newlines](remove-newlines.md)
 
-[remove-processing-instructions](./remove-processing-instructions.html)
+[remove-processing-instructions](remove-processing-instructions.md)
 
-[schematron-remove-empty-rules](./schematron-remove-empty-rules.html)
+[schematron-remove-empty-rules](schematron-remove-empty-rules.md)

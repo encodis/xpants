@@ -66,11 +66,11 @@ parameters and other information.
             <table width="100%">
                 <thead>
                     <tr>
-                        <th width="20%">name</th>
-                        <th>type</th>
-                        <th>required</th>
-                        <th>tunnel</th>
-                        <th width="50%">description</th>
+                        <th width="20%">Name</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Tunnel</th>
+                        <th width="50%">Description</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -89,11 +89,11 @@ parameters and other information.
         <table>
             <thead>
                 <tr>
-                    <th width="35%">name</th>
-                    <th>type</th>
-                    <th>mode</th>
-                    <th>parameters</th>
-                    <th width="35%">description</th>
+                    <th width="35%">Name</th>
+                    <th>Type</th>
+                    <th>Mode</th>
+                    <th>Parameters</th>
+                    <th width="35%">Description</th>
                 </tr>
             </thead>
             <tbody>

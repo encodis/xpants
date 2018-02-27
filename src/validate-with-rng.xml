@@ -38,7 +38,8 @@ None.
 
 ## External Libraries
 
-jing.jar
+*   The [Jing](http://www.thaiopensource.com/relaxng/jing.html) validator must be installed on ANT's
+classpath.
 
 ## Change Log
 

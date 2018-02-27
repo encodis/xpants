@@ -16,7 +16,7 @@ summary:     Build file for XPants
 ...
     </description>
 
-    <!-- include macros/properties -->
+    <!-- set properties -->
     <property environment="env"/>
 
     <property file="build.properties"/>
@@ -47,16 +47,17 @@ summary:     Build file for XPants
         name="docs"
         description="Extract Markdown documentation from macro/XSLT files">
 
-        <!-- NOTE Markdown created in docs folder so that GitHub will display it -->
+        <!-- NOTE Markdown created in docs folder so that GitHub Pages will display it -->
         <!-- IDEA concat all MD files into single one (strip YAML?), so docs are a single page, could use for man page -->
 
-        <!-- FIXME doing this still produces HTML tables - will these be displayed in GitHub ok? -->
+        <!-- make temp MD folder -->
+        <delete dir="${build.dir}/md"/>
+        <mkdir dir="${build.dir}/md"/>
 
         <!-- extract Markdown from ANT files -->
         <extract-markdown
             type="ant"
-            remove-yaml="true"
-            output="${docs.dir}">
+            output="${build.dir}/md">
 
             <fileset dir="${src.dir}" includes="*.xml"/>
         </extract-markdown>
@@ -64,12 +65,29 @@ summary:     Build file for XPants
         <!-- extract Markdown from XSLT files -->
         <extract-markdown
             type="xsl"
-            remove-yaml="true"
-            output="${docs.dir}">
+            output="${build.dir}/md">
 
             <fileset dir="${xslt.dir}" includes="*.xsl"/>
         </extract-markdown>
 
+        <!-- convert to GFM markdown -->
+        <pandoc
+            output="${build.dir}/md"
+            from="markdown"
+            to="gfm">
+
+            <fileset dir="${build.dir}/md" includes="*.md"/>
+        </pandoc>
+
+        <!-- rename GFM to MD -->
+        <move todir="${docs.dir}" verbose="true">
+            <fileset dir="${build.dir}/md" includes="*.gfm"/>
+            <mapper>
+                <globmapper from="*.gfm" to="*.md"/>
+            </mapper>
+        </move>
+
+        <delete dir="${build.dir}/md"/>
     </target>
 
 
