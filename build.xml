@@ -27,7 +27,7 @@ summary:     Build file for XPants
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
     <property name="class.path" value="com/encodis/${ant.project.name}"/>
-    <property name="jar.file" value="${ant.project.name}-${version.number}.jar"/>
+    <property name="jar.file" value="${ant.project.name}-${version.number}-${release.stage}.jar"/>
 
     <!-- include all macros (locally) -->
     <include file="${src.dir}/xpants.xml"/>

@@ -33,7 +33,7 @@ release.stage=RC2
 ```
 
 The *release.stage* can only be explicitly set using the `&lt;release-stage-set&gt;`, which only
-accepts the following values: "PRE-ALPHA", "ALPHA", "BETA", "RC1", "RC2" and "GOLD".
+accepts the following values: "pre-alpha", "alpha", "beta", "rc1", "rc2" and "stable".
 
 ## Usage
 
@@ -365,12 +365,12 @@ To update the **build.properties** file by incrementing the build number:
 
         <attribute
             name="stage"
-            description="New release stage [PRE-ALPHA,ALPHA,BETA,RC1,RC2,GOLD]"/>
+            description="New release stage [pre-alpha,alpha,beta,rc1,rc2,stable]"/>
 
         <sequential>
 
             <!-- check allowed stage name -->
-            <check-attr-list macro="release-stage-set" name="stage" value="@{stage}" list="PRE-ALPHA,ALPHA,BETA,RC1,RC2,GOLD"/>
+            <check-attr-list macro="release-stage-set" name="stage" value="@{stage}" list="pre-alpha,alpha,beta,rc1,rc2,stable"/>
 
             <!-- use var and replaceregexp to overwrite release.stage -->
             <var name="release.stage" unset="true"/>
@@ -379,7 +379,7 @@ To update the **build.properties** file by incrementing the build number:
             <!-- update properties file -->
             <replaceregexp
                 file="@{file}"
-                match="release.stage=(PRE-ALPHA|ALPHA|BETA|RC1|RC2|GOLD)"
+                match="release.stage=(pre-alpha|alpha|beta|rc1|rc2|stable)"
                 replace="release.stage=@{stage}"
                 byline="true"/>
 
