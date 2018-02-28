@@ -153,7 +153,7 @@ XSLT files.
             <check-file-exists macro="extract-markdown-file" file="@{file}"/>
 
             <!-- detect stylesheet to use, use extension if not specified -->
-            <!-- NOTE this will not be called if type is blank as parent macro will fail, so  -->
+            <!-- NOTE this will not be called if type is blank as parent macro will fail, so be careful -->
             <local name="file.ext"/>
             <propertyregex
                 property="file.ext"

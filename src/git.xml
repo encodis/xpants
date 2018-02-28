@@ -134,9 +134,7 @@ The following properties can be set on the command line to override the default 
 
             <fail message="[git-branch] current folder is not a git repository">
                 <condition>
-                    <and>
-                        <matches string="${git.branch.name}" pattern="^fatal: Not a git repository*"/>
-                    </and>
+                    <matches string="${git.branch.name}" pattern="^fatal: Not a git repository*"/>
                 </condition>
             </fail>
 
@@ -253,5 +251,42 @@ The following properties can be set on the command line to override the default 
 
         </sequential>
     </macrodef>
+
+    <macrodef
+        name="git-latest-tag"
+        description="Get the latest tag on the current branch">
+
+        <attribute
+            name="property"
+            description="Property containing the tag"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="git-latest-tag" name="property" value="@{property}"/>
+
+            <local name="git.latest.tag"/>
+
+            <git command="rev-parse" property="git.latest.tag">
+                <args>
+                    <arg value="describe"/>
+                    <arg value="--abbrev=0"/>
+                    <arg value="--tags"/>
+                </args>
+            </git>
+
+            <fail message="[git-latest-tag] no tags found in branch">
+                <condition>
+                    <matches string="${git.latest.tag}" pattern="^fatal: No names found, cannot describe anything"/>
+                </condition>
+            </fail>
+
+            <property name="@{property}" value="${git.latest.tag}"/>
+
+            <echo message="[git.latest.tag] @{property}=${git.latest.tag}" if:true="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
 
 </project>

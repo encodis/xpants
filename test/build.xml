@@ -32,4 +32,12 @@ Summary:     Build file for XPants test suite
 
     </target>
 
+    <!-- test version -->
+    <target name="test-version">
+
+        <version-inc-major/>
+        <version-inc number="build" increment="2"/>
+
+    </target>
+
 </project>

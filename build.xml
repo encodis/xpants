@@ -95,6 +95,9 @@ summary:     Build file for XPants
         name="build-distribution"
         description="Assemble files and build a distribution JAR file">
 
+        <!-- update build number -->
+        <version-inc-build/>
+
         <!-- make build dirs -->
         <tempfile property="temp.dist" destdir="${build.dir}" prefix="dist" deleteonexit="true"/>
         <mkdir dir="${temp.dist}"/>
@@ -132,6 +135,9 @@ summary:     Build file for XPants
 
             <fileset dir="${xslt.dir}" includes="**/*.xsl"/>
         </copy>
+
+        <!-- copy build properties for reference -->
+        <copy file="build.properties" tofile="${build.dir}/${class.path}"/>
 
         <!-- create dist JAR file -->
         <mkdir dir="${build.dir}/${dist.dir}"/>

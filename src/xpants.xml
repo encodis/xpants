@@ -57,6 +57,8 @@ included separately. This may increase load time, as each file loads the environ
     <include file="${xpants.dir}/validate-with-dtd.xml"/>
     <include file="${xpants.dir}/validate-with-rng.xml"/>
     <include file="${xpants.dir}/validate-with-sch.xml"/>
+    <include file="${xpants.dir}/validate-with-schema.xml"/>
     <include file="${xpants.dir}/validate-with-xsd.xml"/>
+    <include file="${xpants.dir}/version.xml"/>
 
 </project>

@@ -112,7 +112,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
         <attribute
             name="type"
             default=""
-            description="Type of schema validation [dtd,xsd,rng]"/>
+            description="Type of schema validation [dtd,xsd,rnc,rng]"/>
 
         <attribute
             name="schema"

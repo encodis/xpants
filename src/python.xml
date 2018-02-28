@@ -148,7 +148,7 @@ property will be based on the script name given in the attribute:
             <check-file-exists macro="python-update-version" file="setup.py"/>
 
             <!-- get version number from module -->
-            <loadfile srcFile="@{script}" property="@{script}.version.number">
+            <loadfile srcfile="@{script}" property="@{script}.version.number">
                 <filterchain>
                     <tokenfilter>
                         <containsregex
@@ -163,8 +163,8 @@ property will be based on the script name given in the attribute:
 
             <!-- insert version number into setup.py -->
             <replaceregexp file="setup.py"
-                           match="version='[0-9\.]*'"
-                           replace="version='${@{script}.version.number}'"
+                           match="__version__ = '[0-9\.]*'"
+                           replace="__version__ = '${@{script}.version.number}'"
                            byline="true"/>
 
         </sequential>

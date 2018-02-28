@@ -18,10 +18,18 @@ summary:    Macros to manipulate version number
 # version.xml
 
 This module defines macros for retrieving and manipulating version and build numbers stored in a
-properties file (by default "build.properties").
+properties file (the default is "build.properties").
 
-Assumes semantic versioning.
+The properties file is assumed to declare either a *version.number* property or a *build.number*
+property, or both.
 
+Full semantic versioning of the *version.number* property is assumed. The *build.number* is assumed
+to be an unsigned integer:
+
+```
+version.number=1.4.2
+build.number=32
+```
 
 ## Usage
 
@@ -37,10 +45,21 @@ To update the **build.properties** file by incrementing the "minor" version numb
 &gt;version-inc-minor increment="2"/&lt;
 ```
 
+To update the **build.properties** file by setting the version number explicitly:
+
+```
+&gt;version-number-set version="3.1.4"/&lt;
+```
+
+To update the **build.properties** file by incrementing the build number:
+
+```
+&gt;version-inc number="build"/&lt;
+```
 
 ## Dependencies
 
-*   **build.properties** (or equivalent specification)
+*   A **build.properties** file (or equivalent) must be available
 
 ## Properties
 
@@ -83,11 +102,9 @@ To update the **build.properties** file by incrementing the "minor" version numb
 
         <sequential>
 
-            <!-- TODO add a pattern attribute, so can change other files? -->
-
             <!-- fail if required attributes not set -->
             <check-attr-set macro="version-inc" name="increment" value="@{increment}"/>
-            <check-attr-set macro="version-inc" name="number" value="@{number}" list="major,minor,patch,build"/>
+            <check-attr-list macro="version-inc" name="number" value="@{number}" list="major,minor,patch,build"/>
 
             <!-- check properties file exists -->
             <check-file-exists macro="version-inc" file="@{file}"/>
@@ -97,84 +114,74 @@ To update the **build.properties** file by incrementing the "minor" version numb
 
             <!-- fail if version.number not set (e.g. not in build.properties file) -->
             <fail message="[version-inc] property 'version.number' not set">
-                <not><isset property="version.number"/></not>
+                <condition>
+                    <not><isset property="version.number"/></not>
+                </condition>
             </fail>
 
-            <!-- split into major, minor, patch or get build -->
+            <!-- split into major, minor, patch - build number obtained directly from properties file -->
             <local name="version.number.major"/>
             <propertyregex
                 property="version.number.major"
                 input="${version.number}"
                 regexp="([0-9]+)\.([0-9]+)\.([0-9]+)"
-                select="\1"
-                defaultvalue="X"/>
+                select="\1"/>
 
             <local name="version.number.minor"/>
             <propertyregex
                 property="version.number.minor"
                 input="${version.number}"
                 regexp="([0-9]+)\.([0-9]+)\.([0-9]+)"
-                select="\2"
-                defaultvalue="X"/>
+                select="\2"/>
 
             <local name="version.number.patch"/>
             <propertyregex
                 property="version.number.patch"
                 input="${version.number}"
                 regexp="([0-9]+)\.([0-9]+)\.([0-9]+)"
-                select="\3"
-                defaultvalue="X"/>
+                select="\3"/>
 
             <!-- increment depending on @{number} -->
             <local name="increment.@{number}"/>
             <property name="increment.@{number}" value="true"/>
 
-            <math result="version.number.major"
+            <var name="version.major" value="${version.number.major}"/>
+            <var name="version.minor" value="${version.number.minor}"/>
+            <var name="version.patch" value="${version.number.patch}"/>
+
+            <math result="version.major"
+                operand1="${version.major}"
                 operation="add"
-                operand1="${version.number.major}"
                 operand2="@{increment}"
                 datatype="int"
-                if:set="increment.major">
+                if:set="increment.major"/>
 
-            <math result="version.number.minor"
+            <math result="version.minor"
+                operand1="${version.minor}"
                 operation="add"
-                operand1="${version.number.minor}"
                 operand2="@{increment}"
                 datatype="int"
-                if:set="increment.minor">
+                if:set="increment.minor"/>
 
-            <math result="version.number.patch"
+            <math result="version.patch"
+                operand1="${version.patch}"
                 operation="add"
-                operand1="${version.number.patch}"
                 operand2="@{increment}"
                 datatype="int"
-                if:set="increment.patch">
+                if:set="increment.patch"/>
 
-            <math result="build.number"
-                operation="add"
+            <math result="build.number.update"
                 operand1="${build.number}"
+                operation="add"
                 operand2="@{increment}"
                 datatype="int"
-                if:set="increment.build">
-
-            <!-- update version.number (build.number is update in math task, above) -->
-            <var name="version.number" unset="true" unless:set="increment.build"/>
-            <property name="version.number" value="${version.number.major}.${version.number.minor}.${version.number.patch}" unless:set="increment.build"/>
-
-            <!-- update properties file -->
-            <replaceregex
-                file="@{file}"
-                match="version.number=[0-9.]+"
-                replace="${version.number}"
-                byline="true"
-                unless:set="increment.build"/>
-
-            <replaceregex
-                file="@{file}"
-                match="build.number=[0-9]+"
-                replace="${build.number}"
-                byline="true"
                 if:set="increment.build"/>
+
+            <!-- set new version number -->
+            <version-number-set file="@{file}" version="${version.major}.${version.minor}.${version.patch}" unless:set="increment.build"/>
+
+            <!-- set new build number -->
+            <build-number-set file="@{file}" build="${build.number.update}" if:set="increment.build"/>
 
         </sequential>
     </macrodef>
@@ -203,6 +210,7 @@ To update the **build.properties** file by incrementing the "minor" version numb
 
         </sequential>
     </macrodef>
+
 
     <macrodef
         name="version-inc-minor"
@@ -294,7 +302,18 @@ To update the **build.properties** file by incrementing the "minor" version numb
 
         <sequential>
 
-            <!-- use var and replaceregex -->
+            <!-- use var and replaceregexp to overwrite version.number -->
+            <var name="version.number" unset="true"/>
+            <property name="version.number" value="@{version}"/>
+
+            <!-- update properties file -->
+            <replaceregexp
+                file="@{file}"
+                match="version.number=[0-9\.]+"
+                replace="version.number=@{version}"
+                byline="true"/>
+
+            <echo message="[version-number-set] version.number = '@{version}'"/>
 
         </sequential>
     </macrodef>
@@ -315,7 +334,52 @@ To update the **build.properties** file by incrementing the "minor" version numb
 
         <sequential>
 
-            <!-- use var and replaceregex -->
+            <!-- use var and replaceregexp to overwrite build.number -->
+            <var name="build.number" unset="true"/>
+            <property name="build.number" value="@{build}"/>
+
+            <!-- update properties file -->
+            <replaceregexp
+                file="@{file}"
+                match="build.number=[0-9]+"
+                replace="build.number=@{build}"
+                byline="true"/>
+
+            <echo message="[build-number-set] build.number = '@{build}'"/>
+
+        </sequential>
+    </macrodef>
+
+    <macrodef
+        name="release-stage-set"
+        description="Set the release stage">
+
+        <attribute
+            name="file"
+            default="build.properties"
+            description="Properties file for version information"/>
+
+        <attribute
+            name="stage"
+            description="New release stage [PRE-ALPHA,ALPHA,BETA,RC1,RC2,GOLD]"/>
+
+        <sequential>
+
+            <!-- check allowed stage name -->
+            <check-attr-list macro="release-stage-set" name="stage" value="@{stage}" list="PRE-ALPHA,ALPHA,BETA,RC1,RC2,GOLD"/>
+
+            <!-- use var and replaceregexp to overwrite release.stage -->
+            <var name="release.stage" unset="true"/>
+            <property name="release.stage" value="@{stage}"/>
+
+            <!-- update properties file -->
+            <replaceregexp
+                file="@{file}"
+                match="release.stage=[a-zA-z0-9-]+"
+                replace="release.stage=@{stage}"
+                byline="true"/>
+
+            <echo message="[release-stage-set] release.stage = '@{stage}'"/>
 
         </sequential>
     </macrodef>
