@@ -12,7 +12,7 @@ title:      version.xml
 date:       2018-02-27
 author:     Philip Hodder
 contact:    philip.hodder@encodis.com
-summary:    Macros to manipulate version number
+summary:    Macros to manipulate version numbers
 ...
 
 # version.xml
@@ -21,7 +21,7 @@ This module defines macros for retrieving and manipulating version and build num
 properties file (the default is "build.properties").
 
 The properties file is assumed to declare either a *version.number* property or a *build.number*
-property, or both.
+property, or both. Optionally, it can contain a *release.stage*.
 
 Full semantic versioning of the *version.number* property is assumed. The *build.number* is assumed
 to be an unsigned integer:
@@ -29,32 +29,36 @@ to be an unsigned integer:
 ```
 version.number=1.4.2
 build.number=32
+release.stage=RC2
 ```
+
+The *release.stage* can only be explicitly set using the `&lt;release-stage-set&gt;`, which only
+accepts the following values: "PRE-ALPHA", "ALPHA", "BETA", "RC1", "RC2" and "GOLD".
 
 ## Usage
 
 To update the **build.properties** file by incrementing the "major" version number:
 
 ```
-&gt;version-inc-major/&lt;
+&lt;version-inc-major/&gt;
 ```
 
 To update the **build.properties** file by incrementing the "minor" version number by 2:
 
 ```
-&gt;version-inc-minor increment="2"/&lt;
+&lt;version-inc-minor increment="2"/&gt;
 ```
 
 To update the **build.properties** file by setting the version number explicitly:
 
 ```
-&gt;version-number-set version="3.1.4"/&lt;
+&lt;version-number-set version="3.1.4"/&gt;
 ```
 
 To update the **build.properties** file by incrementing the build number:
 
 ```
-&gt;version-inc number="build"/&lt;
+&lt;version-inc number="build"/&gt;
 ```
 
 ## Dependencies
@@ -375,7 +379,7 @@ To update the **build.properties** file by incrementing the build number:
             <!-- update properties file -->
             <replaceregexp
                 file="@{file}"
-                match="release.stage=[a-zA-z0-9-]+"
+                match="release.stage=(PRE-ALPHA|ALPHA|BETA|RC1|RC2|GOLD)"
                 replace="release.stage=@{stage}"
                 byline="true"/>
 

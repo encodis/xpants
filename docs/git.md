@@ -87,3 +87,14 @@ Fail the build if the current branch name does not match the pattern
 | Name    | Description             | Allowed | Default | Required |
 | :------ | :---------------------- | :------ | :-----: | :------: |
 | pattern | Name of branch to match |         |         |   yes    |
+
+## git-latest-tag
+
+Get the latest tag on the current
+branch
+
+#### Attributes
+
+| Name     | Description                 | Allowed | Default | Required |
+| :------- | :-------------------------- | :------ | :-----: | :------: |
+| property | Property containing the tag |         |         |   yes    |

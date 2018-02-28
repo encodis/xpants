@@ -70,13 +70,13 @@ schema
 
 #### Attributes
 
-| Name     | Description                    | Allowed       | Default | Required |
-| :------- | :----------------------------- | :------------ | :-----: | :------: |
-| file     | Source XML file                |               |         |    no    |
-| type     | Type of schema validation      | dtd, xsd, rng |         |    no    |
-| schema   | Schema file                    |               |         |    no    |
-| report   | Path for report file(s)        |               |         |    no    |
-| property | Property to update with result |               |         |    no    |
+| Name     | Description                    | Allowed            | Default | Required |
+| :------- | :----------------------------- | :----------------- | :-----: | :------: |
+| file     | Source XML file                |                    |         |    no    |
+| type     | Type of schema validation      | dtd, xsd, rnc, rng |         |    no    |
+| schema   | Schema file                    |                    |         |    no    |
+| report   | Path for report file(s)        |                    |         |    no    |
+| property | Property to update with result |                    |         |    no    |
 
 #### Elements
 

@@ -26,8 +26,8 @@ Summary:     Build file for XPants test suite
     <target name="test-apply-stylesheet">
 
         <apply-stylesheet
-            file="xslt/input.xml"
-            output="xslt/result.xml"
+            file="apply-stylesheet/input.xml"
+            output="apply-stylesheet/result.xml"
             stylesheet="identity"/>
 
     </target>
@@ -37,6 +37,7 @@ Summary:     Build file for XPants test suite
 
         <version-inc-major/>
         <version-inc number="build" increment="2"/>
+        <release-stage-set stage="RC1"/>
 
     </target>
 

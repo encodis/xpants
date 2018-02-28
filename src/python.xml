@@ -210,9 +210,9 @@ property will be based on the script name given in the attribute:
             <property name="temp.delete" value="true"/>
 
             <local name="unzip.dir"/>
-            <tempfile property="unzip.dir" prefix="${ant.project.name}" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+            <tempfile property="unzip.dir" prefix="py" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
-            <echo message="[python] temp.file=${temp.file}" if:true="${debug.macro}"/>
+            <echo message="[python] temp.file=${temp.file}" if:true="${macro.debug}"/>
 
             <unzip src="@{module}-@{version}.zip" dest="${unzip.dir}"/>
 

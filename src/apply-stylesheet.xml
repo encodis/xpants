@@ -260,12 +260,12 @@ None.
             <check-class-path macro="apply-stylesheet" class="net.sf.saxon.TransformerFactoryImpl" property="saxon.processor"/>
 
             <!-- apply the stylesheet -->
-            <echo message="[apply-stylesheet-file] use.stylesheet=${use.stylesheet}" if:true="${debug.macro}"/>
+            <echo message="[apply-stylesheet-file] use.stylesheet=${use.stylesheet}" if:true="${macro.debug}"/>
 
             <local name="temp.file"/>
-            <tempfile property="temp.file" prefix="${ant.project.name}" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+            <tempfile property="temp.file" prefix="sty" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
-            <echo message="[apply-stylesheet-file] temp.file=${temp.file}" if:true="${debug.macro}"/>
+            <echo message="[apply-stylesheet-file] temp.file=${temp.file}" if:true="${macro.debug}"/>
 
             <!-- TODO use of Saxon should really be optional, can we add unless:set="noSaxon" or something?
                  xincludes might not work then -->

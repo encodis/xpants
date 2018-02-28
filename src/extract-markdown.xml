@@ -170,17 +170,10 @@ XSLT files.
             <local name="extract.stylesheet"/>
             <property name="extract.stylesheet" value="extract-markdown-from-${file.type}"/>
 
-            <!-- create temp file for output of apply stylesheet -->
-            <property name="temp.dir" value="${java.io.tmpdir}"/>
-            <property name="temp.delete" value="true"/>
-
-            <local name="output.temp"/>
-            <tempfile property="output.temp" destdir="${temp.dir}" prefix="ext" deleteonexit="${temp.delete}"/>
-
             <!-- extract markdown -->
             <apply-stylesheet
                 file="@{file}"
-                output="${output.temp}"
+                output="@{output}"
                 stylesheet="${extract.stylesheet}"/>
 
         </sequential>
