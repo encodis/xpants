@@ -163,8 +163,8 @@ property will be based on the script name given in the attribute:
 
             <!-- insert version number into setup.py -->
             <replaceregexp file="setup.py"
-                           match="__version__ = '[0-9\.]*'"
-                           replace="__version__ = '${@{script}.version.number}'"
+                           match="version='[0-9\.]*'"
+                           replace="version='${@{script}.version.number}'"
                            byline="true"/>
 
         </sequential>
@@ -214,7 +214,9 @@ property will be based on the script name given in the attribute:
 
             <echo message="[python] temp.file=${temp.file}" if:true="${macro.debug}"/>
 
-            <unzip src="@{module}-@{version}.zip" dest="${unzip.dir}"/>
+            <!-- FIXME hardcoded 'dist' folder, need to change this; maybe give path to zip and work out module name - or just don't need it or version? -->
+
+            <unzip src="dist/@{module}-@{version}.zip" dest="${unzip.dir}"/>
 
             <!-- run python setup.py install in build/module-1.0.zip -->
             <python script="setup.py" dir="${unzip.dir}/@{module}-@{version}">
