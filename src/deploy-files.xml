@@ -165,7 +165,7 @@ The following properties are required when using the 'aws' method:
             <mkdir dir="${target.path}" unless:true="${target.exists}"/>
 
             <!-- copy file -->
-            <copy file="@{file}" tofile="${target.path}" overwrite="true" verbose="${macro.debug}"/>
+            <copy file="@{file}" todir="${target.path}" overwrite="true" verbose="${macro.debug}"/>
 
             <!-- TODO use/detect alternate deploy methods -->
 
