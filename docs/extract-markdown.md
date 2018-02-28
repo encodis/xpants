@@ -2,10 +2,8 @@
 
 Macro definitions to extract documentation (as Markdown) embedded in
 various types of files. The user can specifiy a stylesheet to use for
-the extraction. Alternatively this module defines some macros that can
-be used to extract documentation from standard file types. Successful
-extraction will depend on the source files containing the relevant
-elements with the Markdown documentation.
+the extraction. Successful extraction will depend on the source files
+containing the relevant elements with the Markdown documentation.
 
   - If the *file* attribute is not blank and refers to a file that
     exists then documentation will be extracted from it, using the
@@ -14,14 +12,12 @@ elements with the Markdown documentation.
     Markdown from all files in a folder determined by the ‘input’
     element.
 
-> NOTE: It is the responsibility of the calling task to ensure that any
-> output folders are created before running this task.
-
 The type of extraction is determined by the *type* attribute. Currently
 this can be set to anything, although if left blank it will try to
 determine the type from the file extension. This works fine for
 Schematron (“.sch”) and XSLT (“.xsl”) files, but for ANT files the type
-will need to be given explicitly.
+will need to be given explicitly (as they are usually just “.xml”
+files).
 
 > WARNING: The stylesheets used by these macros will also extract text
 > node messages embedded in <echo> and <fail> elements. Therefore use
@@ -41,7 +37,7 @@ will need to be given explicitly.
 ## Dependencies
 
 These stylesheets are included using the default stylesheet mechanism
-described in [apply-stylesheet](apply-stylesheet.html)
+described in [apply-stylesheet](apply-stylesheet.html):
 
   - **extract-markdown-from-ant.xsl:** This is the standard stylesheet
     used to extract Markdown from ANT scripts.
@@ -63,12 +59,11 @@ files
 
 #### Attributes
 
-| Name        | Description                         | Allowed       | Default | Required |
-| :---------- | :---------------------------------- | :------------ | :-----: | :------: |
-| file        | Source file                         |               |         |    no    |
-| type        | Source file type                    | ant, sch, xsl |         |   yes    |
-| remove-yaml | Remove YAML metadata block          | true, false   |  false  |    no    |
-| output      | Path for extracted Markdown file(s) |               |         |   yes    |
+| Name   | Description                         | Allowed       | Default | Required |
+| :----- | :---------------------------------- | :------------ | :-----: | :------: |
+| file   | Source file                         |               |         |    no    |
+| type   | Source file type                    | ant, sch, xsl |         |   yes    |
+| output | Path for extracted Markdown file(s) |               |         |   yes    |
 
 #### Elements
 
@@ -83,12 +78,11 @@ file
 
 #### Attributes
 
-| Name        | Description                      | Allowed       | Default | Required |
-| :---------- | :------------------------------- | :------------ | :-----: | :------: |
-| file        | Source file                      |               |         |   yes    |
-| type        | Source file type                 | ant, sch, xsl |         |   yes    |
-| remove-yaml | Remove YAML metadata block       | true, false   |  false  |    no    |
-| output      | Path for extracted Markdown file |               |         |   yes    |
+| Name   | Description                      | Allowed       | Default | Required |
+| :----- | :------------------------------- | :------------ | :-----: | :------: |
+| file   | Source file                      |               |         |   yes    |
+| type   | Source file type                 | ant, sch, xsl |         |    no    |
+| output | Path for extracted Markdown file |               |         |   yes    |
 
 ## extract-markdown-dir
 
@@ -97,11 +91,10 @@ files
 
 #### Attributes
 
-| Name        | Description                | Allowed       | Default | Required |
-| :---------- | :------------------------- | :------------ | :-----: | :------: |
-| type        | Source file type           | ant, sch, xsl |         |   yes    |
-| remove-yaml | Remove YAML metadata block | true, false   |  false  |    no    |
-| output      | Path for extracted files   |               |         |   yes    |
+| Name   | Description              | Allowed       | Default | Required |
+| :----- | :----------------------- | :------------ | :-----: | :------: |
+| type   | Source file type         | ant, sch, xsl |         |   yes    |
+| output | Path for extracted files |               |         |   yes    |
 
 #### Elements
 
