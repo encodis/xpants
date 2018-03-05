@@ -88,7 +88,7 @@ The following properties can be set on the command line to override the default 
             <check-attr-set macro="git" name="command" value="@{command}"/>
 
             <!-- find git.exe -->
-            <check-exe-exists property="git.exe" unless:set="git.exe"/>
+            <check-exe-path property="git.exe" unless:set="git.exe"/>
 
             <!-- run git command -->
             <echo message="[git] command=@{command}" if:true="${macro.debug}"/>

@@ -159,7 +159,7 @@ The following properties can be set on the command line to override the default 
             <check-attr-set macro="tidy-file" name="file" value="@{file}"/>
 
             <!-- find tidy.exe -->
-            <check-exe-exists property="tidy.exe" unless:set="tidy.exe"/>
+            <check-exe-path property="tidy.exe" unless:set="tidy.exe"/>
 
             <property name="exec.failonerror" value="true"/>
 

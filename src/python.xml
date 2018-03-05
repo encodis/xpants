@@ -99,6 +99,7 @@ property will be based on the script name given in the attribute:
 
         <element
             name="args"
+            implicit="true"
             optional="true"
             description="Remaining command line arguments"/>
 
@@ -116,7 +117,7 @@ property will be based on the script name given in the attribute:
             </fail>
 
             <!-- check python exists in path -->
-            <check-exe-exists property="python.exe" unless:set="python.exe"/>
+            <check-exe-path property="python.exe" unless:set="python.exe"/>
 
             <!-- check script exists -->
             <check-file-exists macro="python" file="@{script}" unless:blank="@{script}"/>
@@ -134,6 +135,7 @@ property will be based on the script name given in the attribute:
     </macrodef>
 
 
+    <!-- TODO delete this and replace with using bumpversion (or equivalent) -->
     <macrodef
         name="python-update-version"
         description="Update the setup config with a version number taken from the source script">

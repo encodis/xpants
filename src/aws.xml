@@ -105,7 +105,7 @@ root.
             <check-attr-set macro="aws" name="dir" value="@{dir}"/>
 
             <!-- find aws.exe -->
-            <check-exe-exists property="aws.exe" unless:set="aws.exe"/>
+            <check-exe-path property="aws.exe" unless:set="aws.exe"/>
 
             <!-- run AWS command -->
             <echo message="[aws] command=@{command} @{subcommand}" if:true="${macro.debug}"/>

@@ -26,7 +26,7 @@ files
 *   *check-class-path* fails the build if the specified class does not exist in the ANT classpath
 *   *check-file-contains* sets the given property to "true" if a file contains a particular string;
 if the property is not supplied then the build will fail if the file does not contain the string
-*   *check-exe-exists* checks that the specified executable is available on the path, sets a
+*   *check-exe-path* checks that the specified executable is available on the path, sets a
 property with the name of the executable and fails the build if it cannot find it.This is typically
 used for build files that might be used on both Windows and Unix that use the &lt;exec&gt; or
 &lt;apply&gt; tasks. The simplest usage is to just supply the name of a property that will be set
@@ -49,7 +49,7 @@ This build file fragment ensures that the correct name for the "git" executable 
 to the &lt;exec&gt; task. This would be *git* in Unix/MacOS and *git.exe* in Windows.
 
 ```
-&lt;check-exe-exists property="git.exe"/&gt;
+&lt;check-exe-path property="git.exe"/&gt;
 
 &lt;exec
 &#9;executable="${git.exe}"
@@ -64,7 +64,7 @@ This fragment finds the executable name for the "Pandoc" program. The normal Win
 "pan-doc.exe":
 
 ```
-&lt;check-exe-exists property="pandoc.exe" windows="pan-doc.exe"/&gt;
+&lt;check-exe-path property="pandoc.exe" windows="pan-doc.exe"/&gt;
 ```
 
 ## Dependencies
@@ -244,7 +244,7 @@ These macros create the following (global) properties:
 
 
     <macrodef
-        name="check-exe-exists"
+        name="check-exe-path"
         description="Fail the build if the executable is not on the path">
 
         <attribute
@@ -267,7 +267,7 @@ These macros create the following (global) properties:
             <property environment="env"/>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="check-exe-exists" name="property" value="@{property}"/>
+            <check-attr-set macro="check-exe-path" name="property" value="@{property}"/>
 
             <local name="property.name"/>
             <propertyregex
@@ -301,7 +301,7 @@ These macros create the following (global) properties:
             </condition>
 
             <!-- check that executable is in the PATH -->
-            <fail message="[check-exe-exists] An executable file for '@{property}' cannot be found on the path">
+            <fail message="[check-exe-path] An executable file for '@{property}' cannot be found on the path">
               <condition>
                   <not>
                       <available file="${@{property}}" filepath="${env.PATH}"/>
@@ -309,7 +309,7 @@ These macros create the following (global) properties:
               </condition>
             </fail>
 
-            <echo message="[check-exe-exists] @{property}=${@{property}}" if:true="${macro.debug}"/>
+            <echo message="[check-exe-path] @{property}=${@{property}}" if:true="${macro.debug}"/>
 
         </sequential>
     </macrodef>

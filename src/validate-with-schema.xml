@@ -8,10 +8,10 @@
 ---
 project:      XML Practical ANT Scripts
 title:        validate-with-schema.xml
-date:         2018-02-26
+date:         2018-03-05
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
-summary:      Macro definitions to validate XML instances using schema (XSD, DTD or RNG)
+summary:      Macro definitions to validate XML instances using schema (XSD, DTD, RNC or RNG)
 ...
 
 # validate-with-schema.xml
@@ -96,7 +96,14 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
         property is optional, if given is t/f. if fileset given then true if all in fileset pass
         if macro.debug or no report and no property then report each on as you do it.
 
-        TODO is there a way you can automatically determine the type
+        TODO is there a way you can automatically determine the type?
+            DTD instance contains !DOCTYPE
+            XSD instance contains xmlns:default
+            if schema is specified then must be XSD or RelaxNG
+
+        TODO wrappers for validate-with-dtd etc that supplies the type
+
+        TODO how to validate a DTD/XSD against the W3C schema?
     -->
 
 
@@ -248,6 +255,9 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                 </xmlcatalog>
 			</schemavalidate>
 
+            <!-- check jing.jar exists -->
+            <check-class-path macro="validate-with-schema" class="com.thaiopensource.relaxng.util.Driver" if:set="${schema.rnc}"/>
+
             <!-- validate RNC -->
             <java
                 classpath="com.thaiopensource.relaxng.util.Driver"
@@ -256,6 +266,9 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                 <arg value="@{schema}"/>
                 <arg value="@{file}"/>
             </java>
+
+            <!-- check jing.jar exists -->
+            <check-class-path macro="validate-with-schema" class="com.thaiopensource.relaxng.util.Driver" if:set="${schema.rng}"/>
 
             <!-- validate RNG -->
             <java
@@ -269,8 +282,10 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
 
             <!-- valid or not? -->
             <local name="output.valid"/>
-            <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid XML document" unless:set="schema.rng"/>
+            <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid XML document" if:set="schema.dtd"/>
+            <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid XML document" if:set="schema.xsd"/>
             <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid RNG document" if:set="schema.rng"/>
+            <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid RNC document" if:set="schema.rnc"/>
 
             <!-- save report, if required -->
             <copy tofile="@{report}" file="${output.temp}" unless:blank="@{report}"/>

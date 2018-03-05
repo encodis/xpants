@@ -231,7 +231,7 @@ The following properties can be set on the command line to override the default 
             <check-file-exists macro="pandoc-file" file="@{file}"/>
 
             <!-- check if pandoc executable is available -->
-            <check-exe-exists property="pandoc.exe" windows="pan-doc.exe" unless:set="pandoc.exe"/>
+            <check-exe-path property="pandoc.exe" windows="pan-doc.exe" unless:set="pandoc.exe"/>
 
             <!-- convert options -->
             <local name="options.list"/>

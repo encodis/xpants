@@ -573,7 +573,7 @@ The following properties can be set on the command line to override the default 
             <check-attr-set macro="diff-files-txt" name="output" value="@{output}"/>
 
             <!-- check for diff exe -->
-            <check-exe-exists property="diff.exe" unless:set="diff.exe"/>
+            <check-exe-path property="diff.exe" unless:set="diff.exe"/>
 
             <!-- NOTE @{output} will not be created if the files are the same -->
             <property name="exec.failonerror" value="true"/>
@@ -696,6 +696,7 @@ The following properties can be set on the command line to override the default 
 
             <!-- NOTE @{output} will be created even if the files are the same, just says A=B -->
 
+            <!-- FIXME should really use the classpath to run this -->
             <java jar="${deltaxml.dir}/command.jar" failonerror="true" fork="true">
                 <arg value="compare"/>
                 <arg value="@{config}"/>
