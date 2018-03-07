@@ -93,6 +93,11 @@ property will be based on the script name given in the attribute:
             description="Python script path"/>
 
         <attribute
+            name="version"
+            default=""
+            description="Python version [2,3]"/>
+
+        <attribute
             name="dir"
             default="."
             description="Directory to run module/script in"/>
@@ -101,7 +106,7 @@ property will be based on the script name given in the attribute:
             name="args"
             implicit="true"
             optional="true"
-            description="Remaining command line arguments"/>
+            description="Command line arguments"/>
 
         <sequential>
 
@@ -116,15 +121,27 @@ property will be based on the script name given in the attribute:
                 </condition>
             </fail>
 
+            <fail message="[python] 'version' must be '2', '3' or blank for system default">
+                <condition>
+                    <not>
+                        <or>
+                            <equals arg1="@{version}" arg2="2"/>
+                            <equals arg1="@{version}" arg2="3"/>
+                            <equals arg1="@{version}" arg2=""/>
+                        </or>
+                    </not>
+                </condition>
+            </fail>
+
             <!-- check python exists in path -->
-            <check-exe-path property="python.exe" unless:set="python.exe"/>
+            <check-exe-path property="python@{version}.exe" unless:set="python@{version}.exe"/>
 
             <!-- check script exists -->
             <check-file-exists macro="python" file="@{script}" unless:blank="@{script}"/>
 
             <!-- run module or script -->
             <exec
-                executable="${python.exe}"
+                executable="${python@{version}.exe}"
                 searchpath="true"
                 dir="@{dir}">
                 <arg line="-m @{module}" unless:blank="@{module}"/>
