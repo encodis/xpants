@@ -219,7 +219,7 @@ property will be based on the script name given in the attribute:
 
         <attribute
             name="dir"
-            default=""
+            default="."
             description="Distribution directory"/>
 
         <attribute
