@@ -194,12 +194,18 @@ property will be based on the script name given in the attribute:
         name="python-build-distribution"
         description="Build a distribution for a python module">
 
+        <attribute
+            name="dir"
+            default=""
+            description="Distribution directory"/>
+
         <sequential>
 
             <python script="setup.py">
                 <args>
                     <arg value="sdist"/>
                     <arg value="--formats=zip"/>
+                    <arg value="--dist-dir=@{dir}" unless:blank="@{dir}"/>
                 </args>
             </python>
 
@@ -210,6 +216,11 @@ property will be based on the script name given in the attribute:
     <macrodef
         name="python-install-module"
         description="Install a python module">
+
+        <attribute
+            name="dir"
+            default=""
+            description="Distribution directory"/>
 
         <attribute
             name="module"
@@ -233,9 +244,7 @@ property will be based on the script name given in the attribute:
 
             <echo message="[python] temp.file=${temp.file}" if:true="${macro.debug}"/>
 
-            <!-- FIXME hardcoded 'dist' folder, need to change this; maybe give path to zip and work out module name - or just don't need it or version? -->
-
-            <unzip src="dist/@{module}-@{version}.zip" dest="${unzip.dir}"/>
+            <unzip src="@{dir}/@{module}-@{version}.zip" dest="${unzip.dir}"/>
 
             <!-- run python setup.py install in build/module-1.0.zip -->
             <python script="setup.py" dir="${unzip.dir}/@{module}-@{version}">
