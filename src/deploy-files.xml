@@ -144,13 +144,9 @@ The following properties are required when using the 'aws' method:
             <local name="file.name"/>
             <basename property="file.name" file="@{file}"/>
 
-            <!-- set target path -->
-            <local name="target.path"/>
-            <property name="target.path" value="@{target}/${file.name}"/>
-
-            <!-- check if target folder exists and can be overwritten -->
+            <!-- check if file exists in target folder and can be overwritten -->
             <local name="target.exists"/>
-            <available property="target.exists" file="${target.path}" type="file"/>
+            <available property="target.exists" file="@{target}/${file.name}" type="file"/>
 
             <fail message="[deploy-file] '@{file}' exists in target folder '@{target}' and will not be overwritten">
                 <condition>
@@ -162,10 +158,10 @@ The following properties are required when using the 'aws' method:
             </fail>
 
             <!-- make target folder if it does not exist -->
-            <mkdir dir="${target.path}" unless:true="${target.exists}"/>
+            <mkdir dir="@{target}" unless:true="${target.exists}"/>
 
             <!-- copy file -->
-            <copy file="@{file}" todir="${target.path}" overwrite="true" verbose="${macro.debug}"/>
+            <copy file="@{file}" todir="@{target}" overwrite="true" verbose="${macro.debug}"/>
 
             <!-- TODO use/detect alternate deploy methods -->
 
