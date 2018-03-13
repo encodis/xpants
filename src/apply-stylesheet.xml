@@ -299,6 +299,14 @@ None.
             <local name="saxon.processor"/>
             <check-class-path macro="apply-stylesheet" class="net.sf.saxon.TransformerFactoryImpl" property="saxon.processor"/>
 
+            <!-- cannot use @{initial} without Saxon processor -->
+            <fail message="[apply-stylesheet-file] 'initial' option unavailable without Saxon processor">
+                <and>
+                    <not><isset name="saxon.processor"/></not>
+                    <not><equals arg1="@{initial}" arg2=""/></not>
+                </and>
+            </fail>
+
             <!-- apply the stylesheet -->
             <echo message="[apply-stylesheet-file] use.stylesheet=${use.stylesheet}" if:true="${macro.debug}"/>
 
@@ -308,9 +316,7 @@ None.
 
             <echo message="[apply-stylesheet-file] temp.file=${temp.file}" if:true="${macro.debug}"/>
 
-            <!-- TODO use of Saxon should really be optional, can we add unless:set="noSaxon" or something?
-                 xincludes might not work then -->
-
+            <!-- apply transform -->        
             <xslt
             	out="${temp.file}"
             	force="true"
