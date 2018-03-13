@@ -35,7 +35,7 @@ be copied there. Also, if the *ext* attribute is set then it will replace the fi
 original extension. *ext* should therefore contain a leading "." if that is required.
 
 &gt; NOTE: It is the responsibility of the calling task to ensure that any output folders are
-created before running this task. Otherwise each transformed file will overwrite
+created and specified before running this task. Otherwise each transformed file will overwrite
 the given output path.
 
 The macro *apply-stylesheet-file* can take an optional *params.xslt* element which contains
@@ -146,8 +146,13 @@ None.
             description="Source XML file"/>
 
         <attribute
+            name="initial"
+            default=""
+            description="Initial template to run"/>
+
+        <attribute
             name="stylesheet"
-            description="The XSLT file to be applied"/>
+            description="XSLT file to be applied"/>
 
         <attribute
             name="ext"
@@ -175,6 +180,7 @@ None.
             <!-- file or dir mode? -->
             <apply-stylesheet-file
                 file="@{file}"
+                initial="@{initial}"
                 stylesheet="@{stylesheet}"
                 output="@{output}"
                 unless:blank="@{file}"/>
@@ -197,7 +203,13 @@ None.
 
         <attribute
             name="file"
+            default=""
             description="Source XML file"/>
+
+        <attribute
+            name="initial"
+            default=""
+            description="Initial template to run"/>
 
         <attribute
             name="ext"
@@ -206,7 +218,7 @@ None.
 
         <attribute
             name="stylesheet"
-            description="The XSLT file to be applied"/>
+            description="XSLT file to be applied"/>
 
         <attribute
             name="output"
@@ -221,8 +233,36 @@ None.
 
         <sequential>
 
+            <!-- check attributes -->
+            <fail message="[apply-stylesheet-file] must specify either 'file' or 'initial' attributes">
+                <condition>
+                    <and>
+                        <equals arg1="@{file}" arg2=""/>
+                        <equals arg1="@{initial}" arg2=""/>
+                    </and>
+                </condition>
+            </fail>
+
+            <fail message="[apply-stylesheet-file] cannot specify both 'file' and 'initial' attributes">
+                <condition>
+                    <and>
+                        <not><equals arg1="@{file}" arg2=""/></not>
+                        <not><equals arg1="@{initial}" arg2=""/></not>
+                    </and>
+                </condition>
+            </fail>
+
+            <fail message="[apply-stylesheet-file] cannot specify both 'output' and 'initial'">
+                <condition>
+                    <and>
+                        <not><equals arg1="@{output}" arg2=""/></not>
+                        <not><equals arg1="@{initial}" arg2=""/></not>
+                    </and>
+                </condition>
+            </fail>
+
             <!-- fail if file does not exist -->
-            <check-file-exists macro="apply-stylesheet-file" file="@{file}"/>
+            <check-file-exists macro="apply-stylesheet-file" file="@{file}" unless:blank="@{file}"/>
 
             <!-- set debugging properties -->
             <property name="temp.dir" value="${java.io.tmpdir}"/>
@@ -262,6 +302,7 @@ None.
             <!-- apply the stylesheet -->
             <echo message="[apply-stylesheet-file] use.stylesheet=${use.stylesheet}" if:true="${macro.debug}"/>
 
+            <!-- temp file will not be used if @{initial} is set -->
             <local name="temp.file"/>
             <tempfile property="temp.file" prefix="sty" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
@@ -271,7 +312,6 @@ None.
                  xincludes might not work then -->
 
             <xslt
-            	in="@{file}"
             	out="${temp.file}"
             	force="true"
                 suppresswarnings="${xslt.suppresswarnings}"
@@ -291,8 +331,12 @@ None.
                     <attribute name="http://saxon.sf.net/feature/entityResolverClass" value="org.xmlresolver.Resolver"/>
                     <attribute name="http://saxon.sf.net/feature/uriResolverClass" value="org.xmlresolver.Resolver"/>
                     <!-- <attribute name="http://saxon.sf.net/feature/validation" value="false"/> -->
+
                     <!-- TODO check that turning xinclude-aware on is OK for regular transforms -->
                     <attribute name="http://saxon.sf.net/feature/xinclude-aware" value="true"/>
+
+                    <!-- specify initial template if no @{file} -->
+                    <attribute name="http://saxon.sf.net/feature/initialTemplate" value="@{initial}" unless:blank="@{initial}"/>
                 </factory>
 
                 <!-- otherwise use Xalan -->
@@ -302,17 +346,20 @@ None.
                 <sysproperty key="xml.catalog.files" value="${xpants.catalog}"/>
 
                 <params.xslt/>
+
+                <!-- use file if no @{initial} template -->
+                <fileset file="@{file}" unless:blank="@{file}"/>
             </xslt>
 
-            <!-- if 'output' is blank/not given then overwrite existing file -->
+            <!-- if @{output} and @{initial} are blank then overwrite existing @{file} -->
             <!-- NOTE if this macro is called by apply-stylesheet-dir, then 'output' must be a folder -->
-
-            <local name="overwrite.input"/>
-            <condition property="overwrite.input">
+<!--
+            <local name="copy.orig"/>
+            <condition property="copy.orig">
                 <equals arg1="@{output}" arg2=""/>
-            </condition>
+            </condition> -->
 
-            <copy file="${temp.file}" tofile="@{file}" overwrite="true" if:set="overwrite.input"/>
+            <copy file="${temp.file}" tofile="@{file}" overwrite="true" if:blank="@{output}"/>
 
             <!-- if 'output' exists and is a folder, copy file to output dir -->
             <!-- NOTE if 'output' is blank the <available> task will still detect the folder as existing, so must do it in this order -->
@@ -320,17 +367,14 @@ None.
             <condition property="copy.dir">
                 <and>
                     <available file="@{output}" type="dir"/>
-                    <not><isset property="overwrite.input"/></not>
+                    <!-- <not><isset property="copy.orig"/></not> -->
+                    <not><equals arg1="@{output}" arg2=""/></not>
                 </and>
             </condition>
 
             <!-- get file extension -->
             <local name="suffix.name"/>
-            <propertyregex
-                property="suffix.name"
-                input="@{file}"
-                regexp="(.*)\.(.*)"
-                select="\2"/>
+            <propertyregex property="suffix.name" input="@{file}" regexp=".*\.(.*)" select="\1"/>
 
             <!-- get file root name -->
             <local name="file.name"/>
@@ -345,15 +389,15 @@ None.
             <copy file="${temp.file}" tofile="@{output}/${file.name}${file.ext}" overwrite="true" if:set="copy.dir"/>
 
             <!-- if 'output' in not blank but is not a folder, just copy file to output file -->
-            <local name="copy.file"/>
+            <!-- <local name="copy.file"/>
             <condition property="copy.file">
                 <and>
                     <not><isset property="copy.dir"/></not>
-                    <not><isset property="overwrite.input"/></not>
+                    <not><isset property="copy.orig"/></not>
                 </and>
-            </condition>
+            </condition> -->
 
-            <copy file="${temp.file}" tofile="@{output}" overwrite="true" if:set="copy.file"/>
+            <copy file="${temp.file}" tofile="@{output}" overwrite="true" unless:set="copy.dir"/>
 
         </sequential>
     </macrodef>
@@ -365,7 +409,7 @@ None.
 
         <attribute
             name="stylesheet"
-            description="The XSLT file to be applied"/>
+            description="XSLT file to be applied"/>
 
         <attribute
             name="ext"
