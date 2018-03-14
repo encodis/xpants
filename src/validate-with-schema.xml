@@ -224,7 +224,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             <property name="temp.delete" value="true"/>
 
             <local name="output.temp"/>
-            <tempfile property="output.temp" destdir="${temp.dir}" prefix="val" deleteonexit="${temp.delete}"/>
+            <tempfile property="output.temp" destdir="${temp.dir}" prefix="validate-with-schema" deleteonexit="${temp.delete}"/>
 
 			<record name="${output.temp}" action="start"/>
 

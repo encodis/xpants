@@ -321,7 +321,7 @@ The following properties can be set on the command line to override the default 
             <property name="temp.delete" value="true"/>
 
             <local name="temp.svrl"/>
-            <tempfile property="temp.svrl" suffix=".svrl" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+            <tempfile property="temp.svrl" prefix="validate-with-sch" suffix=".svrl" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
 			<validate-with-sch-to-svrl
                 file="@{file}"
@@ -330,7 +330,7 @@ The following properties can be set on the command line to override the default 
 
             <!-- filter the SVRL -->
             <local name="temp.filter"/>
-            <tempfile property="temp.filter" suffix=".filter" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+            <tempfile property="temp.filter" prefix="validate-with-sch" suffix=".filter" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
             <property
                 name="filter-svrl.stylesheet"

@@ -257,7 +257,7 @@ library, rather than on the command line.
 
             <!-- merge includes -->
             <local name="temp.merged"/>
-            <tempfile property="temp.merged" prefix="merged" suffix=".sch" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+            <tempfile property="temp.merged" prefix="merge-sch-includes" suffix=".sch" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
             <merge-schematron-includes
                 file="@{file}"
@@ -265,7 +265,7 @@ library, rather than on the command line.
 
             <!-- resolve abstracts -->
             <local name="temp.resolved"/>
-            <tempfile property="temp.resolved" prefix="resolved" suffix=".sch" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+            <tempfile property="temp.resolved" prefix="resolve-sch-abstracts" suffix=".sch" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
             <resolve-schematron-abstracts
                 file="${temp.resolved}"

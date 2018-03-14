@@ -444,7 +444,7 @@ The following properties are required when using the 'aws' method:
             <property name="temp.delete" value="true"/>
 
             <local name="source.temp"/>
-            <tempfile property="source.temp" destdir="${temp.dir}" prefix="scp" deleteonexit="${temp.delete}" if:blank="@{source}"/>
+            <tempfile property="source.temp" destdir="${temp.dir}" prefix="deploy-files-scp" deleteonexit="${temp.delete}" if:blank="@{source}"/>
 
             <mkdir dir="${source.temp}" if:blank="@{source}"/>
 
@@ -509,7 +509,7 @@ The following properties are required when using the 'aws' method:
             <property name="temp.delete" value="true"/>
 
             <local name="source.temp"/>
-            <tempfile property="source.temp" destdir="${temp.dir}" prefix="aws" deleteonexit="${temp.delete}" if:blank="@{source}"/>
+            <tempfile property="source.temp" destdir="${temp.dir}" prefix="deploy-files-aws" deleteonexit="${temp.delete}" if:blank="@{source}"/>
 
             <mkdir dir="${source.temp}" if:blank="@{source}"/>
 

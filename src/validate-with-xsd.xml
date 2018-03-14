@@ -345,7 +345,7 @@ The following properties can be set on the command line to override the default 
                  or have swithc to call validate-with-xsd/dtd/rng here
 
                  cannot do this as we don't know what the type of schema is unless actually given OR we
-                 look in the file so HAVE to have a type 
+                 look in the file so HAVE to have a type
 
                  adding validate-with-schematron is a bit different
               -->
@@ -408,7 +408,7 @@ The following properties can be set on the command line to override the default 
             <property name="temp.delete" value="true"/>
 
             <local name="temp.txt"/>
-            <tempfile property="temp.txt" suffix=".txt" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+            <tempfile property="temp.txt" prefix="validate-with-xsd" suffix=".txt" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
             <!-- check validation and report... -->
 			<validate-with-xsd-to-txt
@@ -463,7 +463,7 @@ The following properties can be set on the command line to override the default 
             <property name="temp.delete" value="true"/>
 
             <local name="temp.svrl"/>
-            <tempfile property="temp.svrl" suffix=".svrl" destdir="${temp.dir}" deleteonexist="${temp.delete}"/>
+            <tempfile property="temp.svrl" prefix="validate-with-xsd" suffix=".svrl" destdir="${temp.dir}" deleteonexist="${temp.delete}"/>
 
             <!-- check validation and report...  -->
 			<validate-with-xsd-to-svrl
