@@ -146,11 +146,6 @@ None.
             description="Source XML file"/>
 
         <attribute
-            name="initial"
-            default=""
-            description="Initial template to run"/>
-
-        <attribute
             name="stylesheet"
             description="XSLT file to be applied"/>
 
@@ -180,8 +175,8 @@ None.
             <!-- file or dir mode? -->
             <apply-stylesheet-file
                 file="@{file}"
-                initial="@{initial}"
                 stylesheet="@{stylesheet}"
+                ext="@{ext}"
                 output="@{output}"
                 unless:blank="@{file}"/>
 
@@ -203,13 +198,7 @@ None.
 
         <attribute
             name="file"
-            default=""
             description="Source XML file"/>
-
-        <attribute
-            name="initial"
-            default=""
-            description="Initial template to run"/>
 
         <attribute
             name="ext"
@@ -233,34 +222,6 @@ None.
 
         <sequential>
 
-            <!-- check attributes -->
-            <fail message="[apply-stylesheet-file] must specify either 'file' or 'initial' attributes">
-                <condition>
-                    <and>
-                        <equals arg1="@{file}" arg2=""/>
-                        <equals arg1="@{initial}" arg2=""/>
-                    </and>
-                </condition>
-            </fail>
-
-            <fail message="[apply-stylesheet-file] cannot specify both 'file' and 'initial' attributes">
-                <condition>
-                    <and>
-                        <not><equals arg1="@{file}" arg2=""/></not>
-                        <not><equals arg1="@{initial}" arg2=""/></not>
-                    </and>
-                </condition>
-            </fail>
-
-            <fail message="[apply-stylesheet-file] cannot specify both 'output' and 'initial'">
-                <condition>
-                    <and>
-                        <not><equals arg1="@{output}" arg2=""/></not>
-                        <not><equals arg1="@{initial}" arg2=""/></not>
-                    </and>
-                </condition>
-            </fail>
-
             <!-- fail if file does not exist -->
             <check-file-exists macro="apply-stylesheet-file" file="@{file}" unless:blank="@{file}"/>
 
@@ -275,16 +236,21 @@ None.
                 <isset property="xpants.dir"/>
             </condition>
 
-            <!-- check stylesheet exists, either as given or as a standard library one -->
+            <!-- TODO can we use catalog to find these (as well as schema?) -->
+
+            <!-- does stylesheet exist as a file as given? -->
             <local name="given.stylesheet.exists"/>
             <available file="@{stylesheet}" type="file" property="given.stylesheet.exists"/>
 
+            <!-- does stylesheet exist as a file in the XPantS library (when using includes) -->
             <local name="standard.stylesheet.file.exists"/>
             <available file="${stylesheet.resource.path}/@{stylesheet}.xsl" property="standard.stylesheet.file.exists" if:set="xpants.dir"/>
 
+            <!-- does stylesheet exist as a file in the XPantS library (when using JAR file) -->
             <local name="standard.stylesheet.resource.exists"/>
             <available resource="${stylesheet.resource.path}/@{stylesheet}.xsl" property="standard.stylesheet.resource.exists" unless:set="xpants.dir"/>
 
+            <!-- fail if stylesheet does not exist, either as given or in standard library -->
             <fail message="[apply-stylesheet-file] stylesheet '@{stylesheet}' does not exist and/or is not in the XPantS library">
                 <condition>
                     <and>
@@ -299,25 +265,14 @@ None.
             <local name="saxon.processor"/>
             <check-class-path macro="apply-stylesheet" class="net.sf.saxon.TransformerFactoryImpl" property="saxon.processor"/>
 
-            <!-- cannot use @{initial} without Saxon processor -->
-            <fail message="[apply-stylesheet-file] 'initial' option unavailable without Saxon processor">
-                <and>
-                    <not><isset name="saxon.processor"/></not>
-                    <not><equals arg1="@{initial}" arg2=""/></not>
-                </and>
-            </fail>
-
-            <!-- apply the stylesheet -->
-            <echo message="[apply-stylesheet-file] use.stylesheet=${use.stylesheet}" if:true="${macro.debug}"/>
-
-            <!-- temp file will not be used if @{initial} is set -->
             <local name="temp.file"/>
-            <tempfile property="temp.file" prefix="sty" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+            <tempfile property="temp.file" prefix="apply-stylesheet" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
             <echo message="[apply-stylesheet-file] temp.file=${temp.file}" if:true="${macro.debug}"/>
 
-            <!-- apply transform -->        
+            <!-- apply transform -->
             <xslt
+                in="@{file}"
             	out="${temp.file}"
             	force="true"
                 suppresswarnings="${xslt.suppresswarnings}"
@@ -340,24 +295,30 @@ None.
 
                     <!-- TODO check that turning xinclude-aware on is OK for regular transforms -->
                     <attribute name="http://saxon.sf.net/feature/xinclude-aware" value="true"/>
-
-                    <!-- specify initial template if no @{file} -->
-                    <attribute name="http://saxon.sf.net/feature/initialTemplate" value="@{initial}" unless:blank="@{initial}"/>
                 </factory>
 
                 <!-- otherwise use Xalan -->
                 <factory name="org.apache.xalan.processor.TransformerFactoryImpl" unless:true="${saxon.processor}">
                 </factory>
 
-                <sysproperty key="xml.catalog.files" value="${xpants.catalog}"/>
+                <!-- IDEA can we load catalog from JAR file? do we need to? -->
+                <xmlcatalog>
+                    <catalogpath>
+                        <pathelement location="${xpants.catalog}" if:set="xpants.catalog"/>
+                    </catalogpath>
+                </xmlcatalog>
 
                 <params.xslt/>
 
-                <!-- use file if no @{initial} template -->
-                <fileset file="@{file}" unless:blank="@{file}"/>
+                <!-- IDEA could remove need for a-s-dir if we could put input fileset here conditionally
+                     but how would this work with destdir/@{output} ??? and we have params.xslt as implicit
+                     fileset
+
+                     this could have nice synergy with the apply-stylesheetS macro
+                     -->
+
             </xslt>
 
-            <!-- if @{output} and @{initial} are blank then overwrite existing @{file} -->
             <!-- NOTE if this macro is called by apply-stylesheet-dir, then 'output' must be a folder -->
 <!--
             <local name="copy.orig"/>
@@ -511,6 +472,54 @@ None.
 
                 </sequential>
             </for>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="apply-initial-template"
+        description="Run a stylsheet using an initial template">
+
+        <attribute
+            name="stylesheet"
+            description="XSLT file to be executed"/>
+
+        <attribute
+            name="template"
+            description="Initial template"/>
+
+        <element
+            name="args"
+            optional="true"
+            implicit="true"
+            description="Additional parameters"/>
+
+        <sequential>
+
+            <!-- TODO make list of JAR files in ${ant.library.dir} and ${user.home}/.ant/lib that contain the string
+                 'saxon'. use this to get ${saxon.jar} -->
+
+            <fail message="[apply-initial-template] 'saxon.jar' property not set">
+                <condition>
+                    <not><isset name="saxon.jar"/></not>
+                </condition>
+            </fail>
+
+            <check-file-exists macro="apply-initial-template" file="${saxon.jar}"/>
+
+            <!-- apply stylesheet using initial template -->
+            <java
+                jar="${saxon.jar}"
+                logError="true"
+                fork="true"
+                failonerror="true">
+
+                <arg prefix="-xsl:" file="@{stylesheet}"/>
+                <arg prefix="-it:" value="@{template}"/>
+
+                <args/>
+            </java>
 
         </sequential>
     </macrodef>

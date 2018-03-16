@@ -520,6 +520,7 @@ The following properties can be set on the command line to override the default 
             <check-attr-set macro="diff-files" name="type" value="@{type}"/>
 
             <!-- by default always use text compare unless specifically told to use XML -->
+            <!-- TODO autodetect classpath of DeltaXML? -->
             <local name="use.xml"/>
             <condition property="use.xml" value="true" else="false">
                 <equals arg1="@{type}" arg2="xml"/>
@@ -708,6 +709,7 @@ The following properties can be set on the command line to override the default 
                 <arg value="Word By Word=true" if:set="diff.word"/>
                 <arg value="Enhanced Match 1=false" if:set="diff.nomatch"/>
                 <arg value="Indent=no" if:set="diff.noindent"/>
+                <!-- TODO check that this catalog works, cannot use embedded xmlcatalog element -->
                 <sysproperty key="xml.catalog.files" value="${xpants.catalog}"/>
             </java>
 
