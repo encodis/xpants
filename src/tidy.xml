@@ -204,7 +204,7 @@ The following properties can be set on the command line to override the default 
 
         <sequential>
 
-            <!-- fail if inpur fileset is empty -->
+            <!-- fail if input fileset is empty -->
             <check-fileset-empty macro="tidy-dir">
                 <input.files/>
             </check-fileset-empty>

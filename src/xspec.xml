@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="xspec"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+project:      XML Practical ANT Scripts
+title:        xspec.xml
+date:         2018-03-19
+author:       Philip Hodder
+contact:      philip.hodder@encodis.com
+summary:      Macro definitions to use XSpec within a build file
+...
+
+# xspec.xml
+
+A set of macro definitions to use [XSpec](https://github.com/xspec/xspec) from within a build file.
+These macros simply wrap the **xspec.bat** or **xspec.sh** file.
+
+&gt; NOTE: These macros will execute the XSpec command file using ANT's &lt;exec&gt; command. They
+do not attempt to replicate the logic in those files. Therefore XSpec must be installed and
+configured as described in its instructions. However, in addition to this, the folder containing
+the **xspec.bat/xspec.sh** files must be on the path.
+
+## Usage
+
+To run the XSLT tests specified in the **test1.xspec** file:
+
+```
+&lt;xspec file="test1.xspec" type="xslt"/&gt;
+```
+
+## Dependencies
+
+*  The *XSpec* framework must be installed and available on the PATH.
+
+## Properties
+
+None.
+
+## Change Log
+
+##### 2018-03-19 (PH) Initial version
+
+    </description>
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- include macros/properties -->
+    <dirname property="xpants.dir" file="${ant.file.git}"/>
+
+    <include file="${xpants.dir}/file-checks.xml"/>
+    <include file="${xpants.dir}/attr-checks.xml"/>
+
+    <!-- macros -->
+
+    <macrodef
+        name="xspec"
+        description="Run XSpec tests">
+
+        <attribute
+            name="file"
+            default=""
+            description="XSpec file"/>
+
+        <attribute
+            name="test"
+            default=""
+            description="Type of test to run [xslt,xquery,schematron]"/>
+
+        <attribute
+            name="coverage"
+            default="false"
+            description="Output test coverage report [true,false]"/>
+
+        <attribute
+            name="junit"
+            default="false"
+            description="Output JUnit report [true,false]"/>
+
+        <element
+            name="xspec.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- file or dir mode? -->
+            <xspec-file
+                file="@{file}"
+                test="@{test}"
+                coverage="@{coverage}"
+                junit="@{junit}"
+                unless:blank="@{file}"/>
+
+            <xspec-dir
+                test="@{test}"
+                coverage="@{coverage}"
+                junit="@{junit}"
+                if:blank="@{file}">
+                <xspec.files/>
+            </xspec-dir>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="xspec-file"
+        description="Run a single XSpec file">
+
+        <attribute
+            name="file"
+            default=""
+            description="XSpec file"/>
+
+        <attribute
+            name="test"
+            default=""
+            description="Type of test to run [xslt,xquery,schematron]"/>
+
+        <attribute
+            name="coverage"
+            default="false"
+            description="Output test coverage report [true,false]"/>
+
+        <attribute
+            name="junit"
+            default="false"
+            description="Output JUnit report [true,false]"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="xspec-file" name="file" value="@{file}"/>
+
+            <check-attr-list macro="xspec-file" name="test" value="@{test}" list="xslt,xquery,schematron"/>
+
+            <check-attr-bool macro="xspec-file" name="coverage" value="@{coverage}"/>
+            <check-attr-bool macro="xspec-file" name="junit" value="@{junit}"/>
+
+            <!-- find XSpec command -->
+            <check-exe-path property="xspec.exe" unix="xspec.sh" windows="xspec.bat" unless:set="xspec.exe"/>
+
+            <!-- get test type -->
+            <local name="test.@{test}"/>
+            <property name="test.@test" value="true"/>
+
+            <property name="exec.failonerror" value="true"/>
+
+            <!-- run tidy -->
+            <exec
+                executable="${xspec.exe}"
+                failonerror="${exec.failonerror}">
+                <arg line="-t" if:set="test.xslt"/>
+                <arg line="-q" if:set="test.xquery"/>
+                <arg line="-s" if:set="test.schematron"/>
+                <arg line="-c" if:true="@{coverage}"/>
+                <arg line="-j" if:true="@{junit}"/>
+                <arg line="@{file}"/>
+            </exec>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="xspec-dir"
+        description="Run a folder of XSpec files">
+
+        <attribute
+            name="test"
+            default=""
+            description="Type of test to run [xslt,xquery,schematron]"/>
+
+        <attribute
+            name="coverage"
+            default="false"
+            description="Output test coverage report [true,false]"/>
+
+        <attribute
+            name="junit"
+            default="false"
+            description="Output JUnit report [true,false]"/>
+
+        <element
+            name="xspec.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if input fileset is empty -->
+            <check-fileset-empty macro="xspec-dir">
+                <xspec.files/>
+            </check-fileset-empty>
+
+            <property name="for.keepgoing" value="true"/>
+
+            <for param="file" keepgoing="${for.keepgoing}">
+                <xspec.files/>
+
+                <sequential>
+
+                    <!-- process file -->
+                    <xspec-file
+                        file="@{file}"
+                        test="@{test}"
+                        coverage="@{coverage}"
+                        junit="@{junit}"/>
+
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+</project>

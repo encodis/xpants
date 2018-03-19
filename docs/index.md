@@ -126,6 +126,8 @@ Note that in this case, if one macro needs a macro in another file it will autom
 
 [validate-with-xsd](validate-with-xsd.md)
 
+[xspec](xspec.md)
+
 
 ## XSLT Stylesheets
 

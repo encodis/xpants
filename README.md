@@ -61,9 +61,7 @@ If you have used the alternative installation method (copying individual files t
     <!-- load ant-contrib -->
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
-    <!-- include macros/properties -->
-    <property environment="env"/>
-
+    <!-- include macros -->
     <include file="/usr/local/lib/xpants/attr-checks.xml"/>
     <include file="/usr/local/lib/xpants/file-checks.xml"/>
 
@@ -80,7 +78,7 @@ Note that in this case the macros have been configured to include any other macr
 
 - [ ] Any more stylesheets needed?
 
-- [ ] Add testing (see also AntUnit)
+- [ ] Add XSpec module - could simply be a wrapper around xspec.sh (checking for installation etc and running over a file or dir)
 
 
 ## Notes
@@ -90,7 +88,7 @@ Note that in this case the macros have been configured to include any other macr
 See https://stackoverflow.com/questions/5159858/access-antlib-resources-from-within-apache-ant-macros for accessing XSLTs as a resource from the JAR file.
 
 A properties file within the JAR will not get loaded by <taskdef resource="..."/>. This also seems to happen to ANT Contrib itself. So default (global) properties are set in each macrodef that uses them. Attribute defaults are also set directly, rather than indirectly through a property (e.g. the <deploy-files> "method" attribute has a default value of "copy" rather than "${deploy.method}" but that property is still set in the body of the macro, so it can be overidden). Macros also load
-en variables when needed, using the prefix "env".
+environment variables when needed, using the prefix "env".
 
 ### Saxon
 
