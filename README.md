@@ -2,7 +2,7 @@
 
 XPantS is a set of ANT macros that can be used to help teams of developers create more robust and repeatable build processes. It has a focus on XML technologies but can be more generally useful.
 
-Full instructions can be found [here][https://github.com/encodis/xpants/blob/master/docs/index.md]. Brief instructions are given below.
+Full instructions can be found [here](docs/index.md). Brief instructions are given below.
 
 ## Installation
 
