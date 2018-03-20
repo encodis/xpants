@@ -87,6 +87,8 @@ These macros create the following (global) properties:
 
     <!-- macros -->
 
+    <!-- TODO some of these need to set properties like check-file-contains does  -->
+
     <macrodef
         name="check-file-exists"
         description="Fail the build if the specified file does not exist">

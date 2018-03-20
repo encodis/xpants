@@ -2,6 +2,8 @@
 
 <project
     name="xpants"
+    xmlns="antlib:org.apache.tools.ant"
+    xmlns:au="antlib:org.apache.ant.antunit"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">
 
@@ -42,6 +44,16 @@ summary:     Build file for XPants
         <mkdir dir="${build.dir}"/>
     </target>
 
+    <target
+        name="test"
+        description="Run AntUnit tests">
+
+        <au:antunit>
+            <file file="test/build.xml"/>
+            <au:plainlistener/>
+        </au:antunit>
+
+    </target>
 
     <target
         name="docs"

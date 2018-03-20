@@ -2,6 +2,8 @@
 
 <project
     name="xpants"
+    xmlns="antlib:org.apache.tools.ant"
+    xmlns:au="antlib:org.apache.ant.antunit"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">
 
@@ -9,10 +11,10 @@
 ---
 Project:     XPants
 Title:       build.xml
-Date:        2018-02-14
+Date:        2018-03-20
 Author:      Philip Hodder
 Contact:     philip.hodder@encodis.com
-Summary:     Build file for XPants test suite
+Summary:     Build file for XPants test suitez
 ...
     </description>
 
@@ -20,25 +22,63 @@ Summary:     Build file for XPants test suite
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- load installed xpants -->
-    <taskdef resource="com/encodis/xpants/xpants.xml"/>
+    <!-- TODO should this load in via ../src/xpants.xml ??? -->
+    <!-- <taskdef resource="com/encodis/xpants/xpants.xml"/> -->
+    <include file="../src/xpants.xml"/>
+
+    <!-- properties -->
+    <property name="test.dir" value="../build/test"/>
+    <property name="data.dir" value="data"/>
+    <property name="expect.dir" value="expect"/>
+
+    <!-- prepare tests -->
+    <target name="setUp">
+        <mkdir dir="${test.dir}"/>
+    </target>
+
 
     <!-- test apply-stylsheet -->
     <target name="test-apply-stylesheet">
 
         <apply-stylesheet
             file="apply-stylesheet/input.xml"
-            output="apply-stylesheet/result.xml"
+            output="${test.dir}/apply-stylesheet/output.xml"
             stylesheet="identity"/>
+
+        <au:assertFileExists file="${test.dir}/apply-stylesheet/output.xml"/>
+
+        <au:assertFilesMatch
+            expected="apply-stylesheet/result.xml"
+            actual="${test.dir}/apply-stylesheet/output.xml"/>
+
+    </target>
+
+    <target name="test-attr-checks">
+
+        <!-- FIXME not sure you can do these as they fail the build? also some do not set Properties
+            so cannot do an assertion -->
+        <!-- not calling a macro so supply properties instead -->
+
+        <property name="test-attr-set" value="true"/>
+
+        <check-attr-set macro="test-attr-checks" name="test-attr-set" value="${test-attr-set}"/>
+
+        <check-attr-set macro="test-attr-checks" name="test-attr-set" value="${test-attr-not-set}"/>
 
     </target>
 
     <!-- test version -->
-    <target name="test-version">
+    <!-- <target name="test-version">
 
         <version-inc-major/>
         <version-inc number="build" increment="2"/>
         <release-stage-set stage="RC1"/>
 
+    </target> -->
+
+    <!-- clean up -->
+    <target name="tearDown">
+        <delete dir="${test.dir}"/>
     </target>
 
 </project>
