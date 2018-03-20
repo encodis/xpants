@@ -2,27 +2,24 @@
 
 XPantS is a set of ANT macros that can be used to help teams of developers create more robust and repeatable build processes. It has a focus on XML technologies but can be more generally useful.
 
+Full instructions can be found [here][docs/index.md]. Brief instructions are given below.
 
 ## Installation
 
 Simply copy the latest JAR file in the **dist** folder to a folder in ANT's classpath. Typically this will be **$ANT_HOME/lib** or **~/.ant/lib**.
-
-Alternatively each of the macro files can be copied to a suitable folder (e.g. **/usr/local/lib/xpants**). Then individual files can be included as needed.
 
 
 ## Requirements
 
 XPantS assumes that a number of additional libraries and/or applications are installed:
 
-*   [ANT Contrib](https://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download). XPantS uses some tasks defined by ANT Contrib (particuarly the `<for>` and `<propertyregex>` tasks).
+*   [ANT Contrib](https://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download).
 
-*   Although it is not required the [Saxon XSLT and XQuery Processor](https://www.saxonica.com/products/products.xml) is recommended. XPantS will use Saxon for XSLT processing if it can, otherwise it will default to Xalan.
+*   [Saxon XSLT and XQuery Processor](https://www.saxonica.com/products/products.xml) (not required, but recommended).
 
-    > NOTE: Ensure that the relevant Saxon JAR file is in ANT's classpath (e.g. in **$ANT_HOME/lib** or **~/.ant/lib**). Installing Saxon using [Homebrew](brew.sh) on MacOS will place it in a location like **/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar**. The simplest way to fix this is to set up a symbolic link: `$ ln -s /usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar ~/.ant/lib`.
+*   [XML Resolver](http://www.java2s.com/Code/Jar/x/Downloadxmlresolverjar.htm).
 
-*   [XML Resolver](http://www.java2s.com/Code/Jar/x/Downloadxmlresolverjar.htm), installed in ANT's classpath. You may get warnings if the corresponding **XMLResolver.properties** file is missing, but these can generally be ignored.
-
-*   A number of macros act as wrappers around command line applications, which obviously need to be installed to work. These include: [AWS Command Line Tools](https://aws.amazon.com/cli/), [Git](https://github.com/git/git), [Pandoc](https://pandoc.org/), [Python](https://www.python.org/), [SSH](https://www.ssh.com/ssh/) and [Tidy](http://www.html-tidy.org/). The `<convert-schema>` macro requires [Trang](http://www.thaiopensource.com/relaxng/trang.html) to be installed.
+*   A number of macros act as wrappers around command line applications, which obviously need to be installed to work.
 
 
 ## Usage
@@ -46,30 +43,6 @@ To use the XPantS macros simply include the appropriate task definition at the t
     ...
 </project>
 ```
-
-If you have used the alternative installation method (copying individual files to a folder) then you will have to include each macro that you need separately. For example:
-
-```
-<?xml version="1.0" encoding="UTF-8"?>
-
-<project
-    name="mybuild"
-    xmlns:if="ant:if"
-    xmlns:unless="ant:unless">
-
-    <!-- load ant-contrib -->
-    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
-
-    <!-- include macros -->
-    <include file="/usr/local/lib/xpants/attr-checks.xml"/>
-    <include file="/usr/local/lib/xpants/file-checks.xml"/>
-
-    ...
-</project>
-```
-
-Note that in this case the macros have been configured to include any other macros that they need.
-
 
 ## TODO
 

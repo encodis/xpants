@@ -17,7 +17,9 @@ XPantS assumes that a number of additional libraries and/or applications are ins
 
 *   Although it is not required the [Saxon XSLT and XQuery Processor](https://www.saxonica.com/products/products.xml) is recommended. XPantS will use Saxon for XSLT processing if it can, otherwise it will default to Xalan.
 
-    > NOTE: Ensure that the relevant Saxon JAR file is in ANT's classpath (e.g. in **$ANT_HOME/lib** or **~/.ant/lib**). Installing Saxon using [Homebrew](brew.sh) on MacOS will place it in a location like **/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar**. The simplest way to fix this is to set up a symbolic link: `$ ln -s /usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar ~/.ant/lib`.
+    > NOTE: Ensure that the relevant Saxon JAR file is in ANT's classpath (e.g. in **$ANT_HOME/lib** or **~/.ant/lib**). Installing Saxon using [Homebrew](brew.sh) on MacOS will place it in a location like **/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar**. The simplest way to fix this is to set up a symbolic link:
+    >
+    `$ ln -s /usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar ~/.ant/lib`.
 
 *   [XML Resolver](http://www.java2s.com/Code/Jar/x/Downloadxmlresolverjar.htm), installed in ANT's classpath. You may get warnings if the corresponding **XMLResolver.properties** file is missing, but these can generally be ignored. Alternatively, use the **resolver.jar** available from [DeltaXML](https://docs.deltaxml.com/core/current/samples/FilesWithCatalog/ReadMe.html) which contains a number of fixes to the Apache version.
 
