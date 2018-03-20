@@ -1,11 +1,3 @@
----
-project:    XML Practical ANT Scripts
-title:      XML Practical ANT Scripts
-author:     Philip Hodder
-contact:    philip.hodder@lexisnexis.co.uk
-date:       2018-02-20
-...
-
 # XML Practical ANT Scripts
 
 XML - Practical ANT Scripts (or "XPantS" for short) is a set of ANT macros that can be used to help teams of developers create more robust and repeatable build processes. It has a focus on XML technologies but can be more generally useful to build, for example, HTML documents from Markdown
@@ -13,7 +5,7 @@ sources and so on.
 
 ## Installation
 
-Simply copy the latest JAR file in the **dist** folder in the repository to a folder in ANT's classpath. Typically this will be **$ANT_HOME/lib** or **~/.ant/lib**.
+Simply copy the latest JAR file in the **dist** folder to a folder in ANT's classpath. Typically this will be **$ANT_HOME/lib** or **~/.ant/lib**.
 
 Alternatively each of the macro files in the **src** folder can be copied to a suitable folder on the target machine (e.g. **/usr/local/lib/xpants**). Then individual files can be included as needed in a build file.
 
@@ -23,15 +15,15 @@ XPantS assumes that a number of additional libraries and/or applications are ins
 
 *   [ANT Contrib](https://sourceforge.net/projects/ant-contrib/files/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip/download). XPantS uses some tasks defined by ANT Contrib (particularly the `<for>` and `<propertyregex>` tasks).
 
-*   [Saxon XSLT and XQuery Processor](https://www.saxonica.com/products/products.xml). It is recommended that Saxon is used for XSLT processing. It's possible to not have Saxon installed, but the `<apply-stylesheet>` macro will then fall back to use the Xalan processor. XPantS should detect and use any installation of Saxon (HE, PE or EE).
+*   Although it is not required the [Saxon XSLT and XQuery Processor](https://www.saxonica.com/products/products.xml) is recommended. XPantS will use Saxon for XSLT processing if it can, otherwise it will default to Xalan.
 
-    > NOTE: Ensure that the relevant Saxon JAR file is in ANT's classpath. Installing Saxon using [Homebrew](brew.sh) on MacOS will place it in a location like **/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar**. The simplest way to fix this is to set up a symbolic link, viz.: `$ ln -s /usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar ~/.ant/lib`.
+    > NOTE: Ensure that the relevant Saxon JAR file is in ANT's classpath (e.g. in **$ANT_HOME/lib** or **~/.ant/lib**). Installing Saxon using [Homebrew](brew.sh) on MacOS will place it in a location like **/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar**. The simplest way to fix this is to set up a symbolic link: `$ ln -s /usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar ~/.ant/lib`.
 
 *   [XML Resolver](http://www.java2s.com/Code/Jar/x/Downloadxmlresolverjar.htm), installed in ANT's classpath. You may get warnings if the corresponding **XMLResolver.properties** file is missing, but these can generally be ignored. Alternatively, use the **resolver.jar** available from [DeltaXML](https://docs.deltaxml.com/core/current/samples/FilesWithCatalog/ReadMe.html) which contains a number of fixes to the Apache version.
 
-*   The *convert-schema* macros use the [Trang](http://www.thaiopensource.com/relaxng/trang.html) converter.
+*   The *convert-schema* macros use the [Trang](http://www.thaiopensource.com/relaxng/trang.html) converter, which should be installed in the ANT classpath (e.g. in **$ANT_HOME/lib** or **~/.ant/lib**).
 
-*   The *validate-with-schematron* macro uses the [Jing](http://www.thaiopensource.com/relaxng/jing.html) validator.
+*   The *validate-with-schematron* macro uses the [Jing](http://www.thaiopensource.com/relaxng/jing.html) validator, which should be installed in the ANT classpath (e.g. in **$ANT_HOME/lib** or **~/.ant/lib**).
 
 *   A number of macros act as wrappers around command line applications, which obviously need to be installed to work. These include: [AWS Command Line Tools](https://aws.amazon.com/cli/), [Git](https://github.com/git/git), [Pandoc](https://pandoc.org/), [Python](https://www.python.org/), [SSH](https://www.ssh.com/ssh/) and [Tidy](http://www.html-tidy.org/).
 
