@@ -2,7 +2,6 @@
 
 <project
     name="xpants"
-    xmlns="antlib:org.apache.tools.ant"
     xmlns:au="antlib:org.apache.ant.antunit"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">
@@ -31,9 +30,13 @@ Summary:     Build file for XPants test suitez
     <property name="data.dir" value="data"/>
     <property name="expect.dir" value="expect"/>
 
+    <property name="macro.debug" value="true"/>
+
     <!-- prepare tests -->
     <target name="setUp">
         <mkdir dir="${test.dir}"/>
+
+        <touch file="${test.dir}/new-file.dat"/>
     </target>
 
 
@@ -48,33 +51,136 @@ Summary:     Build file for XPants test suitez
         <au:assertFileExists file="${test.dir}/apply-stylesheet/output.xml"/>
 
         <au:assertFilesMatch
-            expected="apply-stylesheet/result.xml"
+            expected="apply-stylesheet/expected.xml"
             actual="${test.dir}/apply-stylesheet/output.xml"/>
 
     </target>
 
-    <target name="test-attr-checks">
+    <!-- NOTE attr-checks.xml only works within a macro so difficult to test -->
 
-        <!-- FIXME not sure you can do these as they fail the build? also some do not set Properties
-            so cannot do an assertion -->
-        <!-- not calling a macro so supply properties instead -->
+    <!-- NOTE aws.xml requires a suitable AWS account etc -->
 
-        <property name="test-attr-set" value="true"/>
+    <target name="test-compare-files">
 
-        <check-attr-set macro="test-attr-checks" name="test-attr-set" value="${test-attr-set}"/>
+        <!-- compare a file with itself -->
 
-        <check-attr-set macro="test-attr-checks" name="test-attr-set" value="${test-attr-not-set}"/>
+        <!-- compare to files with know diffs and check expected -->
+
+        <!-- compare dir with itself -->
+
+        <!-- compare dir with another / shallow -->
+
+        <!-- compare dir with another / deep -->
 
     </target>
 
-    <!-- test version -->
-    <!-- <target name="test-version">
+    <target name="test-compile-schematron">
 
-        <version-inc-major/>
-        <version-inc number="build" increment="2"/>
-        <release-stage-set stage="RC1"/>
+        <!-- compile test schematron and compare with expected -->
 
-    </target> -->
+    </target>
+
+    <target name="test-convert-schema">
+
+        <!-- need simple schema to convert, but not all possibilities -->
+
+    </target>
+
+    <target name="test-deploy-files">
+
+        <!-- deploy file to build/test and assert non-exist before/existance after -->
+
+        <!-- deploy file set to build/test and compare? -->
+
+    </target>
+
+    <target name="test-extract-markdown">
+
+        <!-- extract markdown from build.xml, assert file exists -->
+
+        <!-- difficult to compare as we'll change the description often.
+             use little changed file instead? -->
+
+    </target>
+
+    <target name="test-file-checks">
+
+        <check-file-exists macro="test-file-checks" file="${test.dir}/new-file.dat" property="file.exists"/>
+
+        <au:assertTrue>
+            <istrue value="${file.exists}"/>
+        </au:assertTrue>
+
+        <check-dir-exists macro="test-file-checks" dir="${test.dir}" property="dir.exists"/>
+
+        <au:assertTrue>
+            <istrue value="${dir.exists}"/>
+        </au:assertTrue>
+
+        <!-- <check-fileset-empty macro="test-file-checks" refid=""/> -->
+
+        <check-fileset-empty macro="test-file-checks" property="fileset.not.empty">
+            <fileset dir=".">
+                <include name="**/*"/>
+            </fileset>
+        </check-fileset-empty>
+
+        <au:assertTrue>
+            <istrue value="${fileset.not.empty}"/>
+        </au:assertTrue>
+
+    </target>
+
+
+    <target name="test-git">
+
+        <!-- get branch name and compare -->
+
+        <!-- check it's a repo (may need to add the "property or fail" thing)-->
+
+        <!--  -->
+
+    </target>
+
+
+    <target name="test-pandoc">
+
+        <!-- convert a simple test MD to HTML and compare -->
+
+    </target>
+
+    <target name="test-python">
+
+        <!-- run python -version -->
+
+    </target>
+
+    <!-- NOTE ssh.xml requires a suitable SSH server to connect to etc -->
+
+    <target name="test-validate-with-schema">
+
+        <!-- need a schema and an instance -->
+
+    </target>
+
+    <target name="test-version">
+
+
+        <!-- get version from test/build.properties -->
+        <!-- increment and test -->
+        <!-- set and test -->
+        <!-- set build number -->
+        <!-- set release stage -->
+        <!-- reset build.properties in tearDown -->
+
+    </target>
+
+    <target name="test-xspec">
+
+        <!-- set up a test.xspec, maybe example from the XSpec repo  -->
+
+    </target>
+
 
     <!-- clean up -->
     <target name="tearDown">

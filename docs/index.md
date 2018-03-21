@@ -96,7 +96,7 @@ Note that in this case, if one macro needs a macro in another file it will autom
 
 [extract-markdown](extract-markdown.md)
 
-[file-checks](file-checks.md)
+[file-utils](file-utils.md)
 
 [git](git.md)
 

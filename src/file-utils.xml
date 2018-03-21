@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project
-    name="file-checks"
+    name="file-utils"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">
 
     <description>
 ---
 project:    XML Practical ANT Scripts
-title:      file-checks.xml
+title:      file-utils.xml
 date:       2018-02-14
 author:     Philip Hodder
 contact:    philip.hodder@encodis.com
 summary:    Macros to check various file system related things
 ...
 
-# file-checks.xml
+# file-utils.xml
 
 A set of utility macros to peform various checks on files and directories:
 
@@ -87,8 +87,6 @@ These macros create the following (global) properties:
 
     <!-- macros -->
 
-    <!-- TODO some of these need to set properties like check-file-contains does  -->
-
     <macrodef
         name="check-file-exists"
         description="Fail the build if the specified file does not exist">
@@ -101,9 +99,19 @@ These macros create the following (global) properties:
             name="file"
             description="File to check for availability"/>
 
+        <attribute
+            name="property"
+            default=""
+            description="Property to update with result (true if file exists)"/>
+
         <sequential>
 
-            <fail message="[@{macro}] file '@{file}' does not exist or is a directory">
+            <!-- if property exists then set it if file exists -->
+            <condition property="@{property}" value="true" else="false" unless:blank="@{property}">
+                <available file="@{file}" type="file"/>
+            </condition>
+
+            <fail message="[@{macro}] file '@{file}' does not exist or is a directory" if:blank="@{property}">
                 <condition>
                     <not><available file="@{file}" type="file"/></not>
                 </condition>
@@ -125,9 +133,19 @@ These macros create the following (global) properties:
             name="dir"
             description="Directory to check for availability"/>
 
+        <attribute
+            name="property"
+            default=""
+            description="Property to update with result (true if dir exists)"/>
+
         <sequential>
 
-            <fail message="[@{macro}] directory '@{dir}' does not exist or is a file">
+            <!-- if property exists then set it if dir exists -->
+            <condition property="@{property}" value="true" else="false" unless:blank="@{property}">
+                <available file="@{dir}" type="dir"/>
+            </condition>
+
+            <fail message="[@{macro}] directory '@{dir}' does not exist or is a file" if:blank="@{property}">
                 <condition>
                     <not><available file="@{dir}" type="dir"/></not>
                 </condition>
@@ -150,6 +168,11 @@ These macros create the following (global) properties:
             default=""
             description="Reference to fileset specification to check"/>
 
+        <attribute
+            name="property"
+            default=""
+            description="Property to update with result (true if fileset not empty)"/>
+
         <element
             name="input.files"
             optional="true"
@@ -165,7 +188,16 @@ These macros create the following (global) properties:
                 <fileset refid="@{refid}" unless:blank="@{refid}"/>
             </pathconvert>
 
-            <fail message="[@{macro}] fileset is empty" unless:set="fileset.notempty"/>
+            <!-- if property exists then set it if fileset empty -->
+            <condition property="@{property}" value="true" else="false" unless:blank="@{property}">
+                <isset property="fileset.notempty"/>
+            </condition>
+
+            <fail message="[@{macro}] fileset is empty" if:blank="@{property}">
+                <condition>
+                    <not><isset property="fileset.notempty"/></not>
+                </condition>
+            </fail>
 
         </sequential>
     </macrodef>
@@ -186,7 +218,7 @@ These macros create the following (global) properties:
         <attribute
             name="property"
             default=""
-            description="Property to update with result"/>
+            description="Property to update with result (true if class available)"/>
 
         <sequential>
 
@@ -221,7 +253,7 @@ These macros create the following (global) properties:
         <attribute
             name="property"
             default=""
-            description="Property to update with result"/>
+            description="Property to update with result (true if file contains string)"/>
 
         <sequential>
 

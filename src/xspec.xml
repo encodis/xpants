@@ -34,7 +34,8 @@ To run the XSLT tests specified in the **test1.xspec** file:
 
 ## Dependencies
 
-*  The *XSpec* framework must be installed and available on the PATH.
+*  The *XSpec* framework must be installed and the command files (in the **bin** folder) available
+on the PATH.
 
 ## Properties
 

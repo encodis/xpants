@@ -48,7 +48,7 @@ included separately. This may increase load time, as each file loads the environ
     <include file="${xpants.dir}/convert-schema.xml"/>
     <include file="${xpants.dir}/deploy-files.xml"/>
     <include file="${xpants.dir}/extract-markdown.xml"/>
-    <include file="${xpants.dir}/file-checks.xml"/>
+    <include file="${xpants.dir}/file-utils.xml"/>
     <include file="${xpants.dir}/git.xml"/>
     <include file="${xpants.dir}/pandoc.xml"/>
     <include file="${xpants.dir}/python.xml"/>

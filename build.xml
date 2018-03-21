@@ -2,7 +2,6 @@
 
 <project
     name="xpants"
-    xmlns="antlib:org.apache.tools.ant"
     xmlns:au="antlib:org.apache.ant.antunit"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">

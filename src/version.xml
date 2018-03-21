@@ -106,6 +106,8 @@ To update the **build.properties** file by incrementing the build number:
 
         <sequential>
 
+            <!-- NOTE assumes version number matches "major.minor.patch", no element is optional -->
+
             <!-- fail if required attributes not set -->
             <check-attr-set macro="version-inc" name="increment" value="@{increment}"/>
             <check-attr-list macro="version-inc" name="number" value="@{number}" list="major,minor,patch,build"/>
@@ -181,6 +183,13 @@ To update the **build.properties** file by incrementing the build number:
                 datatype="int"
                 if:set="increment.build"/>
 
+            <!-- if major increment reset minor and patch to 0 -->
+            <var name="version.minor" value="0" if:set="increment.major"/>
+            <var name="version.patch" value="0" if:set="increment.major"/>
+
+            <!-- if minor increment reset patch to 0 -->
+            <var name="version.patch" value="0" if:set="increment.minor"/>
+
             <!-- set new version number -->
             <version-number-set file="@{file}" version="${version.major}.${version.minor}.${version.patch}" unless:set="increment.build"/>
 
@@ -207,6 +216,8 @@ To update the **build.properties** file by incrementing the build number:
 
         <sequential>
 
+            <!-- TODO this must set minor and patch to 0 -->
+
             <version-inc
                 file="@{file}"
                 increment="@{increment}"
@@ -231,6 +242,8 @@ To update the **build.properties** file by incrementing the build number:
             description="Amount to increment version number"/>
 
         <sequential>
+
+            <!-- TODO this must set patch to 0 -->
 
             <version-inc
                 file="@{file}"
@@ -306,6 +319,8 @@ To update the **build.properties** file by incrementing the build number:
 
         <sequential>
 
+            <!-- TODO check that version number matches "major{.minor{.patch}}" -->
+
             <!-- use var and replaceregexp to overwrite version.number -->
             <var name="version.number" unset="true"/>
             <property name="version.number" value="@{version}"/>
@@ -354,6 +369,7 @@ To update the **build.properties** file by incrementing the build number:
         </sequential>
     </macrodef>
 
+
     <macrodef
         name="release-stage-set"
         description="Set the release stage">
@@ -365,12 +381,23 @@ To update the **build.properties** file by incrementing the build number:
 
         <attribute
             name="stage"
-            description="New release stage [pre-alpha,alpha,beta,rc1,rc2,stable]"/>
+            description="New release stage"/>
+
+        <attribute
+            name="stages"
+            default="pre-alpha,alpha,beta,rc1,rc2,stable"
+            description="Allowed stage names [pre-alpha,alpha,beta,rc1,rc2,stable]"/>
 
         <sequential>
 
             <!-- check allowed stage name -->
-            <check-attr-list macro="release-stage-set" name="stage" value="@{stage}" list="pre-alpha,alpha,beta,rc1,rc2,stable"/>
+            <check-attr-list macro="release-stage-set" name="stage" value="@{stage}" list="@{stages}"/>
+
+            <local name="stage.list"/>
+            <propertyregex property="stage.list"
+                input="@{stages}"
+                regexp=","
+                replace="|"/>
 
             <!-- use var and replaceregexp to overwrite release.stage -->
             <var name="release.stage" unset="true"/>
@@ -379,7 +406,7 @@ To update the **build.properties** file by incrementing the build number:
             <!-- update properties file -->
             <replaceregexp
                 file="@{file}"
-                match="release.stage=(pre-alpha|alpha|beta|rc1|rc2|stable)"
+                match="release.stage=(${stage.list})"
                 replace="release.stage=@{stage}"
                 byline="true"/>
 

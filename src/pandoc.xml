@@ -198,7 +198,7 @@ The following properties can be set on the command line to override the default 
         <attribute
             name="style"
             default=""
-            description="Style"/>
+            description="CSS stylesheet"/>
 
         <attribute
             name="filters"
@@ -261,13 +261,15 @@ The following properties can be set on the command line to override the default 
                 global="true"/>
 
             <!-- convert variables -->
-            <local name="lvariables.list"/>
+            <local name="variables.list"/>
             <propertyregex
                 property="variables.list"
                 input="@{variables}"
                 regexp="^|,"
                 replace=" --variable="
                 global="true"/>
+
+            <!-- TODO allow for multiple CSS stylesheets -->
 
             <!-- run pandoc -->
             <exec
