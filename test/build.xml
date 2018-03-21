@@ -99,7 +99,7 @@ Summary:     Build file for XPants test suitez
         <!-- extract markdown from build.xml, assert file exists -->
 
         <!-- difficult to compare as we'll change the description often.
-             use little changed file instead? -->
+             use little changed file instead? use the test/build.xml - that can be fairly static -->
 
     </target>
 

@@ -97,13 +97,13 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
         if macro.debug or no report and no property then report each on as you do it.
 
         TODO is there a way you can automatically determine the type?
-            DTD instance contains !DOCTYPE
+            DTD instance contains !DOCTYPE with public ID
             XSD instance contains xmlns:default
             if schema is specified then must be XSD or RelaxNG
 
         TODO wrappers for validate-with-dtd etc that supplies the type
 
-        TODO how to validate a DTD/XSD against the W3C schema?
+        TODO how to validate a DTD/XSD against the W3C schema? special type=w3c?
     -->
 
 

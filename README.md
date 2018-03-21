@@ -55,12 +55,12 @@ To use the XPantS macros simply include the appropriate task definition at the t
 
 ### Antlib
 
-See https://stackoverflow.com/questions/5159858/access-antlib-resources-from-within-apache-ant-macros for accessing XSLTs as a resource from the JAR file.
+See <https://stackoverflow.com/questions/5159858/access-antlib-resources-from-within-apache-ant-macros> for accessing XSLTs as a resource from the JAR file.
 
 A properties file within the JAR will not get loaded by <taskdef resource="..."/>. This also seems to happen to ANT Contrib itself. So default (global) properties are set in each macrodef that uses them. Attribute defaults are also set directly, rather than indirectly through a property (e.g. the <deploy-files> "method" attribute has a default value of "copy" rather than "${deploy.method}" but that property is still set in the body of the macro, so it can be overidden). Macros also load
 environment variables when needed, using the prefix "env".
 
 ### Saxon
 
-See https://www.saxonica.com/html/documentation/using-xsl/embedding/jaxp-transformation.html for how to use different factories for the various Saxon installs, and how to decide at run time.
+See <https://www.saxonica.com/html/documentation/using-xsl/embedding/jaxp-transformation.html> for how to use different factories for the various Saxon installs, and how to decide at run time.
 
