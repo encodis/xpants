@@ -74,7 +74,7 @@ property will be based on the script name given in the attribute:
     <dirname property="xpants.dir" file="${ant.file.python}"/>
 
     <include file="${xpants.dir}/attr-checks.xml"/>
-    <include file="${xpants.dir}/file-checks.xml"/>
+    <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
 
@@ -104,7 +104,6 @@ property will be based on the script name given in the attribute:
 
         <element
             name="args"
-            implicit="true"
             optional="true"
             description="Command line arguments"/>
 
