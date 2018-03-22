@@ -6,7 +6,7 @@ using the results of certain *git* commands like “status” and “branch”.
 
 ## Usage
 
-Check the current *git* branch name matches the current version number::
+Check the current *git* branch name matches the current version number:
 
     <property name="version" value="v1.2"/>
     

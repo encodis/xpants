@@ -71,7 +71,7 @@ The following properties can be set on the command line to override the default 
     <dirname property="xpants.dir" file="${ant.file.tidy}"/>
 
     <include file="${xpants.dir}/attr-checks.xml"/>
-    <include file="${xpants.dir}/file-checks.xml"/>
+    <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
 

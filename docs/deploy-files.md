@@ -65,7 +65,7 @@ Deploy different filesets for ‘latest’ and ‘versioned’ files:
   - ${xpants.dir}/aws.xml
   - ${xpants.dir}/ssh.xml
   - ${xpants.dir}/attr-checks.xml
-  - ${xpants.dir}/file-checks.xml
+  - ${xpants.dir}/file-utils.xml
 
 ## Properties
 

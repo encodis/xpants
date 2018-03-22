@@ -54,7 +54,7 @@ classpath.
     <dirname property="xpants.dir" file="${ant.file.validate-with-rng}"/>
 
     <include file="${xpants.dir}/attr-checks.xml"/>
-    <include file="${xpants.dir}/file-checks.xml"/>
+    <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
 

@@ -23,8 +23,8 @@ Furthermore:
     therefore contain a leading “.” if that is required.
 
 > NOTE: It is the responsibility of the calling task to ensure that any
-> output folders are created before running this task. Otherwise each
-> transformed file will overwrite the given output path.
+> output folders are created and specified before running this task.
+> Otherwise each transformed file will overwrite the given output path.
 
 The macro *apply-stylesheet-file* can take an optional *params.xslt*
 element which contains additional parameters to pass to ANT’s <xslt>
@@ -117,7 +117,7 @@ file(s)
 | Name       | Description                 | Allowed | Default | Required |
 | :--------- | :-------------------------- | :------ | :-----: | :------: |
 | file       | Source XML file             |         |         |    no    |
-| stylesheet | The XSLT file to be applied |         |         |   yes    |
+| stylesheet | XSLT file to be applied     |         |         |   yes    |
 | ext        | Extension of output file(s) |         |         |    no    |
 | output     | Path for output file(s)     |         |         |    no    |
 
@@ -138,7 +138,7 @@ file
 | :--------- | :-------------------------- | :------ | :-----: | :------: |
 | file       | Source XML file             |         |         |   yes    |
 | ext        | Extension of output file(s) |         |         |    no    |
-| stylesheet | The XSLT file to be applied |         |         |   yes    |
+| stylesheet | XSLT file to be applied     |         |         |   yes    |
 | output     | Path for output file        |         |         |    no    |
 
 #### Elements
@@ -156,7 +156,7 @@ folder
 
 | Name       | Description                 | Allowed | Default | Required |
 | :--------- | :-------------------------- | :------ | :-----: | :------: |
-| stylesheet | The XSLT file to be applied |         |         |   yes    |
+| stylesheet | XSLT file to be applied     |         |         |   yes    |
 | ext        | Extension of output file(s) |         |         |    no    |
 | output     | Path for output files       |         |         |   yes    |
 
@@ -178,3 +178,20 @@ place
 | file        | Source file                                       |         |         |   yes    |
 | output      | Final output file                                 |         |         |    no    |
 | stylesheets | Comma separated list of stylesheets to be applied |         |         |    no    |
+
+## apply-initial-template
+
+Run a stylsheet using an initial template
+
+#### Attributes
+
+| Name       | Description              | Allowed | Default | Required |
+| :--------- | :----------------------- | :------ | :-----: | :------: |
+| stylesheet | XSLT file to be executed |         |         |   yes    |
+| template   | Initial template         |         |         |   yes    |
+
+#### Elements
+
+| Name | Description           | Implicit | Required |
+| :--- | :-------------------- | :------: | :------: |
+| args | Additional parameters |   yes    |    no    |

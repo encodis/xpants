@@ -67,7 +67,7 @@ or the values set in the macro calls directly:
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.ssh}"/>
 
-    <include file="${xpants.dir}/file-checks.xml"/>
+    <include file="${xpants.dir}/file-utils.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
 
 

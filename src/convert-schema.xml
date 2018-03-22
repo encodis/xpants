@@ -89,7 +89,7 @@ Override the following property to change the value of the Trang class being use
     <dirname property="xpants.dir" file="${ant.file.convert-schema}"/>
 
     <include file="${xpants.dir}/attr-checks.xml"/>
-    <include file="${xpants.dir}/file-checks.xml"/>
+    <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
 

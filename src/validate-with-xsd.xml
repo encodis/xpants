@@ -78,7 +78,7 @@ The following properties can be set on the command line to override the default 
 
     <include file="${xpants.dir}/apply-stylesheet.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
-    <include file="${xpants.dir}/file-checks.xml"/>
+    <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
 

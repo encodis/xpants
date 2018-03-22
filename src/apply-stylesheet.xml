@@ -132,7 +132,7 @@ None.
     <property name="xpants.xslt.dir" value="${xpants.dir}/xslt"/>
 
     <include file="${xpants.dir}/attr-checks.xml"/>
-    <include file="${xpants.dir}/file-checks.xml"/>
+    <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
 

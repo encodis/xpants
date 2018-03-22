@@ -61,17 +61,18 @@ script
 
 #### Attributes
 
-| Name   | Description                       | Allowed | Default | Required |
-| :----- | :-------------------------------- | :------ | :-----: | :------: |
-| module | Python module name                |         |         |    no    |
-| script | Python script path                |         |         |    no    |
-| dir    | Directory to run module/script in |         |    .    |    no    |
+| Name    | Description                       | Allowed | Default | Required |
+| :------ | :-------------------------------- | :------ | :-----: | :------: |
+| module  | Python module name                |         |         |    no    |
+| script  | Python script path                |         |         |    no    |
+| version | Python version                    | 2, 3    |         |    no    |
+| dir     | Directory to run module/script in |         |    .    |    no    |
 
 #### Elements
 
-| Name | Description                      | Implicit | Required |
-| :--- | :------------------------------- | :------: | :------: |
-| args | Remaining command line arguments |    no    |    no    |
+| Name | Description            | Implicit | Required |
+| :--- | :--------------------- | :------: | :------: |
+| args | Command line arguments |   yes    |    no    |
 
 ## python-update-version
 
@@ -88,6 +89,12 @@ script
 
 Build a distribution for a python module
 
+#### Attributes
+
+| Name | Description            | Allowed | Default | Required |
+| :--- | :--------------------- | :------ | :-----: | :------: |
+| dir  | Distribution directory |         |         |    no    |
+
 ## python-install-module
 
 Install a python
@@ -97,5 +104,6 @@ module
 
 | Name    | Description                  | Allowed | Default | Required |
 | :------ | :--------------------------- | :------ | :-----: | :------: |
+| dir     | Distribution directory       |         |    .    |    no    |
 | module  | Python module name           |         |         |   yes    |
 | version | Python module version number |         |         |   yes    |

@@ -53,7 +53,7 @@ The following properties can be set on the command line to override the default 
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.git}"/>
 
-    <include file="${xpants.dir}/file-checks.xml"/>
+    <include file="${xpants.dir}/file-utils.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
 
 

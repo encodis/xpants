@@ -78,7 +78,7 @@ Deploy different filesets for 'latest' and 'versioned' files:
 * ${xpants.dir}/aws.xml
 * ${xpants.dir}/ssh.xml
 * ${xpants.dir}/attr-checks.xml
-* ${xpants.dir}/file-checks.xml
+* ${xpants.dir}/file-utils.xml
 
 ## Properties
 
@@ -110,7 +110,7 @@ The following properties are required when using the 'aws' method:
     <include file="${xpants.dir}/aws.xml"/>
     <include file="${xpants.dir}/ssh.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
-    <include file="${xpants.dir}/file-checks.xml"/>
+    <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
 

@@ -72,7 +72,7 @@ parameters
 | options     | List of options       |         |                |    no    |
 | datadir     | Pandoc data directory |         |                |    no    |
 | template    | Template file         |         |                |    no    |
-| style       | Style                 |         |                |    no    |
+| style       | CSS stylesheet        |         |                |    no    |
 | filters     | List of filters       |         |                |    no    |
 | lua-filters | List of Lua filters   |         |                |    no    |
 | variables   | List of variables     |         |                |    no    |

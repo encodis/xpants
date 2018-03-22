@@ -17,7 +17,7 @@ The *build.number* is assumed to be an unsigned integer:
 
 The *release.stage* can only be explicitly set using the
 `<release-stage-set>`, which only accepts the following values:
-“PRE-ALPHA”, “ALPHA”, “BETA”, “RC1”, “RC2” and “GOLD”.
+“pre-alpha”, “alpha”, “beta”, “rc1”, “rc2” and “stable”.
 
 ## Usage
 
@@ -145,7 +145,8 @@ stage
 
 #### Attributes
 
-| Name  | Description                             | Allowed                                |     Default      | Required |
-| :---- | :-------------------------------------- | :------------------------------------- | :--------------: | :------: |
-| file  | Properties file for version information |                                        | build.properties |    no    |
-| stage | New release stage                       | PRE-ALPHA, ALPHA, BETA, RC1, RC2, GOLD |                  |   yes    |
+| Name   | Description                             | Allowed                                  |               Default               | Required |
+| :----- | :-------------------------------------- | :--------------------------------------- | :---------------------------------: | :------: |
+| file   | Properties file for version information |                                          |          build.properties           |    no    |
+| stage  | New release stage                       |                                          |                                     |   yes    |
+| stages | Allowed stage names                     | pre-alpha, alpha, beta, rc1, rc2, stable | pre-alpha,alpha,beta,rc1,rc2,stable |    no    |
