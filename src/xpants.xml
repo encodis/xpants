@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="xpants-all"
+<project name="xpants"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">
 
@@ -37,7 +37,7 @@ included separately. This may increase load time, as each file loads the environ
     <!-- set properties -->
     <property environment="env"/>
 
-    <dirname property="xpants.dir" file="${ant.file.xpants-all}"/>
+    <dirname property="xpants.dir" file="${ant.file.xpants}"/>
 
     <!-- include macros -->
     <include file="${xpants.dir}/apply-stylesheet.xml"/>
@@ -54,11 +54,7 @@ included separately. This may increase load time, as each file loads the environ
     <include file="${xpants.dir}/python.xml"/>
     <include file="${xpants.dir}/ssh.xml"/>
     <include file="${xpants.dir}/tidy.xml"/>
-    <include file="${xpants.dir}/validate-with-dtd.xml"/>
-    <include file="${xpants.dir}/validate-with-rng.xml"/>
-    <include file="${xpants.dir}/validate-with-sch.xml"/>
     <include file="${xpants.dir}/validate-with-schema.xml"/>
-    <include file="${xpants.dir}/validate-with-xsd.xml"/>
     <include file="${xpants.dir}/version.xml"/>
 
 </project>

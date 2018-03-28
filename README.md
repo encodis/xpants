@@ -44,6 +44,30 @@ To use the XPantS macros simply include the appropriate task definition at the t
 </project>
 ```
 
+TODO: TEST THIS:
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+    name="mybuild"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless"
+    xmlns:xpants="com/encodis/xpants">
+
+    <!-- load ant-contrib -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <!-- use xpants macro -->
+    <xpants:deploy-files target="site">
+        <fileset dir="." includes="*.dat"/>
+    </xpants:deploy>
+
+    ...
+</project>
+```
+
+
 ## TODO
 
 - [ ] See if we can build the readme by extracting from build.xml or docs/index.md

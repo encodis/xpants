@@ -131,8 +131,11 @@ summary:     Build file for XPants
              would use taskdef to include each one separately (and could be auto generated)-->
         <!-- IDEA have a dummy antlib.xml file with xi:include for each? but that would just
              include entire files not just macrodefs... -->
+
+             <!-- Call this antlib.xml also see, e.g. http://xmlcalabash.com/docs/reference/antsetup.html
+         for how xproc does it, can just declare namespace in project call ??? -->
         <concat
-            destfile="${build.dir}/${class.path}/xpants.xml">
+            destfile="${build.dir}/${class.path}/antlib.xml">
             <header>&lt;antlib&gt;</header>
             <footer>&lt;/antlib&gt;</footer>
             <fileset dir="${temp.dist}" includes="*.xml"/>

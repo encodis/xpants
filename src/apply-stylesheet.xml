@@ -509,6 +509,7 @@ None.
             <check-file-exists macro="apply-initial-template" file="${saxon.jar}"/>
 
             <!-- apply stylesheet using initial template -->
+            <!-- FIXME cannot use @classname for some reason -->
             <java
                 jar="${saxon.jar}"
                 logError="true"

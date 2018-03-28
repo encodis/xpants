@@ -155,11 +155,7 @@ XSLT files.
             <!-- detect stylesheet to use, use extension if not specified -->
             <!-- NOTE this will not be called if type is blank as parent macro will fail, so be careful -->
             <local name="file.ext"/>
-            <propertyregex
-                property="file.ext"
-                input="@{file}"
-                regexp="(.*)\.(.*)"
-                select="\2"/>
+            <propertyregex property="file.ext" input="@{file}" regexp="(.*)\.(.*)" select="\2"/>
 
             <local name="file.type"/>
             <condition property="file.type" value="${file.ext}" else="@{type}">
@@ -219,11 +215,7 @@ XSLT files.
 
                     <!-- check for actual extension, might be .xsl -->
                     <local name="output.ext"/>
-                    <propertyregex
-                        property="output.ext"
-                        input="@{file}"
-                        regexp=".*\.(.*)"
-                        select="\1"/>
+                    <propertyregex property="output.ext" input="@{file}" regexp=".*\.(.*)" select="\1"/>
 
                     <local name="output.name"/>
                     <basename property="output.name" file="@{file}" suffix=".${output.ext}"/>

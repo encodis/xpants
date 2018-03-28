@@ -9,7 +9,7 @@
 ---
 project:    XML Practical ANT Scripts
 title:      file-utils.xml
-date:       2018-02-14
+date:       2018-03-26
 author:     Philip Hodder
 contact:    philip.hodder@encodis.com
 summary:    Macros to check various file system related things
@@ -304,18 +304,10 @@ These macros create the following (global) properties:
             <check-attr-set macro="check-exe-path" name="property" value="@{property}"/>
 
             <local name="property.name"/>
-            <propertyregex
-                property="property.name"
-                input="@{property}"
-                regexp="([a-zA-Z0-9_-]+).[a-zA-Z0-9_-]+"
-                replace="\1"/>
+            <propertyregex property="property.name" input="@{property}" regexp="([a-zA-Z0-9_-]+).[a-zA-Z0-9_-]+" replace="\1"/>
 
             <local name="property.ext"/>
-            <propertyregex
-                property="property.ext"
-                input="@{property}"
-                regexp="[a-zA-Z0-9_-]+.([a-zA-Z0-9_-]+)"
-                replace="\1"/>
+            <propertyregex property="property.ext" input="@{property}" regexp="[a-zA-Z0-9_-]+.([a-zA-Z0-9_-]+)" replace="\1"/>
 
             <local name="windows.name"/>
             <property name="windows.name" value="@{windows}" unless:blank="@{windows}"/>
@@ -338,7 +330,12 @@ These macros create the following (global) properties:
             <fail message="[check-exe-path] An executable file for '@{property}' cannot be found on the path">
               <condition>
                   <not>
-                      <available file="${@{property}}" filepath="${env.PATH}"/>
+                      <or>
+                          <!-- Unix path -->
+                          <available file="${@{property}}" filepath="${env.PATH}"/>
+                          <!-- Windows path -->
+                          <available file="${@{property}}" filepath="${env.Path}"/>
+                      </or>
                   </not>
               </condition>
             </fail>
@@ -347,5 +344,9 @@ These macros create the following (global) properties:
 
         </sequential>
     </macrodef>
+
+    <!-- TODO 'find-jar-file' will look at ANT_HOME and ${user.home}/.ant/lib and find JAR file
+         matching given pattern (e.g. to find saxon9XX.jar). don't need if you know the classpath
+         so would you just look for the saxon path, say? find 'ant' path  -->
 
 </project>

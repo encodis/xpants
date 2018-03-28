@@ -153,9 +153,8 @@ Override the following property to change the value of the Trang class being use
 
             <echo message="[convert-schema] output: ${output.name}" if:true="${macro.debug}"/>
 
-            <java
-                failonerror="true"
-                classname="${trang.class}">
+            <java classname="${trang.class}"
+                failonerror="true">
 
                 <arg line="-I @{from}"/>
                 <arg line="-O @{to}"/>

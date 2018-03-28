@@ -91,11 +91,6 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
     <!-- macros -->
 
     <!--
-        so, if report is not blank, save report. if fileset given then default filename is "file.log"
-        schema is optional, if not given then use file info
-        property is optional, if given is t/f. if fileset given then true if all in fileset pass
-        if macro.debug or no report and no property then report each on as you do it.
-
         TODO is there a way you can automatically determine the type?
             DTD instance contains !DOCTYPE with public ID
             XSD instance contains xmlns:default
@@ -103,7 +98,17 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
 
         TODO wrappers for validate-with-dtd etc that supplies the type
 
-        TODO how to validate a DTD/XSD against the W3C schema? special type=w3c?
+        TODO how to validate a DTD/XSD against the W3C schema? special type=w3c? (or type=schema,
+        i.e. validate the schema, rather than validate a file with a schema BUT also need to know
+        if we are validating a schema against the W3C dtd or RelaxNG etc). Can we set
+        up a default catalog with W3C schema in the JAR file? The ANT xmlcatalog entry suggests that
+        we can... but may have to fiddle with @location? leave that to resolver.jar?
+
+        TODO option for just checking well formedness
+
+        TODO support URL for file in schemavalidate
+
+        TODO should this be called validate-instance.xml ?
     -->
 
 
@@ -187,6 +192,11 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             description="Schema file"/>
 
         <attribute
+            name="namespace"
+            default=""
+            description="Namespace URI (for XSD validation)"/>
+
+        <attribute
             name="report"
             default=""
             description="Path for report file(s)"/>
@@ -212,12 +222,24 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             <local name="schema.@{type}"/>
             <property name="schema.@{type}" value="true"/>
 
+            <!-- if validating XSD must supply namespace -->
+            <check-attr-set macro="validate-with-schema-file" name="namespace" value="@{namespace}" if:set="${schema.xsd}"/>
+
             <!-- if validating with RNG must supply schema explicitly -->
             <check-attr-set macro="validate-with-schema-file" name="schema" value="@{schema}" if:set="${schema.rng}"/>
 
             <!-- set up properties for catalog use, can override on command line -->
             <property environment="env"/>
             <property name="xpants.catalog" value="${env.XPANTS_CATALOG}" if:set="env.XPANTS_CATALOG"/>
+
+            <!-- set up XML catalog -->
+            <xmlcatalog id="xpantscatalog" if:set="xpants.catalog">
+                <catalogpath>
+                    <!-- TODO should use catalog built into the JAR + that specified by XPANTS_CATALOG -->
+                    <!-- TODO specify user.catalog? -->
+                    <pathelement location="${xpants.catalog}"/>
+                </catalogpath>
+            </xmlcatalog>
 
             <!-- create temp file for output of command -->
             <property name="temp.dir" value="${java.io.tmpdir}"/>
@@ -226,6 +248,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             <local name="output.temp"/>
             <tempfile property="output.temp" destdir="${temp.dir}" prefix="validate-with-schema" deleteonexit="${temp.delete}"/>
 
+            <!-- start recording output -->
 			<record name="${output.temp}" action="start"/>
 
             <!-- validate DTD -->
@@ -234,11 +257,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                 failonerror="false"
                 if:set="${schema.dtd}">
 
-                <xmlcatalog>
-                    <catalogpath>
-                        <pathelement location="${xpants.catalog}" if:set="xpants.catalog"/>
-                    </catalogpath>
-                </xmlcatalog>
+                <xmlcatalog refid="xpantscatalog" if:set="xpants.catalog"/>
 			</xmlvalidate>
 
             <!-- validate XSD -->
@@ -247,12 +266,10 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                 failonerror="false"
                 if:set="${schema.xsd}">
 
-                <!-- TODO need to pass in namespace -->
-				<schema namespace="@{namespace}" file="@{schema}" unless:blank="@{schema}"/>
+				<schema namespace="@{namespace}" file="@{schema}"/>
+                <attribute name="http://xml.org/sax/features/namespaces" value="true"/>
 
-                <xmlcatalog>
-                    <catalogpath location="${xpants.catalog}" if:set="xpants.catalog"/>
-                </xmlcatalog>
+                <xmlcatalog refid="xpantscatalog" if:set="xpants.catalog"/>
 			</schemavalidate>
 
             <!-- check jing.jar exists -->
@@ -278,6 +295,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                 <arg value="@{file}"/>
             </java>
 
+            <!-- stop recording output -->
 			<record name="${output.temp}" action="stop"/>
 
             <!-- valid or not? -->
@@ -287,13 +305,13 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid RNG document" if:set="schema.rng"/>
             <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid RNC document" if:set="schema.rnc"/>
 
+            <!-- TODO check for failures in the output report? -->
+
             <!-- save report, if required -->
             <copy tofile="@{report}" file="${output.temp}" unless:blank="@{report}"/>
 
             <!-- set property to t/f, if required -->
-            <condition property="@{property}" value="true" else="false" unless:blank="@{property}">
-                <istrue value="${output.valid}"/>
-            </condition>
+            <condition property="@{property}" value="${output.valid}" unless:blank="@{property}"/>
 
             <!-- if report and property are blank, or macro.debug is true, then report result -->
             <local name="echo.result"/>
