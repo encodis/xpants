@@ -355,7 +355,7 @@ None.
 
             <copy file="${temp.file}" tofile="@{output}/${file.name}${file.ext}" overwrite="true" if:set="copy.dir"/>
 
-            <!-- if 'output' in not blank but is not a folder, just copy file to output file -->
+            <!-- if 'output' is not blank but is not a folder, just copy file to output file -->
             <!-- <local name="copy.file"/>
             <condition property="copy.file">
                 <and>
@@ -402,6 +402,8 @@ None.
 
             <!-- make output dir if needed -->
             <mkdir dir="@{output}"/>
+
+            <!-- TODO check output has been created AND IS A DIR -->
 
             <property name="for.keepgoing" value="true"/>
 

@@ -85,6 +85,12 @@ To update the **build.properties** file by incrementing the build number:
 
     <!-- macros -->
 
+    <!-- IDEA use git macros to tag/commit with message using properties in build.properties file
+         see bumpversion
+         git.tag=true
+         git.commit=A message ${version.number} (if not set, do not commit)
+     -->
+
     <macrodef
         name="version-inc"
         description="Update a version number">
@@ -151,6 +157,7 @@ To update the **build.properties** file by incrementing the build number:
             <local name="increment.@{number}"/>
             <property name="increment.@{number}" value="true"/>
 
+            <!-- math operations use vars not properties -->
             <var name="version.major" value="${version.number.major}"/>
             <var name="version.minor" value="${version.number.minor}"/>
             <var name="version.patch" value="${version.number.patch}"/>
@@ -216,8 +223,6 @@ To update the **build.properties** file by incrementing the build number:
 
         <sequential>
 
-            <!-- TODO this must set minor and patch to 0 -->
-
             <version-inc
                 file="@{file}"
                 increment="@{increment}"
@@ -242,8 +247,6 @@ To update the **build.properties** file by incrementing the build number:
             description="Amount to increment version number"/>
 
         <sequential>
-
-            <!-- TODO this must set patch to 0 -->
 
             <version-inc
                 file="@{file}"
