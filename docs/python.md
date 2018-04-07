@@ -72,7 +72,7 @@ script
 
 | Name | Description            | Implicit | Required |
 | :--- | :--------------------- | :------: | :------: |
-| args | Command line arguments |   yes    |    no    |
+| args | Command line arguments |    no    |    no    |
 
 ## python-update-version
 

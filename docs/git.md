@@ -59,6 +59,27 @@ name
 | :------- | :---------------------------------- | :------ | :-----: | :------: |
 | property | Property containing the branch name |         |         |   yes    |
 
+## git-tag
+
+Create an annotated tag
+
+#### Attributes
+
+| Name    | Description | Allowed | Default | Required |
+| :------ | :---------- | :------ | :-----: | :------: |
+| tag     | Tag value   |         |         |   yes    |
+| message | Tag message |         |         |   yes    |
+
+## git-commit
+
+Stage all files and commit
+
+#### Attributes
+
+| Name    | Description    | Allowed | Default | Required |
+| :------ | :------------- | :------ | :-----: | :------: |
+| message | Commit message |         |         |   yes    |
+
 ## git-status
 
 Create a property with current git

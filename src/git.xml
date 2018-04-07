@@ -145,6 +145,62 @@ The following properties can be set on the command line to override the default 
         </sequential>
     </macrodef>
 
+    <macrodef
+        name="git-tag"
+        description="Create an annotated tag">
+
+        <attribute
+            name="tag"
+            description="Tag value"/>
+
+        <attribute
+            name="message"
+            description="Tag message"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="git-tag" name="tag" value="@{tag}"/>
+            <check-attr-set macro="git-tag" name="message" value="@{message}"/>
+
+            <git command="tag">
+                <args>
+                    <arg line="-a @{tag}"/>
+                    <arg line="-m @{message}"/>
+                </args>
+            </git>
+
+            <echo message="[git-tag] tag='@{tag}' message='@{message}'" if:true="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="git-commit"
+        description="Stage all files and commit">
+
+        <attribute
+            name="message"
+            description="Commit message"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="git-commit" name="message" value="@{message}"/>
+
+            <git command="commit">
+                <args>
+                    <arg value="--all"/>
+                    <arg value="--message=@{message}"/>
+                </args>
+            </git>
+
+            <echo message="[git-commit] message='@{message}'" if:true="${macro.debug}"/>
+
+        </sequential>
+    </macrodef>
+
 
     <macrodef
         name="git-status"

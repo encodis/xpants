@@ -170,6 +170,9 @@ The following properties can be set on the command line to override the default 
 
     <!-- macros -->
 
+    <!-- TODO result property att names should be 'property' to match other macros, also
+         if blank then report result though some have output logs -->
+
     <macrodef
         name="compare-files"
         description="Compare two files and report on differences">

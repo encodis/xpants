@@ -33,11 +33,11 @@ release.stage=RC2
 ```
 
 The *release.stage* can only be explicitly set using the `&lt;release-stage-set&gt;`, which only
-accepts the following values: "pre-alpha", "alpha", "beta", "rc1", "rc2" and "stable".
+accepts the values given by the *stages* attribute. The default values of the attribute are: "pre-alpha", "alpha", "beta", "rc1", "rc2" and "stable".
 
 ## Usage
 
-To update the **build.properties** file by incrementing the "major" version number:
+To update the **build.properties** file by incrementing the "major" version number by 1 (the default):
 
 ```
 &lt;version-inc-major/&gt;
@@ -55,10 +55,22 @@ To update the **build.properties** file by setting the version number explicitly
 &lt;version-number-set version="3.1.4"/&gt;
 ```
 
-To update the **build.properties** file by incrementing the build number:
+To update the **build.properties** file by incrementing the build number by 1:
 
 ```
-&lt;version-inc number="build"/&gt;
+&lt;build-inc/&gt;
+```
+
+To update the version number from the command line add a target similar to the following:
+
+```
+&lt;target name=&quot;version&quot;&gt;&#10;    &lt;version-inc element=&quot;${version.bump}&quot;/&gt;&#10;&lt;/target&gt;&#10;
+```
+
+and run:
+
+```
+$ ant version -Dversion.bump=major
 ```
 
 ## Dependencies
@@ -85,12 +97,6 @@ To update the **build.properties** file by incrementing the build number:
 
     <!-- macros -->
 
-    <!-- IDEA use git macros to tag/commit with message using properties in build.properties file
-         see bumpversion
-         git.tag=true
-         git.commit=A message ${version.number} (if not set, do not commit)
-     -->
-
     <macrodef
         name="version-inc"
         description="Update a version number">
@@ -106,7 +112,7 @@ To update the **build.properties** file by incrementing the build number:
             description="Amount to increment version number"/>
 
         <attribute
-            name="number"
+            name="element"
             default="patch"
             description="Version number element to increment [major,minor,patch,build]"/>
 
@@ -116,7 +122,7 @@ To update the **build.properties** file by incrementing the build number:
 
             <!-- fail if required attributes not set -->
             <check-attr-set macro="version-inc" name="increment" value="@{increment}"/>
-            <check-attr-list macro="version-inc" name="number" value="@{number}" list="major,minor,patch,build"/>
+            <check-attr-list macro="version-inc" name="element" value="@{element}" list="major,minor,patch,build"/>
 
             <!-- check properties file exists -->
             <check-file-exists macro="version-inc" file="@{file}"/>
@@ -154,8 +160,8 @@ To update the **build.properties** file by incrementing the build number:
                 select="\3"/>
 
             <!-- increment depending on @{number} -->
-            <local name="increment.@{number}"/>
-            <property name="increment.@{number}" value="true"/>
+            <local name="increment.@{element}"/>
+            <property name="increment.@{element}" value="true"/>
 
             <!-- math operations use vars not properties -->
             <var name="version.major" value="${version.number.major}"/>
@@ -202,6 +208,30 @@ To update the **build.properties** file by incrementing the build number:
 
             <!-- set new build number -->
             <build-number-set file="@{file}" build="${build.number.update}" if:set="increment.build"/>
+
+            <!-- add a tag? -->
+            <local name="version.tag"/>
+            <condition property="version.tag" value="true">
+                <equal arg1="${git.tag}" arg2="@{element}"/>
+            </condition>
+
+            <git-tag
+                tag="v${version.number}"
+                message="v${version.number}"
+                if:set="version.tag"/>
+
+            <!-- commit? -->
+            <local name="version.commit"/>
+            <condition property="version.commit" value="true">
+                <and>
+                    <isset property="version.tag"/>
+                    <not><equal arg1="${git.commit}" arg2=""/></not>
+                </and>
+            </condition>
+
+            <git-commit
+                message="${git.commit}"
+                if:set="version.commit"/>
 
         </sequential>
     </macrodef>
@@ -283,7 +313,7 @@ To update the **build.properties** file by incrementing the build number:
 
 
     <macrodef
-        name="version-inc-build"
+        name="build-inc"
         description="Increment the build number">
 
         <attribute
@@ -301,7 +331,7 @@ To update the **build.properties** file by incrementing the build number:
             <version-inc
                 file="@{file}"
                 increment="@{increment}"
-                number="build"/>
+                element="build"/>
 
         </sequential>
     </macrodef>

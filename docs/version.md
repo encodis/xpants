@@ -16,13 +16,14 @@ The *build.number* is assumed to be an unsigned integer:
     release.stage=RC2
 
 The *release.stage* can only be explicitly set using the
-`<release-stage-set>`, which only accepts the following values:
+`<release-stage-set>`, which only accepts the values given by the
+*stages* attribute. The default values of the attribute are:
 “pre-alpha”, “alpha”, “beta”, “rc1”, “rc2” and “stable”.
 
 ## Usage
 
 To update the **build.properties** file by incrementing the “major”
-version number:
+version number by 1 (the default):
 
     <version-inc-major/>
 
@@ -36,10 +37,21 @@ explicitly:
 
     <version-number-set version="3.1.4"/>
 
-To update the **build.properties** file by incrementing the build
-number:
+To update the **build.properties** file by incrementing the build number
+by 1:
 
-    <version-inc number="build"/>
+    <build-inc/>
+
+To update the version number from the command line add a target similar
+to the following:
+
+    <target name="version">
+        <version-inc element="${version.bump}"/>
+    </target>
+
+and run:
+
+    $ ant version -Dversion.bump=major
 
 ## Dependencies
 
@@ -64,7 +76,7 @@ number
 | :-------- | :-------------------------------------- | :------------------------- | :--------------: | :------: |
 | file      | Properties file for version information |                            | build.properties |    no    |
 | increment | Amount to increment version number      |                            |        1         |    no    |
-| number    | Version number element to increment     | major, minor, patch, build |      patch       |    no    |
+| element   | Version number element to increment     | major, minor, patch, build |      patch       |    no    |
 
 ## version-inc-major
 
@@ -102,7 +114,7 @@ number
 | file      | Properties file for version information |         | build.properties |    no    |
 | increment | Amount to increment version number      |         |        1         |    no    |
 
-## version-inc-build
+## build-inc
 
 Increment the build
 number
