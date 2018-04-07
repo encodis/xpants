@@ -212,7 +212,7 @@ $ ant version -Dversion.bump=major
             <!-- add a tag? -->
             <local name="version.tag"/>
             <condition property="version.tag" value="true">
-                <equal arg1="${git.tag}" arg2="@{element}"/>
+                <equals arg1="${git.tag}" arg2="@{element}"/>
             </condition>
 
             <git-tag
@@ -225,7 +225,7 @@ $ ant version -Dversion.bump=major
             <condition property="version.commit" value="true">
                 <and>
                     <isset property="version.tag"/>
-                    <not><equal arg1="${git.commit}" arg2=""/></not>
+                    <not><equals arg1="${git.commit}" arg2=""/></not>
                 </and>
             </condition>
 

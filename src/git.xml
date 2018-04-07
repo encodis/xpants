@@ -145,6 +145,7 @@ The following properties can be set on the command line to override the default 
         </sequential>
     </macrodef>
 
+
     <macrodef
         name="git-tag"
         description="Create an annotated tag">

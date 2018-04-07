@@ -107,7 +107,7 @@ summary:     Build file for XPants
         description="Assemble files and build a distribution JAR file">
 
         <!-- update build number -->
-        <version-inc-build/>
+        <build-inc/>
 
         <!-- make build dirs -->
         <tempfile property="temp.dist" destdir="${build.dir}" prefix="dist" deleteonexit="true"/>
