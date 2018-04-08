@@ -166,8 +166,9 @@ The following properties can be set on the command line to override the default 
 
             <git command="tag">
                 <args>
-                    <arg line="-a @{tag}"/>
-                    <arg line="-m @{message}"/>
+                    <arg value="--annotate"/>
+                    <arg value="@{tag}"/>
+                    <arg value="--message='@{message}'"/>
                 </args>
             </git>
 
