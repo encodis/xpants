@@ -234,8 +234,12 @@ None.
             <property name="xslt.suppresswarnings" value="true"/>
             <property name="xslt.failonerror" value="true"/>
 
+            <!-- set xpants.catalog if required, can override on command line -->
+            <property environment="env"/>
+            <property name="xpants.catalog" value="${env.XPANTS_CATALOG}" if:set="env.XPANTS_CATALOG"/>
+
             <!-- set resource path based on how macro was loaded -->
-            <condition property="xslt.resource.path" value="${xpants.dir}/xslt" else="com/encodis/xpants/xslt">
+            <condition property="xslt.resource.path" value="${xpants.xslt.dir}" else="com/encodis/xpants/xslt">
                 <isset property="xpants.dir"/>
             </condition>
 
@@ -246,6 +250,7 @@ None.
             <available file="@{xslt}" type="file" property="given.xslt.exists"/>
 
             <!-- does stylesheet exist as a file in the XPantS library (when using includes) -->
+            <!-- NOTE does not seem to work with spaces in file path -->
             <local name="standard.xslt.file.exists"/>
             <available file="${xslt.resource.path}/@{xslt}.xsl" property="standard.xslt.file.exists" if:set="xpants.dir"/>
 
@@ -305,9 +310,9 @@ None.
                 </factory>
 
                 <!-- IDEA can we load catalog from JAR file? do we need to? -->
-                <xmlcatalog>
+                <xmlcatalog if:set="xpants.catalog">
                     <catalogpath>
-                        <pathelement location="${xpants.catalog}" if:set="xpants.catalog"/>
+                        <pathelement location="${xpants.catalog}"/>
                     </catalogpath>
                 </xmlcatalog>
 
@@ -367,7 +372,8 @@ None.
                 </and>
             </condition> -->
 
-            <copy file="${temp.file}" tofile="@{output}" overwrite="true" unless:set="copy.dir"/>
+            <!-- FIXME does not work if @{output} is blank...  -->
+            <copy file="${temp.file}" tofile="@{output}" overwrite="true" force="true" unless:set="copy.dir"/>
 
         </sequential>
     </macrodef>
@@ -427,7 +433,6 @@ None.
     </macrodef>
 
 
-    <!-- TODO apply-stylsheet-list-file ? -->
     <macrodef
         name="apply-transform-list-file"
         description="Apply a series of stylesheets to a file">
@@ -542,7 +547,7 @@ None.
 
     <macrodef
         name="apply-transform-template"
-        description="Run a stylsheet using an initial template">
+        description="Run a stylesheet using an initial template">
 
         <attribute
             name="xslt"

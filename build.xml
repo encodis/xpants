@@ -8,12 +8,12 @@
 
     <description>
 ---
-project:     XPants
+project:     XML Practical ANT Scripts
 title:       build.xml
 date:        2018-04-07
 author:      Philip Hodder
 contact:     philip.hodder@encodis.com
-summary:     Build file for XPants
+summary:     Build file for XPantS
 ...
     </description>
 

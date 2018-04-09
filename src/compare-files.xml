@@ -637,6 +637,10 @@ The following properties can be set on the command line to override the default 
 
             <echo message="[diff-files-xml] deltaxml.dir=${deltaxml.dir}" if:true="${macro.debug}"/>
 
+            <!-- set xpants.catalog if required, can override on command line -->
+            <property environment="env"/>
+            <property name="xpants.catalog" value="${env.XPANTS_CATALOG}" if:set="env.XPANTS_CATALOG"/>
+
             <!-- analyse params -->
 
             <!-- delta: [no]whitespace,[no]context,[no]word,[no]match,[no]indent -->

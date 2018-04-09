@@ -358,9 +358,11 @@ The following properties can be set on the command line to override the default 
 					namespace="@{namespace}"
 					file="@{schema}"/>
 
-                <xmlcatalog>
-                    <catalogpath location="${xpants.catalog}" if:set="xpants.catalog"/>
-                </xmlcatalog>
+                    <xmlcatalog if:set="xpants.catalog">
+                        <catalogpath>
+                            <pathelement location="${xpants.catalog}"/>
+                        </catalogpath>
+                    </xmlcatalog>
 			</schemavalidate>
 
 			<record name="@{output}" action="stop"/>
