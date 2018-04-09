@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        compile-schematron.xml
-date:         2018-02-19
+date:         2018-04-09
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to compile Schematron files
@@ -128,6 +128,8 @@ library, rather than on the command line.
 
 ##### 2018-02-19 (PH) Initial version
 
+##### 2018-04-09 (PH) Macro naming alignment
+
     </description>
 
     <!-- TODO this could probably be strealined, esp. with regard to output file formats  -->
@@ -187,7 +189,7 @@ library, rather than on the command line.
             <!-- fail if required attributes not set -->
             <check-attr-set macro="compile-schematron" name="output" value="@{output}"/>
 
-            <!-- file or dir mode? -->
+            <!-- file or fileset mode? -->
             <compile-schematron-file
                 file="@{file}"
                 encoding="@{encoding}"
@@ -197,7 +199,7 @@ library, rather than on the command line.
                 output="@{output}"
                 unless:blank="@{file}"/>
 
-            <compile-schematron-dir
+            <compile-schematron-fileset
                 encoding="@{encoding}"
                 phase="@{phase}"
                 foreign="@{foreign}"
@@ -205,7 +207,7 @@ library, rather than on the command line.
                 output="@{output}"
                 if:blank="@{file}">
                 <input.files/>
-            </compile-schematron-dir>
+            </compile-schematron-fileset>
 
         </sequential>
     </macrodef>
@@ -259,23 +261,16 @@ library, rather than on the command line.
             <local name="temp.merged"/>
             <tempfile property="temp.merged" prefix="merge-sch-includes" suffix=".sch" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
-            <merge-schematron-includes
-                file="@{file}"
-                output="${temp.merged}"/>
+            <compile-schematron-merge-includes file="@{file}" output="${temp.merged}"/>
 
             <!-- resolve abstracts -->
             <local name="temp.resolved"/>
             <tempfile property="temp.resolved" prefix="resolve-sch-abstracts" suffix=".sch" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
-            <resolve-schematron-abstracts
-                file="${temp.resolved}"
-                output="@{output}"/>
+            <compile-schematron-resolve-abstracts file="${temp.resolved}" output="@{output}"/>
 
             <!-- apply filtering, overwrites resolved file -->
-            <apply-stylesheets
-                file="${temp.resolved}"
-                filters="@{filters}"
-                unless:blank="@{filters}"/>
+            <apply-stylesheet-list file="${temp.resolved}" filters="@{filters}" unless:blank="@{filters}"/>
 
             <!-- choose XSLT1/XSLT2 transform based on version in SCH file, can be overridden on command line -->
             <local name="schematron.querybinding"/>
@@ -339,7 +334,7 @@ library, rather than on the command line.
 
 
     <macrodef
-        name="compile-schematron-dir"
+        name="compile-schematron-fileset"
         description="Compile a folder of Schematron files">
 
         <attribute
@@ -375,12 +370,17 @@ library, rather than on the command line.
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="compile-schematron-dir">
+            <check-fileset-empty macro="compile-schematron-fileset">
                 <input.files/>
             </check-fileset-empty>
 
+            <!-- make output dir if needed -->
             <mkdir dir="@{output}"/>
 
+            <!-- check output has been created and is a dir -->
+            <check-dir-exists macro="compile-schematron-fileset" dir="${output}"/>
+
+            <!-- compile all schematron files in fileset -->
             <property name="for.keepgoing" value="true"/>
 
             <for param="file" keepgoing="${for.keepgoing}">
@@ -407,7 +407,7 @@ library, rather than on the command line.
 
 
     <macrodef
-        name="merge-schematron-includes"
+        name="compile-schematron-merge-includes"
         description="Merge included files into a single Schematron file">
 
         <attribute
@@ -421,14 +421,12 @@ library, rather than on the command line.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="merge-schematron-includes" name="file" value="@{file}"/>
-            <check-attr-set macro="merge-schematron-includes" name="output" value="@{output}"/>
+            <check-attr-set macro="compile-schematron-merge-includes" name="file" value="@{file}"/>
+            <check-attr-set macro="compile-schematron-merge-includes" name="output" value="@{output}"/>
 
-            <property
-                name="merge-schematron-includes.stylesheet"
-                value="iso/iso_dsdl_include"/>
+            <property name="merge-schematron-includes.stylesheet" value="iso/iso_dsdl_include"/>
 
-            <echo message="[merge-schematron-includes] merge-schematron-includes.stylesheet=${merge-schematron-includes.stylesheet}" if:true="${macro.debuf}"/>
+            <echo message="[compile-schematron-merge-includes] merge-schematron-includes.stylesheet=${merge-schematron-includes.stylesheet}" if:true="${macro.debuf}"/>
 
             <apply-stylesheet
                 file="@{file}"
@@ -440,7 +438,7 @@ library, rather than on the command line.
 
 
     <macrodef
-        name="resolve-schematron-abstracts"
+        name="compile-schematron-resolve-abstracts"
         description="Resolve abstract patterns in a Schematron file">
 
         <attribute
@@ -454,16 +452,14 @@ library, rather than on the command line.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="resolve-schematron-abstracts" name="file" value="@{file}"/>
-            <check-attr-set macro="resolve-schematron-abstracts" name="output" value="@{output}"/>
+            <check-attr-set macro="compile-schematron-resolve-abstracts" name="file" value="@{file}"/>
+            <check-attr-set macro="compile-schematron-resolve-abstracts" name="output" value="@{output}"/>
 
             <!-- set property "resolve-schematron-abstracts.stylesheet=iso/iso_abstract_expand_bugfix6" to override -->
 
-            <property
-                name="resolve-schematron-abstracts.stylesheet"
-                value="iso/iso_abstract_expand"/>
+            <property name="resolve-schematron-abstracts.stylesheet" value="iso/iso_abstract_expand"/>
 
-            <echo message="[resolve-schematron-abstracts] resolve-schematron-abstracts.stylesheet=${resolve-schematron-abstracts.stylesheet}" if:true="${macro.debuf}"/>
+            <echo message="[compile-schematron-resolve-abstracts] resolve-schematron-abstracts.stylesheet=${resolve-schematron-abstracts.stylesheet}" if:true="${macro.debuf}"/>
 
             <apply-stylesheet
                 file="@{file}"

@@ -215,10 +215,7 @@ $ ant version -Dversion.bump=major
                 <equals arg1="${git.tag}" arg2="@{element}"/>
             </condition>
 
-            <git-tag
-                tag="v${version.number}"
-                message="v${version.number}"
-                if:set="version.tag"/>
+            <git-tag tag="v${version.number}" message="v${version.number}" if:set="version.tag"/>
 
             <!-- commit? -->
             <local name="version.commit"/>
@@ -229,9 +226,7 @@ $ ant version -Dversion.bump=major
                 </and>
             </condition>
 
-            <git-commit
-                message="${git.commit}"
-                if:set="version.commit"/>
+            <git-commit message="${git.commit}" if:set="version.commit"/>
 
         </sequential>
     </macrodef>
@@ -253,10 +248,7 @@ $ ant version -Dversion.bump=major
 
         <sequential>
 
-            <version-inc
-                file="@{file}"
-                increment="@{increment}"
-                number="major"/>
+            <version-inc file="@{file}" increment="@{increment}" number="major"/>
 
         </sequential>
     </macrodef>
@@ -278,10 +270,7 @@ $ ant version -Dversion.bump=major
 
         <sequential>
 
-            <version-inc
-                file="@{file}"
-                increment="@{increment}"
-                number="minor"/>
+            <version-inc file="@{file}" increment="@{increment}" number="minor"/>
 
         </sequential>
     </macrodef>
@@ -303,10 +292,7 @@ $ ant version -Dversion.bump=major
 
         <sequential>
 
-            <version-inc
-                file="@{file}"
-                increment="@{increment}"
-                number="patch"/>
+            <version-inc file="@{file}" increment="@{increment}" number="patch"/>
 
         </sequential>
     </macrodef>
@@ -328,10 +314,7 @@ $ ant version -Dversion.bump=major
 
         <sequential>
 
-            <version-inc
-                file="@{file}"
-                increment="@{increment}"
-                element="build"/>
+            <version-inc file="@{file}" increment="@{increment}" element="build"/>
 
         </sequential>
     </macrodef>
@@ -427,10 +410,7 @@ $ ant version -Dversion.bump=major
             <check-attr-list macro="release-stage-set" name="stage" value="@{stage}" list="@{stages}"/>
 
             <local name="stage.list"/>
-            <propertyregex property="stage.list"
-                input="@{stages}"
-                regexp=","
-                replace="|"/>
+            <propertyregex property="stage.list" input="@{stages}" regexp="," replace="|"/>
 
             <!-- use var and replaceregexp to overwrite release.stage -->
             <var name="release.stage" unset="true"/>

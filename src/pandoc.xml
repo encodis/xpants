@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        pandoc.xml
-date:         2018-02-14
+date:         2018-04-09
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to process files using pandoc
@@ -44,6 +44,8 @@ The following properties can be set on the command line to override the default 
 ## Change Log
 
 ##### 2018-02-14 (PH) Initial version
+
+##### 2018-04-09 (PH) Macro naming alignment
 
     </description>
 
@@ -143,7 +145,7 @@ The following properties can be set on the command line to override the default 
                 output="@{output}"
                 unless:blank="@{file}"/>
 
-            <pandoc-dir
+            <pandoc-fileset
                 from="@{from}"
                 to="@{to}"
                 options="@{options}"
@@ -156,7 +158,7 @@ The following properties can be set on the command line to override the default 
                 output="@{output}"
                 if:blank="@{file}">
                 <input.files/>
-            </pandoc-dir>
+            </pandoc-fileset>
 
         </sequential>
     </macrodef>
@@ -235,39 +237,19 @@ The following properties can be set on the command line to override the default 
 
             <!-- convert options -->
             <local name="options.list"/>
-            <propertyregex
-                property="options.list"
-                input="@{options}"
-                regexp="^|,"
-                replace=" --"
-                global="true"/>
+            <propertyregex property="options.list" input="@{options}" regexp="^|," replace=" --" global="true"/>
 
             <!-- convert filters -->
             <local name="filters.list"/>
-            <propertyregex
-                property="filters.list"
-                input="@{filters}"
-                regexp="^|,"
-                replace=" --filter="
-                global="true"/>
+            <propertyregex property="filters.list" input="@{filters}" regexp="^|," replace=" --filter=" global="true"/>
 
             <!-- convert Lua filters -->
             <local name="lua-filters.list"/>
-            <propertyregex
-                property="lua-filters.list"
-                input="@{lua-filters}"
-                regexp="^|,"
-                replace=" --lua-filter="
-                global="true"/>
+            <propertyregex property="lua-filters.list" input="@{lua-filters}" regexp="^|," replace=" --lua-filter=" global="true"/>
 
             <!-- convert variables -->
             <local name="variables.list"/>
-            <propertyregex
-                property="variables.list"
-                input="@{variables}"
-                regexp="^|,"
-                replace=" --variable="
-                global="true"/>
+            <propertyregex property="variables.list" input="@{variables}" regexp="^|," replace=" --variable=" global="true"/>
 
             <!-- TODO allow for multiple CSS stylesheets -->
 
@@ -294,8 +276,8 @@ The following properties can be set on the command line to override the default 
     </macrodef>
 
     <macrodef
-        name="pandoc-dir"
-        description="Run pandoc on folder, with parameters">
+        name="pandoc-fileset"
+        description="Run pandoc on fileset, with parameters">
 
         <attribute
             name="from"
@@ -355,13 +337,17 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="pandoc-dir">
+            <check-fileset-empty macro="pandoc-fileset">
                 <input.files/>
             </check-fileset-empty>
 
             <!-- make output dir if needed -->
             <mkdir dir="@{output}"/>
 
+            <!-- check output has been created and is a dir -->
+            <check-dir-exists macro="pandoc-fileset" dir="${output}"/>
+
+            <!-- run pandoc on all files in fileset -->
             <property name="for.keepgoing" value="true"/>
 
             <for param="file" keepgoing="${for.keepgoing}">

@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        validate-with-schema.xml
-date:         2018-03-05
+date:         2018-04-09
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to validate XML instances using schema (XSD, DTD, RNC or RNG)
@@ -76,6 +76,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
 
 ##### 2018-02-19 (PH) Initial version
 
+##### 2018-04-09 (PH) Macro naming alignment
     </description>
 
     <!-- load ant-contrib -->
@@ -151,7 +152,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
 
 		<sequential>
 
-            <!-- file or dir mode? -->
+            <!-- file or fileset mode? -->
             <validate-with-schema-file
                 file="@{file}"
                 type="@{type}"
@@ -160,14 +161,14 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                 property="@{property}"
                 unless:blank="@{file}"/>
 
-            <validate-with-schema-dir
+            <validate-with-schema-fileset
                 type="@{type}"
                 schema="@{schema}"
                 report="@{report}"
                 property="@{property}"
                 if:blank="@{file}">
                 <input.files/>
-            </validate-with-schema-dir>
+            </validate-with-schema-fileset>
 
 		</sequential>
 	</macrodef>
@@ -338,7 +339,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
 
 
     <macrodef
-        name="validate-with-schema-dir"
+        name="validate-with-schema-fileset"
         description="Validate a folder of XML instance documents against a schema">
 
         <attribute
@@ -370,7 +371,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="validate-with-schema-dir">
+            <check-fileset-empty macro="validate-with-schema-fileset">
                 <input.files/>
             </check-fileset-empty>
 

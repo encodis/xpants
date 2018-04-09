@@ -8,7 +8,7 @@
 ---
 project:    XML Practical ANT Scripts
 title:      apply-stylesheet.xml
-date:       2018-02-14
+date:       2018-04-09
 author:     Philip Hodder
 contact:    philip.hodder@encodis.com
 summary:    Macro definitions to apply an XSLT stylesheet to an XML file
@@ -93,13 +93,13 @@ transformed files in the **updated** folder with an extension of ".upd":
 Apply a list of stylesheets in the XSLT library to a file, overwriting the file:
 
 ```
-&lt;apply-stylesheets
+&lt;apply-stylesheet-list
 &#9;file="instance-doc.xml"
 &#9;stylesheets="remove-docs,remove-comments,remove-processing-instructions"/&lt;
 ```
 
 Process a Schematron file to include all "&lt;xi:xinclude&gt;" elements in the output file. Note
-that as the XSLT engine is aware of this the file just needs to be run through the "identity"
+that as the XSLT engine is "xinclude aware" the file just needs to be run through the "identity"
 transform:
 
 ```
@@ -121,6 +121,8 @@ None.
 
 ##### 2018-02-14 (PH) Initial version
 
+##### 2018-04-09 (PH) Macro naming alignment
+
     </description>
 
     <!-- load ant-contrib -->
@@ -133,6 +135,8 @@ None.
 
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
+
+    <!-- TODO call whole thing apply-transform ? -->
 
     <!-- macros -->
 
@@ -172,7 +176,7 @@ None.
 
             <!-- NOTE do not check for @{output} being blank, as this indicates @{file} should be overwritten -->
 
-            <!-- file or dir mode? -->
+            <!-- file or fileset mode? -->
             <apply-stylesheet-file
                 file="@{file}"
                 stylesheet="@{stylesheet}"
@@ -180,13 +184,13 @@ None.
                 output="@{output}"
                 unless:blank="@{file}"/>
 
-            <apply-stylesheet-dir
+            <apply-stylesheet-fileset
                 stylesheet="@{stylesheet}"
                 ext="@{ext}"
                 output="@{output}"
                 if:blank="@{file}">
                 <input.files/>
-            </apply-stylesheet-dir>
+            </apply-stylesheet-fileset>
 
         </sequential>
     </macrodef>
@@ -201,13 +205,13 @@ None.
             description="Source XML file"/>
 
         <attribute
+            name="stylesheet"
+            description="XSLT file to be applied"/>
+
+        <attribute
             name="ext"
             default=""
             description="Extension of output file(s)"/>
-
-        <attribute
-            name="stylesheet"
-            description="XSLT file to be applied"/>
 
         <attribute
             name="output"
@@ -314,13 +318,13 @@ None.
                      but how would this work with destdir/@{output} ??? and we have params.xslt as implicit
                      fileset
 
-                     this could have nice synergy with the apply-stylesheetS macro
+                     this could have nice synergy with the apply-stylesheet-list macro
                      -->
 
             </xslt>
 
             <!-- NOTE if this macro is called by apply-stylesheet-dir, then 'output' must be a folder -->
-<!--
+            <!--
             <local name="copy.orig"/>
             <condition property="copy.orig">
                 <equals arg1="@{output}" arg2=""/>
@@ -371,7 +375,7 @@ None.
 
 
     <macrodef
-        name="apply-stylesheet-dir"
+        name="apply-stylesheet-fileset"
         description="Apply a stylsheet to all files in a folder">
 
         <attribute
@@ -396,15 +400,17 @@ None.
         <sequential>
 
             <!-- fail if input.files is empty -->
-            <check-fileset-empty macro="apply-stylesheet-dir">
+            <check-fileset-empty macro="apply-stylesheet-fileset">
                 <input.files/>
             </check-fileset-empty>
 
             <!-- make output dir if needed -->
             <mkdir dir="@{output}"/>
 
-            <!-- TODO check output has been created AND IS A DIR -->
+            <!-- check output has been created and is a dir -->
+            <check-dir-exists macro="apply-stylesheet-fileset" dir="${output}"/>
 
+            <!-- apply stylesheet to files in fileset -->
             <property name="for.keepgoing" value="true"/>
 
             <for param="file" keepgoing="${for.keepgoing}">
@@ -413,11 +419,7 @@ None.
                 <sequential>
 
                     <!-- NOTE set file ext in apply-stylesheet-file because it is independant of transform -->
-                    <apply-stylesheet-file
-                        file="@{file}"
-                        stylesheet="@{stylesheet}"
-                        ext="@{ext}"
-                        output="@{output}"/>
+                    <apply-stylesheet-file file="@{file}" stylesheet="@{stylesheet}" ext="@{ext}" output="@{output}"/>
 
                 </sequential>
             </for>
@@ -426,31 +428,32 @@ None.
     </macrodef>
 
 
+    <!-- TODO apply-stylsheet-list-file ? -->
     <macrodef
-        name="apply-stylesheets"
-        description="Apply a series of stylesheets to a file in place">
+        name="apply-stylesheet-list"
+        description="Apply a series of stylesheets to a file">
 
         <attribute
             name="file"
             description="Source file"/>
 
         <attribute
-            name="output"
-            default=""
-            description="Final output file"/>
-
-        <attribute
             name="stylesheets"
             default=""
             description="Comma separated list of stylesheets to be applied"/>
 
+        <attribute
+            name="output"
+            default=""
+            description="Final output file (default: overwrite source file)"/>
+
         <sequential>
 
             <!-- fail if file does not exist -->
-            <check-file-exists macro="apply-stylesheets" file="@{file}"/>
+            <check-file-exists macro="apply-stylesheet-list" file="@{file}"/>
 
             <!-- fail if no stylesheets supplied -->
-            <check-attr-set macro="apply-stylesheets" name="stylesheets" value="@{stylesheets}"/>
+            <check-attr-set macro="apply-stylesheet-list" name="stylesheets" value="@{stylesheets}"/>
 
             <!-- set up output if not blank -->
             <copy file="@{file}" tofile="@{output}" unless:blank="@{output}"/>
@@ -462,15 +465,9 @@ None.
                 <sequential>
 
                     <!-- if @{output} is blank then overwrite @{file}, otherwise overwrite @{output} -->
-                    <apply-stylesheet
-                        file="@{file}"
-                        stylesheet="@{stylesheet}"
-                        if:blank="@{output}"/>
+                    <apply-stylesheet file="@{file}" stylesheet="@{stylesheet}" if:blank="@{output}"/>
 
-                    <apply-stylesheet
-                        file="@{output}"
-                        stylesheet="@{stylesheet}"
-                        unless:blank="@{output}"/>
+                    <apply-stylesheet file="@{output}" stylesheet="@{stylesheet}" unless:blank="@{output}"/>
 
                 </sequential>
             </for>
@@ -480,7 +477,72 @@ None.
 
 
     <macrodef
-        name="apply-initial-template"
+        name="apply-stylesheet-list-fileset"
+        description="Apply a series of stylesheets to all files in a fileset">
+
+        <attribute
+            name="stylesheets"
+            default=""
+            description="Comma separated list of stylesheets to be applied"/>
+
+        <attribute
+            name="ext"
+            default=""
+            description="Extension of output file(s)"/>
+
+        <attribute
+            name="output"
+            description="Output directory"/>
+
+        <element
+            name="input.files"
+            optional="true"
+            implicit="true"
+            description="A fileset specification"/>
+
+        <sequential>
+
+            <!-- fail if input.files is empty -->
+            <check-fileset-empty macro="apply-stylesheet-list-fileset">
+                <input.files/>
+            </check-fileset-empty>
+
+            <!-- fail if no stylesheets supplied -->
+            <check-attr-set macro="apply-stylesheet-list-fileset" name="stylesheets" value="@{stylesheets}"/>
+
+            <!-- make output dir if needed -->
+            <mkdir dir="@{output}"/>
+
+            <!-- check output has been created and is a dir -->
+            <check-dir-exists macro="apply-stylesheet-list-fileset" dir="${output}"/>
+
+            <!-- apply stylesheet list to files in fileset -->
+            <property name="for.keepgoing" value="true"/>
+
+            <for param="file" keepgoing="${for.keepgoing}">
+                <input.files/>
+
+                <sequential>
+
+                    <!-- check for actual extension, might be .xsl -->
+                    <local name="output.ext"/>
+                    <propertyregex property="output.ext" input="@{file}" regexp=".*\.(.*)" select="\1"/>
+
+                    <local name="output.name"/>
+                    <basename property="output.name" file="@{file}" suffix=".${output.ext}"/>
+
+                    <!-- NOTE set file ext here because we're setting output dir here -->
+                    <apply-stylesheet-list file="@{file}" stylesheet="@{stylesheet}" output="@{output}/${output.name}.${output.ext}"/>
+
+                </sequential>
+            </for>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="apply-stylesheet-template"
         description="Run a stylsheet using an initial template">
 
         <attribute
@@ -502,19 +564,19 @@ None.
             <!-- TODO make list of JAR files in ${ant.library.dir} and ${user.home}/.ant/lib that contain the string
                  'saxon'. use this to get ${saxon.jar} -->
 
-            <fail message="[apply-initial-template] 'saxon.jar' property not set">
+            <fail message="[apply-stylesheet-template] 'saxon.jar' property not set">
                 <condition>
                     <not><isset name="saxon.jar"/></not>
                 </condition>
             </fail>
 
-            <check-file-exists macro="apply-initial-template" file="${saxon.jar}"/>
+            <check-file-exists macro="apply-stylesheet-template" file="${saxon.jar}"/>
 
             <!-- apply stylesheet using initial template -->
-            <!-- FIXME cannot use @classname for some reason -->
+            <!-- FIXME cannot use @classname = net.sf.saxon.Transform for some reason -->
             <java
                 jar="${saxon.jar}"
-                logError="true"
+                logerror="true"
                 fork="true"
                 failonerror="true">
 

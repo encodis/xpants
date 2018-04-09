@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        xspec.xml
-date:         2018-03-19
+date:         2018-04-09
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to use XSpec within a build file
@@ -44,6 +44,8 @@ None.
 ## Change Log
 
 ##### 2018-03-19 (PH) Initial version
+
+##### 2018-04-09 (PH) Macro naming alignment
 
     </description>
 
@@ -90,7 +92,7 @@ None.
 
         <sequential>
 
-            <!-- file or dir mode? -->
+            <!-- file or fileset mode? -->
             <xspec-file
                 file="@{file}"
                 test="@{test}"
@@ -98,13 +100,13 @@ None.
                 junit="@{junit}"
                 unless:blank="@{file}"/>
 
-            <xspec-dir
+            <xspec-fileset
                 test="@{test}"
                 coverage="@{coverage}"
                 junit="@{junit}"
                 if:blank="@{file}">
                 <xspec.files/>
-            </xspec-dir>
+            </xspec-fileset>
 
         </sequential>
     </macrodef>
@@ -149,11 +151,11 @@ None.
 
             <!-- get test type -->
             <local name="test.@{test}"/>
-            <property name="test.@test" value="true"/>
-
-            <property name="exec.failonerror" value="true"/>
+            <property name="test.@{test}" value="true"/>
 
             <!-- run tidy -->
+            <property name="exec.failonerror" value="true"/>
+
             <exec
                 executable="${xspec.exe}"
                 failonerror="${exec.failonerror}">
@@ -170,7 +172,7 @@ None.
 
 
     <macrodef
-        name="xspec-dir"
+        name="xspec-fileset"
         description="Run a folder of XSpec files">
 
         <attribute
@@ -197,10 +199,11 @@ None.
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="xspec-dir">
+            <check-fileset-empty macro="xspec-fileset">
                 <xspec.files/>
             </check-fileset-empty>
 
+            <!-- run xspec on all files in fileset -->
             <property name="for.keepgoing" value="true"/>
 
             <for param="file" keepgoing="${for.keepgoing}">
@@ -209,11 +212,7 @@ None.
                 <sequential>
 
                     <!-- process file -->
-                    <xspec-file
-                        file="@{file}"
-                        test="@{test}"
-                        coverage="@{coverage}"
-                        junit="@{junit}"/>
+                    <xspec-file file="@{file}" test="@{test}" coverage="@{coverage}" junit="@{junit}"/>
 
                 </sequential>
             </for>
