@@ -109,7 +109,11 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
         TODO support URL for file in schemavalidate
 
         TODO should this be called validate-instance.xml ? then we could have validate-schema to do
+<<<<<<< HEAD
         just that
+=======
+        just that 
+>>>>>>> 447f833577823751398a2a8a3e1079df9848ed57
 
         TODO need to add Schematron validation - can we do this with saxon? precompile? cache it
         for working on a fileset
