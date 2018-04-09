@@ -136,6 +136,11 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             description="Schema file"/>
 
         <attribute
+            name="namespace"
+            default=""
+            description="Namespace URI (for XSD validation)"/>
+
+        <attribute
             name="report"
             default=""
             description="Path for report file(s)"/>
@@ -163,6 +168,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                 file="@{file}"
                 type="@{type}"
                 schema="@{schema}"
+                namespace="@{namespace}"
                 report="@{report}"
                 property="@{property}"
                 unless:blank="@{file}"/>
@@ -307,10 +313,10 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
 
             <!-- valid or not? -->
             <local name="output.valid"/>
-            <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid XML document" if:set="schema.dtd"/>
-            <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid XML document" if:set="schema.xsd"/>
-            <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid RNG document" if:set="schema.rng"/>
-            <check-file-contains property="output.valid" file="@{output.temp}" string="is not a valid RNC document" if:set="schema.rnc"/>
+            <check-file-contains property="output.valid" file="${output.temp}" string="is not a valid XML document" if:set="schema.dtd"/>
+            <check-file-contains property="output.valid" file="${output.temp}" string="is not a valid XML document" if:set="schema.xsd"/>
+            <check-file-contains property="output.valid" file="${output.temp}" string="is not a valid RNG document" if:set="schema.rng"/>
+            <check-file-contains property="output.valid" file="${output.temp}" string="is not a valid RNC document" if:set="schema.rnc"/>
 
             <!-- TODO check for failures in the output report? -->
 
@@ -352,6 +358,11 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             name="schema"
             default=""
             description="Schema file"/>
+
+        <attribute
+            name="namespace"
+            default=""
+            description="Namespace URI (for XSD validation)"/>
 
         <attribute
             name="type"
@@ -408,6 +419,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                         file="@{file}"
                         type="@{type}"
                         schema="@{schema}"
+                        namespace="@{namespace}"
                         report="${report.file}"
                         property="property.temp"/>
 
