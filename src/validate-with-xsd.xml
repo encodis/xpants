@@ -76,7 +76,7 @@ The following properties can be set on the command line to override the default 
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.validate-with-xsd}"/>
 
-    <include file="${xpants.dir}/apply-stylesheet.xml"/>
+    <include file="${xpants.dir}/apply-transform.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
@@ -123,7 +123,7 @@ The following properties can be set on the command line to override the default 
                 then remove @format, using extension to detemine if svrl, html or txt (anything else)
 
                 might not need all the sub-macros - just validate-gen-report which runs
-                the various apply-stylesheet conditionally
+                the various apply-transform conditionally
 
                 don't think RNG has versions of the report though
 
@@ -428,10 +428,10 @@ The following properties can be set on the command line to override the default 
 
             <echo message="[validate-with-xsd-to-svrl] convert-xsd-text-to-svrl.stylesheet=${convert-xsd-text-to-svrl.stylesheet}" if:true="${macro.debug}"/>
 
-            <apply-stylesheet
+            <apply-transform
                 file="${temp.txt}"
                 output="@{output}"
-                stylesheet="${convert-xsd-text-to-svrl.stylesheet}"/>
+                xslt="${convert-xsd-text-to-svrl.stylesheet}"/>
 
 		</sequential>
 	</macrodef>
@@ -482,10 +482,10 @@ The following properties can be set on the command line to override the default 
 
             <echo message="[validate-xsd-to-html] convert-svrl-to-html.stylesheet=${convert-svrl-to-html.stylesheet}" if:true="${macro.debug}"/>
 
-            <apply-stylesheet
+            <apply-transform
                 file="${temp.svrl}"
                 output="@{output}"
-                stylesheet="${convert-svrl-to-html.stylesheet}"/>
+                xslt="${convert-svrl-to-html.stylesheet}"/>
 
 		</sequential>
 	</macrodef>

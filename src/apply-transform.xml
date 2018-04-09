@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="apply-stylesheet"
+<project name="apply-transform"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">
 
     <description>
 ---
 project:    XML Practical ANT Scripts
-title:      apply-stylesheet.xml
+title:      apply-transform.xml
 date:       2018-04-09
 author:     Philip Hodder
 contact:    philip.hodder@encodis.com
 summary:    Macro definitions to apply an XSLT stylesheet to an XML file
 ...
 
-# apply-stylesheet.xml
+# apply-transform.xml
 
-Macro definitions to apply an XSLT stylesheet to an XML file (of folder of XML files). By default
-the stylesheet is applied in place, i.e. the name of the file is not changed. The top level macro
-("apply-stylesheet") will transform either a single file or a folder, depending on the arguments
-supplied:
+Macro definitions to apply an XSLT stylesheets or transforms to an XML file (of folder of XML
+files). By default the stylesheet is applied in place, i.e. the name of the file is not changed. The
+top level macro ("apply-transform") will transform either a single file or a folder, depending on
+the arguments supplied:
 
 * If the *file* attribute is not blank and refers to a file that exists then it will be
 transformed.
@@ -38,21 +38,21 @@ original extension. *ext* should therefore contain a leading "." if that is requ
 created and specified before running this task. Otherwise each transformed file will overwrite
 the given output path.
 
-The macro *apply-stylesheet-file* can take an optional *params.xslt* element which contains
+The macro *apply-transform-file* can take an optional *params.xslt* element which contains
 additional parameters to pass to ANT's &lt;xslt&gt; task. This cannot be passed to this macro via
-the main *apply-stylesheet* macro, so *apply-stylesheet-file* must be used directly if this is
+the main *apply-transform* macro, so *apply-transform-file* must be used directly if this is
 the case.
 
-The *stylesheet* attribute can be used in one of two ways:
+The *xslt* attribute can be used in one of two ways:
 
 * Primarily it can be used to specify a relative or absolute path to a stylesheet
-(e.g. `stylesheet="./my-stylesheets/convert.xsl"`).
+(e.g. `xslt="./my-stylesheets/convert.xsl"`).
 
 * However, it can also be used to specify default stylesheets in the XPantS XSLT Library.
-If the attribute value contains no path related information (e.g. `stylesheet="filter-svrl"`)
+If the attribute value contains no path related information (e.g. `xslt="filter-svrl"`)
 then the macro will try to locate a stylesheet with that name and the extension ".xsl" in the
 **com/encodis/xpants/xslt** resource (i.e. in the XPantS jar file). So specifying
-`stylesheet="filter-svrl"` will make the macro try and load the resource
+`xslt="filter-svrl"` will make the macro try and load the resource
 **com/encodis/xpants/xslt/filter-svrl.xsl**.
 
 ## Usage
@@ -61,41 +61,41 @@ To apply the XPantS XSLT standard library stylesheet **remove-docs.xsl** to the 
 file, putting the result into the file **my-schema-nodocs.xsd**:
 
 ```
-&lt;apply-stylesheet
+&lt;apply-transform
 &#9;file="my-schema.xsd"
 &#9;output="my-schema-nodocs.xsd"
-&#9;stylesheet="remove-docs"/&gt;
+&#9;xslt="remove-docs"/&gt;
 ```
 
 To apply the **remove-docs.xsl** stylesheet to the **my-schema.xsd** file in place (so that
 **my-schema.xsd** is overwritten/updated):
 
 ```
-&lt;apply-stylesheet
+&lt;apply-transform
 &#9;file="my-schema.xsd"
-&#9;stylesheet="remove-docs"/&gt;
+&#9;xslt="remove-docs"/&gt;
 ```
 
 To apply the **remove-docs.xsl** stylesheet to all files in the **schema** folder, putting the
 transformed files in the **updated** folder with an extension of ".upd":
 
 ```
-&lt;apply-stylesheet
+&lt;apply-transform
 &#9;output="updated"
 &#9;ext=".upd"
-&#9;stylesheet="remove-docs"&gt;
+&#9;xslt="remove-docs"&gt;
 &#9;&lt;fileset dir="schema"&gt;
 &#9;&#9;&lt;include name="*.xml"/&gt;
 &#9;&lt;/fileset&gt;
-&lt;/apply-stylesheet&gt;
+&lt;/apply-transform&gt;
 ```
 
-Apply a list of stylesheets in the XSLT library to a file, overwriting the file:
+Apply a list of transforms in the XSLT library to a file, overwriting the file:
 
 ```
-&lt;apply-stylesheet-list
+&lt;apply-transform-list-file
 &#9;file="instance-doc.xml"
-&#9;stylesheets="remove-docs,remove-comments,remove-processing-instructions"/&lt;
+&#9;xslt-list="remove-docs,remove-comments,remove-processing-instructions"/&lt;
 ```
 
 Process a Schematron file to include all "&lt;xi:xinclude&gt;" elements in the output file. Note
@@ -103,10 +103,10 @@ that as the XSLT engine is "xinclude aware" the file just needs to be run throug
 transform:
 
 ```
-&lt;apply-stylesheet
+&lt;apply-transform
 &#9;file="doc-with-xincludes.xml"
 &#9;output="expanded-doc.xml"
-&#9;stylesheet="identity"/&lt;
+&#9;xslt="identity"/&lt;
 ```
 
 ## Dependencies
@@ -129,19 +129,18 @@ None.
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- include macros/properties -->
-    <dirname property="xpants.dir" file="${ant.file.apply-stylesheet}"/>
+    <dirname property="xpants.dir" file="${ant.file.apply-transform}"/>
 
     <property name="xpants.xslt.dir" value="${xpants.dir}/xslt"/>
 
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
-    <!-- TODO call whole thing apply-transform ? -->
 
     <!-- macros -->
 
     <macrodef
-        name="apply-stylesheet"
+        name="apply-transform"
         description="Apply a stylsheet to the designated file(s)">
 
         <attribute
@@ -150,7 +149,7 @@ None.
             description="Source XML file"/>
 
         <attribute
-            name="stylesheet"
+            name="xslt"
             description="XSLT file to be applied"/>
 
         <attribute
@@ -172,32 +171,32 @@ None.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="apply-stylesheet" name="stylesheet" value="@{stylesheet}"/>
+            <check-attr-set macro="apply-transform" name="xslt" value="@{xslt}"/>
 
             <!-- NOTE do not check for @{output} being blank, as this indicates @{file} should be overwritten -->
 
             <!-- file or fileset mode? -->
-            <apply-stylesheet-file
+            <apply-transform-file
                 file="@{file}"
-                stylesheet="@{stylesheet}"
+                xslt="@{xslt}"
                 ext="@{ext}"
                 output="@{output}"
                 unless:blank="@{file}"/>
 
-            <apply-stylesheet-fileset
-                stylesheet="@{stylesheet}"
+            <apply-transform-fileset
+                xslt="@{xslt}"
                 ext="@{ext}"
                 output="@{output}"
                 if:blank="@{file}">
                 <input.files/>
-            </apply-stylesheet-fileset>
+            </apply-transform-fileset>
 
         </sequential>
     </macrodef>
 
 
     <macrodef
-        name="apply-stylesheet-file"
+        name="apply-transform-file"
         description="Apply a stylsheet to a file">
 
         <attribute
@@ -205,7 +204,7 @@ None.
             description="Source XML file"/>
 
         <attribute
-            name="stylesheet"
+            name="xslt"
             description="XSLT file to be applied"/>
 
         <attribute
@@ -227,7 +226,7 @@ None.
         <sequential>
 
             <!-- fail if file does not exist -->
-            <check-file-exists macro="apply-stylesheet-file" file="@{file}" unless:blank="@{file}"/>
+            <check-file-exists macro="apply-transform-file" file="@{file}" unless:blank="@{file}"/>
 
             <!-- set debugging properties -->
             <property name="temp.dir" value="${java.io.tmpdir}"/>
@@ -236,43 +235,43 @@ None.
             <property name="xslt.failonerror" value="true"/>
 
             <!-- set resource path based on how macro was loaded -->
-            <condition property="stylesheet.resource.path" value="${xpants.dir}/xslt" else="com/encodis/xpants/xslt">
+            <condition property="xslt.resource.path" value="${xpants.dir}/xslt" else="com/encodis/xpants/xslt">
                 <isset property="xpants.dir"/>
             </condition>
 
             <!-- TODO can we use catalog to find these (as well as schema?) -->
 
             <!-- does stylesheet exist as a file as given? -->
-            <local name="given.stylesheet.exists"/>
-            <available file="@{stylesheet}" type="file" property="given.stylesheet.exists"/>
+            <local name="given.xslt.exists"/>
+            <available file="@{xslt}" type="file" property="given.xslt.exists"/>
 
             <!-- does stylesheet exist as a file in the XPantS library (when using includes) -->
-            <local name="standard.stylesheet.file.exists"/>
-            <available file="${stylesheet.resource.path}/@{stylesheet}.xsl" property="standard.stylesheet.file.exists" if:set="xpants.dir"/>
+            <local name="standard.xslt.file.exists"/>
+            <available file="${xslt.resource.path}/@{xslt}.xsl" property="standard.xslt.file.exists" if:set="xpants.dir"/>
 
             <!-- does stylesheet exist as a file in the XPantS library (when using JAR file) -->
-            <local name="standard.stylesheet.resource.exists"/>
-            <available resource="${stylesheet.resource.path}/@{stylesheet}.xsl" property="standard.stylesheet.resource.exists" unless:set="xpants.dir"/>
+            <local name="standard.xslt.resource.exists"/>
+            <available resource="${xslt.resource.path}/@{xslt}.xsl" property="standard.xslt.resource.exists" unless:set="xpants.dir"/>
 
             <!-- fail if stylesheet does not exist, either as given or in standard library -->
-            <fail message="[apply-stylesheet-file] stylesheet '@{stylesheet}' does not exist and/or is not in the XPantS library">
+            <fail message="[apply-transform-file] stylesheet '@{xslt}' does not exist and/or is not in the XPantS library">
                 <condition>
                     <and>
-                        <not><isset property="given.stylesheet.exists"/></not>
-                        <not><isset property="standard.stylesheet.file.exists"/></not>
-                        <not><isset property="standard.stylesheet.resource.exists"/></not>
+                        <not><isset property="given.xslt.exists"/></not>
+                        <not><isset property="standard.xslt.file.exists"/></not>
+                        <not><isset property="standard.xslt.resource.exists"/></not>
                     </and>
                 </condition>
             </fail>
 
             <!-- detect XSLT processor (use Saxon if possible) -->
             <local name="saxon.processor"/>
-            <check-class-path macro="apply-stylesheet" class="net.sf.saxon.TransformerFactoryImpl" property="saxon.processor"/>
+            <check-class-path macro="apply-transform-file" class="net.sf.saxon.TransformerFactoryImpl" property="saxon.processor"/>
 
             <local name="temp.file"/>
-            <tempfile property="temp.file" prefix="apply-stylesheet" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
+            <tempfile property="temp.file" prefix="apply-transform" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
-            <echo message="[apply-stylesheet-file] temp.file=${temp.file}" if:true="${macro.debug}"/>
+            <echo message="[apply-transform-file] temp.file=${temp.file}" if:true="${macro.debug}"/>
 
             <!-- apply transform -->
             <xslt
@@ -283,9 +282,9 @@ None.
                 failonerror="${xslt.failonerror}">
 
                 <style>
-                    <javaresource name="${stylesheet.resource.path}/@{stylesheet}.xsl" if:set="standard.stylesheet.resource.exists"/>
-                    <file file="${stylesheet.resource.path}/@{stylesheet}.xsl" if:set="standard.stylesheet.file.exists"/>
-                    <file file="@{stylesheet}" if:set="given.stylesheet.exists"/>
+                    <javaresource name="${xslt.resource.path}/@{xslt}.xsl" if:set="standard.xslt.resource.exists"/>
+                    <file file="${xslt.resource.path}/@{xslt}.xsl" if:set="standard.xslt.file.exists"/>
+                    <file file="@{xslt}" if:set="given.xslt.exists"/>
                 </style>
 
                 <!-- use Saxon if possible -->
@@ -318,12 +317,12 @@ None.
                      but how would this work with destdir/@{output} ??? and we have params.xslt as implicit
                      fileset
 
-                     this could have nice synergy with the apply-stylesheet-list macro
+                     this could have nice synergy with the apply-transform-list-file macro
                      -->
 
             </xslt>
 
-            <!-- NOTE if this macro is called by apply-stylesheet-dir, then 'output' must be a folder -->
+            <!-- NOTE if this macro is called by apply-transform-dir, then 'output' must be a folder -->
             <!--
             <local name="copy.orig"/>
             <condition property="copy.orig">
@@ -375,11 +374,11 @@ None.
 
 
     <macrodef
-        name="apply-stylesheet-fileset"
+        name="apply-transform-fileset"
         description="Apply a stylsheet to all files in a folder">
 
         <attribute
-            name="stylesheet"
+            name="xslt"
             description="XSLT file to be applied"/>
 
         <attribute
@@ -400,7 +399,7 @@ None.
         <sequential>
 
             <!-- fail if input.files is empty -->
-            <check-fileset-empty macro="apply-stylesheet-fileset">
+            <check-fileset-empty macro="apply-transform-fileset">
                 <input.files/>
             </check-fileset-empty>
 
@@ -408,7 +407,7 @@ None.
             <mkdir dir="@{output}"/>
 
             <!-- check output has been created and is a dir -->
-            <check-dir-exists macro="apply-stylesheet-fileset" dir="${output}"/>
+            <check-dir-exists macro="apply-transform-fileset" dir="${output}"/>
 
             <!-- apply stylesheet to files in fileset -->
             <property name="for.keepgoing" value="true"/>
@@ -418,8 +417,8 @@ None.
 
                 <sequential>
 
-                    <!-- NOTE set file ext in apply-stylesheet-file because it is independant of transform -->
-                    <apply-stylesheet-file file="@{file}" stylesheet="@{stylesheet}" ext="@{ext}" output="@{output}"/>
+                    <!-- NOTE set file ext in apply-transform-file because it is independant of transform -->
+                    <apply-transform-file file="@{file}" xslt="@{xslt}" ext="@{ext}" output="@{output}"/>
 
                 </sequential>
             </for>
@@ -430,7 +429,7 @@ None.
 
     <!-- TODO apply-stylsheet-list-file ? -->
     <macrodef
-        name="apply-stylesheet-list"
+        name="apply-transform-list-file"
         description="Apply a series of stylesheets to a file">
 
         <attribute
@@ -438,7 +437,7 @@ None.
             description="Source file"/>
 
         <attribute
-            name="stylesheets"
+            name="xslt-list"
             default=""
             description="Comma separated list of stylesheets to be applied"/>
 
@@ -450,10 +449,10 @@ None.
         <sequential>
 
             <!-- fail if file does not exist -->
-            <check-file-exists macro="apply-stylesheet-list" file="@{file}"/>
+            <check-file-exists macro="apply-transform-list-file" file="@{file}"/>
 
             <!-- fail if no stylesheets supplied -->
-            <check-attr-set macro="apply-stylesheet-list" name="stylesheets" value="@{stylesheets}"/>
+            <check-attr-set macro="apply-transform-list-file" name="xslt-list" value="@{xslt-list}"/>
 
             <!-- set up output if not blank -->
             <copy file="@{file}" tofile="@{output}" unless:blank="@{output}"/>
@@ -461,13 +460,13 @@ None.
             <!-- apply stylesheets in order -->
             <property name="for.keepgoing" value="true"/>
 
-            <for list="@{stylesheets}" param="stylesheet" keepgoing="${for.keepgoing}">
+            <for list="@{xslt-list}" param="xslt" keepgoing="${for.keepgoing}">
                 <sequential>
 
                     <!-- if @{output} is blank then overwrite @{file}, otherwise overwrite @{output} -->
-                    <apply-stylesheet file="@{file}" stylesheet="@{stylesheet}" if:blank="@{output}"/>
+                    <apply-transform file="@{file}" xslt="@{xslt}" if:blank="@{output}"/>
 
-                    <apply-stylesheet file="@{output}" stylesheet="@{stylesheet}" unless:blank="@{output}"/>
+                    <apply-transform file="@{output}" xslt="@{xslt}" unless:blank="@{output}"/>
 
                 </sequential>
             </for>
@@ -477,11 +476,11 @@ None.
 
 
     <macrodef
-        name="apply-stylesheet-list-fileset"
+        name="apply-transform-list-fileset"
         description="Apply a series of stylesheets to all files in a fileset">
 
         <attribute
-            name="stylesheets"
+            name="xslt-list"
             default=""
             description="Comma separated list of stylesheets to be applied"/>
 
@@ -503,18 +502,18 @@ None.
         <sequential>
 
             <!-- fail if input.files is empty -->
-            <check-fileset-empty macro="apply-stylesheet-list-fileset">
+            <check-fileset-empty macro="apply-transform-list-fileset">
                 <input.files/>
             </check-fileset-empty>
 
             <!-- fail if no stylesheets supplied -->
-            <check-attr-set macro="apply-stylesheet-list-fileset" name="stylesheets" value="@{stylesheets}"/>
+            <check-attr-set macro="apply-transform-list-fileset" name="xslt-list" value="@{xslt-list}"/>
 
             <!-- make output dir if needed -->
             <mkdir dir="@{output}"/>
 
             <!-- check output has been created and is a dir -->
-            <check-dir-exists macro="apply-stylesheet-list-fileset" dir="${output}"/>
+            <check-dir-exists macro="apply-transform-list-fileset" dir="${output}"/>
 
             <!-- apply stylesheet list to files in fileset -->
             <property name="for.keepgoing" value="true"/>
@@ -532,7 +531,7 @@ None.
                     <basename property="output.name" file="@{file}" suffix=".${output.ext}"/>
 
                     <!-- NOTE set file ext here because we're setting output dir here -->
-                    <apply-stylesheet-list file="@{file}" stylesheet="@{stylesheet}" output="@{output}/${output.name}.${output.ext}"/>
+                    <apply-transform-list-file file="@{file}" xslt="@{xslt}" output="@{output}/${output.name}.${output.ext}"/>
 
                 </sequential>
             </for>
@@ -542,11 +541,11 @@ None.
 
 
     <macrodef
-        name="apply-stylesheet-template"
+        name="apply-transform-template"
         description="Run a stylsheet using an initial template">
 
         <attribute
-            name="stylesheet"
+            name="xslt"
             description="XSLT file to be executed"/>
 
         <attribute
@@ -564,13 +563,15 @@ None.
             <!-- TODO make list of JAR files in ${ant.library.dir} and ${user.home}/.ant/lib that contain the string
                  'saxon'. use this to get ${saxon.jar} -->
 
-            <fail message="[apply-stylesheet-template] 'saxon.jar' property not set">
+            <fail message="[apply-transform-template] 'saxon.jar' property not set">
                 <condition>
                     <not><isset name="saxon.jar"/></not>
                 </condition>
             </fail>
 
-            <check-file-exists macro="apply-stylesheet-template" file="${saxon.jar}"/>
+            <check-file-exists macro="apply-transform-template" file="${saxon.jar}"/>
+
+            <!-- TODO check xslt exists (or is in standard library?) -->
 
             <!-- apply stylesheet using initial template -->
             <!-- FIXME cannot use @classname = net.sf.saxon.Transform for some reason -->
@@ -580,7 +581,7 @@ None.
                 fork="true"
                 failonerror="true">
 
-                <arg prefix="-xsl:" file="@{stylesheet}"/>
+                <arg prefix="-xsl:" file="@{xslt}"/>
                 <arg prefix="-it:" value="@{template}"/>
 
                 <args/>

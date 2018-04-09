@@ -76,7 +76,7 @@ The following properties can be set on the command line to override the default 
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.validate-with-sch}"/>
 
-    <include file="${xpants.dir}/apply-stylesheet.xml"/>
+    <include file="${xpants.dir}/apply-transform.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
@@ -89,7 +89,7 @@ The following properties can be set on the command line to override the default 
     generally assume not compiled, add compiled=true to stop that step
     -->
 
-    <!-- is this really compile-schematron | apply-stylesheet | grep for any report/assert ?
+    <!-- is this really compile-schematron | apply-transform | grep for any report/assert ?
          PLUS error message/list of errors as option? print out or report to property/file? -->
 
 	<macrodef
@@ -285,10 +285,10 @@ The following properties can be set on the command line to override the default 
 
 		<sequential>
 
-            <apply-stylesheet
+            <apply-transform
                 file="@{file}"
                 output="@{output}"
-                stylesheet="@{schematron}"/>
+                xslt="@{schematron}"/>
 
             <!--
                 TODO this looks wrong - are we implying a compiled SCH file here? yes, see comment above for compiled
@@ -338,10 +338,10 @@ The following properties can be set on the command line to override the default 
 
             <echo message="[validate-with-sch-to-html] filter-svrl.stylesheet=${filter-svrl.stylesheet}" if:true="${macro.debug}"/>
 
-            <apply-stylesheet
+            <apply-transform
                 file="${temp.svrl}"
                 output="${temp.filter}"
-                stylesheet="${filter-svrl.stylesheet}"/>
+                xslt="${filter-svrl.stylesheet}"/>
 
             <!-- convert filtered SVRL to HTML -->
             <property
@@ -353,13 +353,13 @@ The following properties can be set on the command line to override the default 
             <local name="report.name"/>
             <basename property="report.name" file="@{output}" suffix=".html"/>
 
-            <apply-stylesheet-file
+            <apply-transform-file
                 file="${temp.filter}"
                 output="@{output}"
-                stylesheet="${convert-svrl-to-html.stylesheet}">
+                xslt="${convert-svrl-to-html.stylesheet}">
 
                 <param name="filename" expression="${report.name}.xml"/>
-            </apply-stylesheet-file>
+            </apply-transform-file>
 
 		</sequential>
 	</macrodef>

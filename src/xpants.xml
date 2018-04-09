@@ -40,7 +40,7 @@ included separately. This may increase load time, as each file loads the environ
     <dirname property="xpants.dir" file="${ant.file.xpants-include}"/>
 
     <!-- include macros -->
-    <include file="${xpants.dir}/apply-stylesheet.xml"/>
+    <include file="${xpants.dir}/apply-transform.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/aws.xml"/>
     <include file="${xpants.dir}/compare-files.xml"/>

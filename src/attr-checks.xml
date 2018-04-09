@@ -22,12 +22,12 @@ A set of utility macros to check the status of attributes used in macros.
 ## Usage
 
 ```
-&lt;check-attr-set macro="apply-stylesheet" name="file" value="@{file}"/&gt;
+&lt;check-attr-set macro="apply-transform" name="file" value="@{file}"/&gt;
 ```
 
 ```
 &lt;check-attr-list
-&#9;macro="apply-stylesheet"
+&#9;macro="apply-transform"
 &#9;name="options"
 &#9;value="@{options}"
 &#9;list="alpha,bravo,charlie"/&gt;

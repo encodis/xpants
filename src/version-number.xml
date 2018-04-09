@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project
-    name="version"
+    name="version-number"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">
 
     <description>
 ---
 project:    XML Practical ANT Scripts
-title:      version.xml
-date:       2018-02-27
+title:      version-number.xml
+date:       2018-04-09
 author:     Philip Hodder
 contact:    philip.hodder@encodis.com
 summary:    Macros to manipulate version numbers
@@ -84,13 +84,15 @@ $ ant version -Dversion.bump=major
 
 ##### 2018-02-14 (PH) Initial version
 
+##### 2018-04-09 (PH) Name changed to 'version-number'
+
     </description>
 
     <!-- load ant-contrib -->
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- include macros/properties -->
-    <dirname property="xpants.dir" file="${ant.file.version}"/>
+    <dirname property="xpants.dir" file="${ant.file.version-number}"/>
 
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
@@ -139,27 +141,15 @@ $ ant version -Dversion.bump=major
 
             <!-- split into major, minor, patch - build number obtained directly from properties file -->
             <local name="version.number.major"/>
-            <propertyregex
-                property="version.number.major"
-                input="${version.number}"
-                regexp="([0-9]+)\.([0-9]+)\.([0-9]+)"
-                select="\1"/>
+            <propertyregex property="version.number.major" input="${version.number}" regexp="([0-9]+)\.([0-9]+)\.([0-9]+)" select="\1"/>
 
             <local name="version.number.minor"/>
-            <propertyregex
-                property="version.number.minor"
-                input="${version.number}"
-                regexp="([0-9]+)\.([0-9]+)\.([0-9]+)"
-                select="\2"/>
+            <propertyregex property="version.number.minor" input="${version.number}" regexp="([0-9]+)\.([0-9]+)\.([0-9]+)" select="\2"/>
 
             <local name="version.number.patch"/>
-            <propertyregex
-                property="version.number.patch"
-                input="${version.number}"
-                regexp="([0-9]+)\.([0-9]+)\.([0-9]+)"
-                select="\3"/>
+            <propertyregex property="version.number.patch" input="${version.number}" regexp="([0-9]+)\.([0-9]+)\.([0-9]+)" select="\3"/>
 
-            <!-- increment depending on @{number} -->
+            <!-- increment depending on @{element} -->
             <local name="increment.@{element}"/>
             <property name="increment.@{element}" value="true"/>
 
@@ -168,12 +158,19 @@ $ ant version -Dversion.bump=major
             <var name="version.minor" value="${version.number.minor}"/>
             <var name="version.patch" value="${version.number.patch}"/>
 
-            <math result="version.major"
+            <math result="version.major" datatype="int" if:set="increment.major">
+                <add>
+                    <num value="${version.major}"/>
+                    <num value="@{increment}"/>
+                </add>
+            </math>
+
+            <!-- <math result="version.major"
                 operand1="${version.major}"
                 operation="add"
                 operand2="@{increment}"
                 datatype="int"
-                if:set="increment.major"/>
+                if:set="increment.major"/> -->
 
             <math result="version.minor"
                 operand1="${version.minor}"
@@ -342,11 +339,7 @@ $ ant version -Dversion.bump=major
             <property name="version.number" value="@{version}"/>
 
             <!-- update properties file -->
-            <replaceregexp
-                file="@{file}"
-                match="version.number=[0-9\.]+"
-                replace="version.number=@{version}"
-                byline="true"/>
+            <replaceregexp file="@{file}" match="version.number=[0-9\.]+" replace="version.number=@{version}" byline="true"/>
 
             <echo message="[version-number-set] version.number = '@{version}'"/>
 
@@ -374,11 +367,7 @@ $ ant version -Dversion.bump=major
             <property name="build.number" value="@{build}"/>
 
             <!-- update properties file -->
-            <replaceregexp
-                file="@{file}"
-                match="build.number=[0-9]+"
-                replace="build.number=@{build}"
-                byline="true"/>
+            <replaceregexp file="@{file}" match="build.number=[0-9]+" replace="build.number=@{build}" byline="true"/>
 
             <echo message="[build-number-set] build.number = '@{build}'"/>
 
@@ -417,11 +406,7 @@ $ ant version -Dversion.bump=major
             <property name="release.stage" value="@{stage}"/>
 
             <!-- update properties file -->
-            <replaceregexp
-                file="@{file}"
-                match="release.stage=(${stage.list})"
-                replace="release.stage=@{stage}"
-                byline="true"/>
+            <replaceregexp file="@{file}" match="release.stage=(${stage.list})" replace="release.stage=@{stage}" byline="true"/>
 
             <echo message="[release-stage-set] release.stage = '@{stage}'"/>
 

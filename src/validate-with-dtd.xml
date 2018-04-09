@@ -79,7 +79,7 @@ The following properties can be set on the command line to override the default 
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.validate-with-dtd}"/>
 
-    <include file="${xpants.dir}/apply-stylesheet.xml"/>
+    <include file="${xpants.dir}/apply-transform.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
@@ -337,10 +337,10 @@ The following properties can be set on the command line to override the default 
 
             <echo message="[validate-with-dtd-to-svrl] convert-log-to-svrl.stylesheet=${convert-log-to-svrl.stylesheet}" if:true="${macro.debug}"/>
 
-            <apply-stylesheet
+            <apply-transform
                 file="${temp.txt}"
                 output="@{output}"
-                stylesheet="${convert-log-to-svrl.stylesheet}"/>
+                xslt="${convert-log-to-svrl.stylesheet}"/>
 
 		</sequential>
 	</macrodef>
@@ -377,10 +377,10 @@ The following properties can be set on the command line to override the default 
 
             <echo message="[validate-with-dtd-to-html] convert-svrl-to-html.stylesheet=${convert-svrl-to-html.stylesheet}" if:true="${macro.debug}"/>
 
-            <apply-stylesheet
+            <apply-transform
                 file="${temp.svrl}"
                 output="@{output}"
-                stylesheet="${convert-svrl-to-html.stylesheet}"/>
+                xslt="${convert-svrl-to-html.stylesheet}"/>
 
 		</sequential>
 	</macrodef>

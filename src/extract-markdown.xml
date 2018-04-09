@@ -52,7 +52,7 @@ of these elements if possible.
 ## Dependencies
 
 These stylesheets are included using the default stylesheet mechanism described in
-[apply-stylesheet](apply-stylesheet.html):
+[apply-transform](apply-transform.html):
 
 * __extract-markdown-from-ant.xsl:__ This is the standard stylesheet used to extract Markdown from
 ANT scripts.
@@ -76,7 +76,7 @@ XSLT files.
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.extract-markdown}"/>
 
-    <include file="${xpants.dir}/apply-stylesheet.xml"/>
+    <include file="${xpants.dir}/apply-transform.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
@@ -171,10 +171,10 @@ XSLT files.
             <property name="extract.stylesheet" value="extract-markdown-from-${file.type}"/>
 
             <!-- extract markdown -->
-            <apply-stylesheet
+            <apply-transform
                 file="@{file}"
                 output="@{output}"
-                stylesheet="${extract.stylesheet}"/>
+                xslt="${extract.stylesheet}"/>
 
         </sequential>
     </macrodef>

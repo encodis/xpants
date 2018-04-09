@@ -85,7 +85,6 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.validate-with-schema}"/>
 
-    <include file="${xpants.dir}/apply-stylesheet.xml"/>
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
