@@ -291,6 +291,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             <!-- validate RNC -->
             <java
                 classpath="com.thaiopensource.relaxng.util.Driver"
+                failonerror="false"
                 if:set="${schema.rnc}">
                 <arg value="-c"/>
                 <arg value="@{schema}"/>
@@ -303,6 +304,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             <!-- validate RNG -->
             <java
                 classpath="com.thaiopensource.relaxng.util.Driver"
+                failonerror="false"
                 if:set="${schema.rng}">
                 <arg value="@{schema}"/>
                 <arg value="@{file}"/>
@@ -318,7 +320,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             <check-file-contains property="output.valid" file="${output.temp}" string="is not a valid RNG document" if:set="schema.rng"/>
             <check-file-contains property="output.valid" file="${output.temp}" string="is not a valid RNC document" if:set="schema.rnc"/>
 
-            <!-- TODO check for failures in the output report? -->
+            <!-- TODO check for failures in the output report? using @resultproperty in java task? -->
 
             <!-- save report, if required -->
             <copy tofile="@{report}" file="${output.temp}" unless:blank="@{report}"/>
