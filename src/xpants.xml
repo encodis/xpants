@@ -54,7 +54,7 @@ included separately. This may increase load time, as each file loads the environ
     <include file="${xpants.dir}/python.xml"/>
     <include file="${xpants.dir}/ssh.xml"/>
     <include file="${xpants.dir}/tidy.xml"/>
-    <include file="${xpants.dir}/validate-with-schema.xml"/>
+    <include file="${xpants.dir}/validate-instance.xml"/>
     <include file="${xpants.dir}/version-number.xml"/>
 
 </project>
