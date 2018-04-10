@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="validate-with-schema"
+<project name="validate-instance"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">
 
 	<description>
 ---
 project:      XML Practical ANT Scripts
-title:        validate-with-schema.xml
+title:        validate-instance.xml
 date:         2018-04-09
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
-summary:      Macro definitions to validate XML instances using schema (XSD, DTD, RNC or RNG)
+summary:      Macro definitions to validate XML instances using schema (XSD, DTD, RNC or RNG) or Schematron
 ...
 
-# validate-with-schema.xml
+# validate-instance.xml
 
 A set of macro definitions to validate an XML file using a related schema. Essentially this macro is
-a wrapper around ANT's built in `&lt;xmlvalidate&gt;` and `&lt;schemavalidate&gt;` tasks, but with
-enhanced reporting and output file manipulation. The top level macro ("validate-with-schema") will
-validate either a single file or a folder, depending on the arguments supplied:
+a wrapper around ANT's built in `&lt;xmlvalidate&gt;` and `&lt;schemavalidate&gt;` tasks, together
+with the &lt;java&gt; task (for RelaxNG validation), and the &lt;apply-template&gt; and
+&lt;compile-schematron&gt; macros (for Schematron validation). The top level macro
+("validate-instance") will validate either a single file or a file set, depending on the arguments
+supplied:
 
 * If the *file* attribute is not blank and refers to a file that exists then it will be
 validated, using the *output* attribute as the resulting file name for the report.
@@ -31,7 +33,7 @@ determined by the *input.files* element.
 To validate a single instance against its declared XSD:
 
 ```
-&lt;validate-with-schema
+&lt;validate-instance
 &#9;file="file.xml"
 &#9;type="xsd"
 &#9;report="docs/validation/file.log"/&gt;
@@ -41,7 +43,7 @@ To validate a single instance against a specific XSD, storing the result (as "tr
 the property *val-result*:
 
 ```
-&lt;validate-with-schema
+&lt;validate-instance
 &#9;file="file.xml"
 &#9;type="xsd"
 &#9;property="val-result"/&gt;
@@ -51,13 +53,13 @@ To validate all XML files in the **models/instances** folder that begin with "te
 included DTD declarations, storing the results in the **docs/validation** folder:
 
 ```
-&lt;validate-with-schema
+&lt;validate-instance
 &#9;report="docs/validation/"
 &#9;type="dtd"&gt;
 &#9;&lt;fileset dir="models/instances"&gt;
 &#9;&#9;&lt;include name="test*.xml"/&gt;
 &#9;&lt;fileset/&gt;
-&lt;validate-with-schema/&gt;
+&lt;validate-instance/&gt;
 ```
 
 ## Dependencies
@@ -77,16 +79,20 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
 ##### 2018-02-19 (PH) Initial version
 
 ##### 2018-04-09 (PH) Macro naming alignment
+
+##### 2018-04-10 (PH) Renamed to validate-instance
+
     </description>
 
     <!-- load ant-contrib -->
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- include macros/properties -->
-    <dirname property="xpants.dir" file="${ant.file.validate-with-schema}"/>
+    <dirname property="xpants.dir" file="${ant.file.validate-instance}"/>
 
     <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
+    <include file="${xpants.dir}/compile-schematron.xml"/>
 
     <!-- macros -->
 
@@ -108,17 +114,13 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
 
         TODO support URL for file in schemavalidate
 
-        TODO should this be called validate-instance.xml ? then we could have validate-schema to do
-        just that
-
-        TODO need to add Schematron validation - can we do this with saxon? precompile? cache it
-        for working on a fileset
+        TODO have validate-schema to do validate schema agains w3c
     -->
 
 
 	<macrodef
-        name="validate-with-schema"
-        description="Validate a file according to a schema">
+        name="validate-instance"
+        description="Validate an instance file according to a schema">
 
 		<attribute
             name="file"
@@ -128,7 +130,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
         <attribute
             name="type"
             default=""
-            description="Type of schema validation [dtd,xsd,rnc,rng]"/>
+            description="Type of schema validation [dtd,xsd,rnc,rng,sch]"/>
 
         <attribute
             name="schema"
@@ -160,34 +162,50 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
 
 		<sequential>
 
-            <!-- TODO test for Schematron validation here, pre-compile and pass temp XSLT
-                 as the schema attribute with type = SCH -->
+            <!-- test for Schematron validation -->
+            <local name="schema.@{type}"/>
+            <property name="schema.@{type}" value="true"/>
+
+            <!-- compile Schematron file to temp file if necessary, @{schema} is the Schematron file -->
+            <property name="temp.dir" value="${java.io.tmpdir}"/>
+            <property name="temp.delete" value="true"/>
+
+            <local name="output.sch"/>
+            <tempfile property="output.sch" destdir="${temp.dir}" prefix="validate-instance" deleteonexit="${temp.delete}" if:set="schema.sch"/>
+
+            <compile-schematron file="@{schema}" output="${output.sch}" if:set="schema.sch"/>
+
+            <!-- use original schema or compiled schematron -->
+            <local name="use.schema"/>
+            <condition property="use.schema" value="${output.sch}" else="@{schema}">
+                <isset property="${schema.sch}"/>
+            </condition>
 
             <!-- file or fileset mode? -->
-            <validate-with-schema-file
+            <validate-instance-file
                 file="@{file}"
                 type="@{type}"
-                schema="@{schema}"
+                schema="${use.schema}"
                 namespace="@{namespace}"
                 report="@{report}"
                 property="@{property}"
                 unless:blank="@{file}"/>
 
-            <validate-with-schema-fileset
+            <validate-instance-fileset
                 type="@{type}"
-                schema="@{schema}"
+                schema="${use.schema}"
                 report="@{report}"
                 property="@{property}"
                 if:blank="@{file}">
                 <input.files/>
-            </validate-with-schema-fileset>
+            </validate-instance-fileset>
 
 		</sequential>
 	</macrodef>
 
 
     <macrodef
-        name="validate-with-schema-file"
+        name="validate-instance-file"
         description="Validate an XML instance document against a schema">
 
         <attribute
@@ -197,7 +215,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
         <attribute
             name="type"
             default=""
-            description="Type of schema validation [dtd,xsd,rnc,rng]"/>
+            description="Type of schema validation [dtd,xsd,rnc,rng,sch]"/>
 
         <attribute
             name="schema"
@@ -222,24 +240,25 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="validate-with-schema-file" name="file" value="@{file}"/>
-            <check-attr-list macro="validate-with-schema-file" name="type" value="@{type}" list="dtd,xsd,rnc,rng"/>
+            <check-attr-set macro="validate-instance-file" name="file" value="@{file}"/>
+            <check-attr-list macro="validate-instance-file" name="type" value="@{type}" list="dtd,xsd,rnc,rng,sch"/>
 
-            <!-- fail if file does not exist -->
-            <check-file-exists macro="validate-with-schema-file" file="@{file}"/>
+            <!-- fail if instance file does not exist -->
+            <check-file-exists macro="validate-instance-file" file="@{file}"/>
 
             <!-- fail if schema given but does not exist -->
-            <check-file-exists macro="validate-with-schema-file" file="@{schema}" unless:blank="@{schema}"/>
+            <check-file-exists macro="validate-instance-file" file="@{schema}" unless:blank="@{schema}"/>
 
             <!-- set schema type -->
             <local name="schema.@{type}"/>
             <property name="schema.@{type}" value="true"/>
 
             <!-- if validating XSD must supply namespace -->
-            <check-attr-set macro="validate-with-schema-file" name="namespace" value="@{namespace}" if:set="${schema.xsd}"/>
+            <check-attr-set macro="validate-instance-file" name="namespace" value="@{namespace}" if:set="${schema.xsd}"/>
 
-            <!-- if validating with RNG must supply schema explicitly -->
-            <check-attr-set macro="validate-with-schema-file" name="schema" value="@{schema}" if:set="${schema.rng}"/>
+            <!-- if validating with RNG/RNC must supply schema explicitly -->
+            <check-attr-set macro="validate-instance-file" name="schema" value="@{schema}" if:set="${schema.rng}"/>
+            <check-attr-set macro="validate-instance-file" name="schema" value="@{schema}" if:set="${schema.rnc}"/>
 
             <!-- set up properties for catalog use, can override on command line -->
             <property environment="env"/>
@@ -259,10 +278,10 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             <property name="temp.delete" value="true"/>
 
             <local name="output.temp"/>
-            <tempfile property="output.temp" destdir="${temp.dir}" prefix="validate-with-schema" deleteonexit="${temp.delete}"/>
+            <tempfile property="output.temp" destdir="${temp.dir}" prefix="validate-instance" deleteonexit="${temp.delete}"/>
 
-            <!-- start recording output -->
-			<record name="${output.temp}" action="start"/>
+            <!-- start recording output (unless Schematron validation) -->
+			<record name="${output.temp}" action="start" unless:set="${schema.sch}"/>
 
             <!-- validate DTD -->
             <xmlvalidate
@@ -286,7 +305,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
 			</schemavalidate>
 
             <!-- check jing.jar exists -->
-            <check-class-path macro="validate-with-schema" class="com.thaiopensource.relaxng.util.Driver" if:set="${schema.rnc}"/>
+            <check-class-path macro="validate-instance" class="com.thaiopensource.relaxng.util.Driver" if:set="${schema.rnc}"/>
 
             <!-- validate RNC -->
             <java
@@ -299,7 +318,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             </java>
 
             <!-- check jing.jar exists -->
-            <check-class-path macro="validate-with-schema" class="com.thaiopensource.relaxng.util.Driver" if:set="${schema.rng}"/>
+            <check-class-path macro="validate-instance" class="com.thaiopensource.relaxng.util.Driver" if:set="${schema.rng}"/>
 
             <!-- validate RNG -->
             <java
@@ -310,8 +329,15 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                 <arg value="@{file}"/>
             </java>
 
-            <!-- stop recording output -->
-			<record name="${output.temp}" action="stop"/>
+            <!-- stop recording output (before possible SCH validation so file can be re-used) -->
+			<record name="${output.temp}" action="stop" unless:set="${schema.sch}"/>
+
+            <!-- validate SCH -->
+            <apply-transform
+                file="@{file}"
+                xslt="@{schema}"
+                output="${output.temp}"
+                if:set="${schema.sch}"/>
 
             <!-- valid or not? -->
             <local name="output.valid"/>
@@ -319,6 +345,10 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             <check-file-contains property="output.valid" file="${output.temp}" string="is not a valid XML document" if:set="schema.xsd"/>
             <check-file-contains property="output.valid" file="${output.temp}" string="is not a valid RNG document" if:set="schema.rng"/>
             <check-file-contains property="output.valid" file="${output.temp}" string="is not a valid RNC document" if:set="schema.rnc"/>
+
+            <!-- if Schematron, check file for failed assertions & successful reports -->
+            <check-file-contains property="output.valid" file="${output.temp}" string="svrl:failed-assert" if:set="schema.sch"/>
+            <check-file-contains property="output.valid" file="${output.temp}" string="svrl:successful-report" if:set="schema.sch"/>
 
             <!-- TODO check for failures in the output report? using @resultproperty in java task? -->
 
@@ -346,14 +376,14 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                 <istrue value="${output.valid}"/>
             </condition>
 
-            <echo message="[validate-with-schema] '@{file}' is ${result.type} schema valid" if:true="${echo.result}"/>
+            <echo message="[validate-instance] '@{file}' is ${result.type} schema valid" if:true="${echo.result}"/>
 
         </sequential>
     </macrodef>
 
 
     <macrodef
-        name="validate-with-schema-fileset"
+        name="validate-instance-fileset"
         description="Validate a folder of XML instance documents against a schema">
 
         <attribute
@@ -390,7 +420,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="validate-with-schema-fileset">
+            <check-fileset-empty macro="validate-instance-fileset">
                 <input.files/>
             </check-fileset-empty>
 
@@ -417,7 +447,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
 
                     <local name="property.temp"/>
 
-                    <validate-with-schema-file
+                    <validate-instance-file
                         file="@{file}"
                         type="@{type}"
                         schema="@{schema}"
