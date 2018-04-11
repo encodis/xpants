@@ -276,7 +276,7 @@ or the values set in the macro calls directly:
                 user="@{user}"
                 host="@{host}"
                 keys="@{keys}"
-                command="mkdir -m @{mode} @{dir}"/>
+                command="mkdir -p -m @{mode} @{dir}"/>
 
         </sequential>
     </macrodef>
