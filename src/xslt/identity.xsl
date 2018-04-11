@@ -29,6 +29,8 @@ This stylesheet is simply the standard identity transform.
         </doc:log>
     </doc:doc>
 
+    <xsl:output indent="yes"/>
+
 	<xsl:template match="@*|node()" mode="#all">
 	    <!-- standard identity transform -->
         <xsl:copy copy-namespaces="no"><xsl:apply-templates select="@*|node()" mode="#current"/></xsl:copy>
