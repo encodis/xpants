@@ -327,53 +327,41 @@ None.
 
             </xslt>
 
-            <!-- NOTE if this macro is called by apply-transform-dir, then 'output' must be a folder -->
-            <!--
-            <local name="copy.orig"/>
-            <condition property="copy.orig">
+            <if>
+                <!-- if @{output} is blank, overwrite the input file -->
                 <equals arg1="@{output}" arg2=""/>
-            </condition> -->
+                <then>
+                    <copy file="${temp.file}" tofile="@{file}" overwrite="true"/>
+                </then>
 
-            <copy file="${temp.file}" tofile="@{file}" overwrite="true" if:blank="@{output}"/>
-
-            <!-- if 'output' exists and is a folder, copy file to output dir -->
-            <!-- NOTE if 'output' is blank the <available> task will still detect the folder as existing, so must do it in this order -->
-            <local name="copy.dir"/>
-            <condition property="copy.dir">
-                <and>
+                <!-- if @{output} is a dir, copy new file + ext to output -->
+                <elseif>
                     <available file="@{output}" type="dir"/>
-                    <!-- <not><isset property="copy.orig"/></not> -->
-                    <not><equals arg1="@{output}" arg2=""/></not>
-                </and>
-            </condition>
+                    <then>
+                        <!-- get file extension -->
+                        <local name="suffix.name"/>
+                        <propertyregex property="suffix.name" input="@{file}" regexp=".*\.(.*)" select="\1"/>
 
-            <!-- get file extension -->
-            <local name="suffix.name"/>
-            <propertyregex property="suffix.name" input="@{file}" regexp=".*\.(.*)" select="\1"/>
+                        <!-- get file root name -->
+                        <local name="file.name"/>
+                        <basename property="file.name" file="@{file}" suffix="${suffix.name}"/>
 
-            <!-- get file root name -->
-            <local name="file.name"/>
-            <basename property="file.name" file="@{file}" suffix="${suffix.name}"/>
+                        <!-- if no extension given use existing one, no leading "." -->
+                        <local name="file.ext"/>
+                        <condition property="file.ext" value="${suffix.name}" else="@{ext}">
+                            <equals arg1="@{ext}" arg2=""/>
+                        </condition>
 
-            <!-- if no extension given use existing one, given extension must have leading "." -->
-            <local name="file.ext"/>
-            <condition property="file.ext" value=".${suffix.name}" else="@{ext}">
-                <equals arg1="@{ext}" arg2=""/>
-            </condition>
+                        <!-- if ${output.dir} is set, copy to that dir with new filename and ext -->
+                        <copy file="${temp.file}" tofile="@{output}/${file.name}.${file.ext}" overwrite="true"/>
+                    </then>
+                </elseif>
 
-            <copy file="${temp.file}" tofile="@{output}/${file.name}${file.ext}" overwrite="true" if:set="copy.dir"/>
-
-            <!-- if 'output' is not blank but is not a folder, just copy file to output file -->
-            <!-- <local name="copy.file"/>
-            <condition property="copy.file">
-                <and>
-                    <not><isset property="copy.dir"/></not>
-                    <not><isset property="copy.orig"/></not>
-                </and>
-            </condition> -->
-
-            <!-- FIXME does not work if @{output} is blank...  -->
-            <copy file="${temp.file}" tofile="@{output}" overwrite="true" force="true" unless:set="copy.dir"/>
+                <!-- only other option is that @{output} is a file to be created -->
+                <else>
+                    <copy file="${temp.file}" tofile="@{output}" overwrite="true" force="true"/>
+                </else>
+            </if>
 
         </sequential>
     </macrodef>
