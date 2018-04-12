@@ -340,7 +340,7 @@ These macros create the following (global) properties:
               </condition>
             </fail>
 
-            <echo message="[check-exe-path] @{property}=${@{property}}" if:true="${macro.debug}"/>
+            <echo message="[check-exe-path] @{property}=${@{property}}" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>

@@ -635,7 +635,7 @@ The following properties can be set on the command line to override the default 
             <!-- default Delta XML location -->
             <property name="deltaxml.dir" location="${user.home}/.ant/lib/DeltaXMLCore-8_2_1_j"/>
 
-            <echo message="[diff-files-xml] deltaxml.dir=${deltaxml.dir}" if:true="${macro.debug}"/>
+            <echo message="[diff-files-xml] deltaxml.dir=${deltaxml.dir}" if:true="${xpants.debug}"/>
 
             <!-- set xpants.catalog if required, can override on command line -->
             <property environment="env"/>

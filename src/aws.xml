@@ -108,7 +108,7 @@ root.
             <check-exe-path property="aws.exe" unless:set="aws.exe"/>
 
             <!-- run AWS command -->
-            <echo message="[aws] command=@{command} @{subcommand}" if:true="${macro.debug}"/>
+            <echo message="[aws] command=@{command} @{subcommand}" if:true="${xpants.debug}"/>
 
             <property name="exec.failonerror" value="true"/>
 
@@ -123,7 +123,7 @@ root.
                 <args/>
             </exec>
 
-            <echo message="[aws] output=${@{property}}" if:true="${macro.debug}"/>
+            <echo message="[aws] output=${@{property}}" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>

@@ -158,7 +158,7 @@ classpath.
 
             <check-file-contains property="output.valid" file="@{output}" string="is not a valid RNG document"/>
 
-            <echo message="[validate-with-rng-file] output.valid=${output.valid}" if:true="${macro.debug}"/>
+            <echo message="[validate-with-rng-file] output.valid=${output.valid}" if:true="${xpants.debug}"/>
 
             <!-- <condition property="output.valid">
                 <resourcecontains resource="@{output}" substring="is not a valid RNG document"/>

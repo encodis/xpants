@@ -336,7 +336,7 @@ The following properties can be set on the command line to override the default 
                 name="filter-svrl.stylesheet"
                 value="filter-svrl"/>
 
-            <echo message="[validate-with-sch-to-html] filter-svrl.stylesheet=${filter-svrl.stylesheet}" if:true="${macro.debug}"/>
+            <echo message="[validate-with-sch-to-html] filter-svrl.stylesheet=${filter-svrl.stylesheet}" if:true="${xpants.debug}"/>
 
             <apply-transform
                 file="${temp.svrl}"
@@ -348,7 +348,7 @@ The following properties can be set on the command line to override the default 
                 name="convert-svrl-to-html.stylesheet"
                 value="convert-svrl-to-html"/>
 
-            <echo message="[validate-with-sch-to-html] convert-svrl-to-html.stylesheet=${convert-svrl-to-html.stylesheet}" if:true="${macro.debug}"/>
+            <echo message="[validate-with-sch-to-html] convert-svrl-to-html.stylesheet=${convert-svrl-to-html.stylesheet}" if:true="${xpants.debug}"/>
 
             <local name="report.name"/>
             <basename property="report.name" file="@{output}" suffix=".html"/>
@@ -447,7 +447,7 @@ The following properties can be set on the command line to override the default 
 
             <property name="@{property}" value="${report.valid}"/>
 
-            <echo message="[check-schematron-validity] @{property}=${report.valid}" if:true="${macro.debug}"/>
+            <echo message="[check-schematron-validity] @{property}=${report.valid}" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>

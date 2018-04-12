@@ -358,7 +358,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             <!-- set property to t/f, if required -->
             <condition property="@{property}" value="${output.valid}" unless:blank="@{property}"/>
 
-            <!-- if report and property are blank, or macro.debug is true, then report result -->
+            <!-- if report and property are blank, or xpants.debug is true, then report result -->
             <local name="echo.result"/>
             <condition property="echo.result" value="true" else="false">
                 <or>
@@ -366,7 +366,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                         <equals arg1="@{report}" arg2=""/>
                         <equals arg1="@{property}" arg2=""/>
                     </and>
-                    <equals arg1="${macro.debug}" arg2="true"/>
+                    <equals arg1="${xpants.debug}" arg2="true"/>
                 </or>
             </condition>
 

@@ -177,7 +177,7 @@ property will be based on the script name given in the attribute:
                 </filterchain>
             </loadfile>
 
-            <echo message="[python-update-version] setting property '@{script}.version.number' to '${@{script}.version.number}'" if:true="${macro.debug}"/>
+            <echo message="[python-update-version] setting property '@{script}.version.number' to '${@{script}.version.number}'" if:true="${xpants.debug}"/>
 
             <!-- insert version number into setup.py -->
             <replaceregexp file="setup.py"
@@ -241,7 +241,7 @@ property will be based on the script name given in the attribute:
             <local name="unzip.dir"/>
             <tempfile property="unzip.dir" prefix="python-install-module" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
-            <echo message="[python] temp.file=${temp.file}" if:true="${macro.debug}"/>
+            <echo message="[python] temp.file=${temp.file}" if:true="${xpants.debug}"/>
 
             <unzip src="@{dir}/@{module}-@{version}.zip" dest="${unzip.dir}"/>
 

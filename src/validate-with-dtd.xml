@@ -294,7 +294,7 @@ The following properties can be set on the command line to override the default 
 
             <check-file-contains property="output.valid" file="@{output}" string="is not a valid XML document"/>
 
-            <echo message="[validate-with-dtd-to-txt] output.valid=${output.valid}" if:true="${macro.debug}"/>
+            <echo message="[validate-with-dtd-to-txt] output.valid=${output.valid}" if:true="${xpants.debug}"/>
 
             <echo message="[validate-with-dtd] '@{file}' is NOT DTD valid" if:true="${output.valid}"/>
             <echo message="[validate-with-dtd] '@{file}' is DTD valid" unless:true="${output.valid}"/>
@@ -335,7 +335,7 @@ The following properties can be set on the command line to override the default 
                 name="convert-log-to-svrl.stylesheet"
                 value="convert-log-to-svrl"/>
 
-            <echo message="[validate-with-dtd-to-svrl] convert-log-to-svrl.stylesheet=${convert-log-to-svrl.stylesheet}" if:true="${macro.debug}"/>
+            <echo message="[validate-with-dtd-to-svrl] convert-log-to-svrl.stylesheet=${convert-log-to-svrl.stylesheet}" if:true="${xpants.debug}"/>
 
             <apply-transform
                 file="${temp.txt}"
@@ -375,7 +375,7 @@ The following properties can be set on the command line to override the default 
                 name="convert-svrl-to-html.stylesheet"
                 value="convert-svrl-to-html"/>
 
-            <echo message="[validate-with-dtd-to-html] convert-svrl-to-html.stylesheet=${convert-svrl-to-html.stylesheet}" if:true="${macro.debug}"/>
+            <echo message="[validate-with-dtd-to-html] convert-svrl-to-html.stylesheet=${convert-svrl-to-html.stylesheet}" if:true="${xpants.debug}"/>
 
             <apply-transform
                 file="${temp.svrl}"

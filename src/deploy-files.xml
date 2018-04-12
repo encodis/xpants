@@ -161,7 +161,7 @@ The following properties are required when using the 'aws' method:
             <mkdir dir="@{target}" unless:true="${target.exists}"/>
 
             <!-- copy file -->
-            <copy file="@{file}" todir="@{target}" overwrite="true" verbose="${macro.debug}"/>
+            <copy file="@{file}" todir="@{target}" overwrite="true" verbose="${xpants.debug}"/>
 
             <!-- TODO use/detect alternate deploy methods -->
 
@@ -232,7 +232,7 @@ The following properties are required when using the 'aws' method:
 
             <property name="method.${deploy.method}" value="true"/>
 
-            <echo message="[deploy-files] method='@{method}', deploy.method='${deploy.method}'" if:true="${macro.debug}"/>
+            <echo message="[deploy-files] method='@{method}', deploy.method='${deploy.method}'" if:true="${xpants.debug}"/>
 
             <!-- TODO detect best deploy method based on target characteristics -->
 
@@ -338,18 +338,18 @@ The following properties are required when using the 'aws' method:
             </condition>
 
             <!-- delete files _in_ target dir, but not target dir itself -->
-            <delete includeemptydirs="true" verbose="${macro.debug}" if:true="${clean.files}">
+            <delete includeemptydirs="true" verbose="${xpants.debug}" if:true="${clean.files}">
                 <fileset dir="${deploy.root}@{target}" includes="*.*"/>
             </delete>
 
             <!-- delete target dir and all children -->
-            <delete dir="${deploy.root}@{target}" verbose="${macro.debug}" if:true="${clean.target}"/>
+            <delete dir="${deploy.root}@{target}" verbose="${xpants.debug}" if:true="${clean.target}"/>
 
             <!-- make target folder if it does not exist -->
             <mkdir dir="${deploy.root}@{target}" unless:true="${target.exists}"/>
 
             <!-- copy files... -->
-            <copy todir="${deploy.root}@{target}" overwrite="true" flatten="@{flatten}" verbose="${macro.debug}">
+            <copy todir="${deploy.root}@{target}" overwrite="true" flatten="@{flatten}" verbose="${xpants.debug}">
                 <deploy.files if:blank="@{source}"/>
                 <fileset dir="@{source}" includes="**/*" unless:blank="@{source}"/>
             </copy>
@@ -401,7 +401,7 @@ The following properties are required when using the 'aws' method:
             <mkdir dir="@{target}" unless:true="${target.exists}"/>
 
             <!-- synchronise files... -->
-            <sync todir="@{target}" overwrite="false" verbose="${macro.debug}">
+            <sync todir="@{target}" overwrite="false" verbose="${xpants.debug}">
                 <deploy.files if:blank="@{source}"/>
                 <fileset dir="@{source}" includes="**/*" unless:blank="@{source}"/>
             </sync>

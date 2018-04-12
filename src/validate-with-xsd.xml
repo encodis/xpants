@@ -119,7 +119,7 @@ The following properties can be set on the command line to override the default 
 
             <!--
                 IDEA want two attributes, an output property (for T/F) and a report file.
-                only print result here if macro.debug is on and property not set?
+                only print result here if xpants.debug is on and property not set?
                 then remove @format, using extension to detemine if svrl, html or txt (anything else)
 
                 might not need all the sub-macros - just validate-gen-report which runs
@@ -371,7 +371,7 @@ The following properties can be set on the command line to override the default 
             <local name="output.valid"/>
             <check-file-contains property="output.valid" file="@{output}" string="is not a valid XML document"/>
 
-            <echo message="[validate-xsd] output.valid=${output.valid}" if:true="${macro.debug}"/>
+            <echo message="[validate-xsd] output.valid=${output.valid}" if:true="${xpants.debug}"/>
 
             <!-- <condition property="output.valid">
                 <resourcecontains resource="@{output}" substring="is not a valid XML document"/>
@@ -428,7 +428,7 @@ The following properties can be set on the command line to override the default 
                 name="convert-xsd-text-to-svrl.stylesheet"
                 value="convert-xsd-text-to-svrl"/>
 
-            <echo message="[validate-with-xsd-to-svrl] convert-xsd-text-to-svrl.stylesheet=${convert-xsd-text-to-svrl.stylesheet}" if:true="${macro.debug}"/>
+            <echo message="[validate-with-xsd-to-svrl] convert-xsd-text-to-svrl.stylesheet=${convert-xsd-text-to-svrl.stylesheet}" if:true="${xpants.debug}"/>
 
             <apply-transform
                 file="${temp.txt}"
@@ -482,7 +482,7 @@ The following properties can be set on the command line to override the default 
                 name="convert-svrl-to-html.stylesheet"
                 value="convert-svrl-to-html"/>
 
-            <echo message="[validate-xsd-to-html] convert-svrl-to-html.stylesheet=${convert-svrl-to-html.stylesheet}" if:true="${macro.debug}"/>
+            <echo message="[validate-xsd-to-html] convert-svrl-to-html.stylesheet=${convert-svrl-to-html.stylesheet}" if:true="${xpants.debug}"/>
 
             <apply-transform
                 file="${temp.svrl}"

@@ -43,7 +43,7 @@ None
 
 These macros use the following properties:
 
-* *macro.debug* Output additional information for debugging
+* *xpants.debug* Output additional information for debugging
 
 
 ## Change Log
@@ -76,7 +76,7 @@ These macros use the following properties:
 
             <!-- TODO add check for it all being spaces -->
 
-            <echo message="[@{macro}] @{name}=@{value}" if:true="${macro.debug}"/>
+            <echo message="[@{macro}] @{name}=@{value}" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>
@@ -119,7 +119,7 @@ These macros use the following properties:
                 </condition>
             </fail>
 
-            <echo message="[@{macro}] @{name}=@{value}" if:true="${macro.debug}"/>
+            <echo message="[@{macro}] @{name}=@{value}" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>
@@ -157,7 +157,7 @@ These macros use the following properties:
                 </condition>
             </fail>
 
-            <echo message="[@{macro}] @{name}=@{value}" if:true="${macro.debug}"/>
+            <echo message="[@{macro}] @{name}=@{value}" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>

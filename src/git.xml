@@ -91,7 +91,7 @@ The following properties can be set on the command line to override the default 
             <check-exe-path property="git.exe" unless:set="git.exe"/>
 
             <!-- run git command -->
-            <echo message="[git] command=@{command}" if:true="${macro.debug}"/>
+            <echo message="[git] command=@{command}" if:true="${xpants.debug}"/>
 
             <property name="exec.failonerror" value="true"/>
 
@@ -104,7 +104,7 @@ The following properties can be set on the command line to override the default 
                 <args/>
             </exec>
 
-            <echo message="[git] output=${@{property}}" if:true="${macro.debug}"/>
+            <echo message="[git] output=${@{property}}" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>
@@ -140,7 +140,7 @@ The following properties can be set on the command line to override the default 
 
             <property name="@{property}" value="${git.branch.name}"/>
 
-            <echo message="[git-branch] @{property}=${git.branch.name}" if:true="${macro.debug}"/>
+            <echo message="[git-branch] @{property}=${git.branch.name}" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>
@@ -172,7 +172,7 @@ The following properties can be set on the command line to override the default 
                 </args>
             </git>
 
-            <echo message="[git-tag] tag='@{tag}' message='@{message}'" if:true="${macro.debug}"/>
+            <echo message="[git-tag] tag='@{tag}' message='@{message}'" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>
@@ -198,7 +198,7 @@ The following properties can be set on the command line to override the default 
                 </args>
             </git>
 
-            <echo message="[git-commit] message='@{message}'" if:true="${macro.debug}"/>
+            <echo message="[git-commit] message='@{message}'" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>
@@ -237,7 +237,7 @@ The following properties can be set on the command line to override the default 
                 </and>
             </condition>
 
-            <echo message="[git-status] @{property}=${git.status}" if:true="${macro.debug}"/>
+            <echo message="[git-status] @{property}=${git.status}" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>
@@ -341,7 +341,7 @@ The following properties can be set on the command line to override the default 
 
             <property name="@{property}" value="${git.latest.tag}"/>
 
-            <echo message="[git.latest.tag] @{property}=${git.latest.tag}" if:true="${macro.debug}"/>
+            <echo message="[git.latest.tag] @{property}=${git.latest.tag}" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>

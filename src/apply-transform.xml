@@ -276,7 +276,7 @@ None.
             <local name="temp.file"/>
             <tempfile property="temp.file" prefix="apply-transform" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
 
-            <echo message="[apply-transform-file] temp.file=${temp.file}" if:true="${macro.debug}"/>
+            <echo message="[apply-transform-file] temp.file=${temp.file}" if:true="${xpants.debug}"/>
 
             <!-- apply transform -->
             <xslt

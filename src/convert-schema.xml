@@ -137,7 +137,7 @@ Override the following property to change the value of the Trang class being use
 
             <check-class-path macro="convert-schema" class="${trang.class}"/>
 
-            <echo message="[convert-schema] trang.class=${trang.class}" if:true="${macro.debug}"/>
+            <echo message="[convert-schema] trang.class=${trang.class}" if:true="${xpants.debug}"/>
 
             <!-- work out final output name -->
             <local name="input.name"/>
@@ -151,7 +151,7 @@ Override the following property to change the value of the Trang class being use
             <property name="output.name" value="@{output}" unless:blank="@{output}"/>
             <property name="output.name" value="${input.path}/${input.name}.@{to}" if:blank="@{output}"/>
 
-            <echo message="[convert-schema] output: ${output.name}" if:true="${macro.debug}"/>
+            <echo message="[convert-schema] output: ${output.name}" if:true="${xpants.debug}"/>
 
             <java classname="${trang.class}"
                 failonerror="true">
@@ -189,7 +189,7 @@ Override the following property to change the value of the Trang class being use
 
         <sequential>
 
-            <echo message="[convert-rnc-to-xsd]" if:true="${macro.debug}"/>
+            <echo message="[convert-rnc-to-xsd]" if:true="${xpants.debug}"/>
 
             <convert-schema file="@{file}" output="@{output}" from="rnc" to="xsd">
                 <params.trang/>
@@ -220,7 +220,7 @@ Override the following property to change the value of the Trang class being use
 
         <sequential>
 
-            <echo message="[convert-rng-to-xsd]" if:true="${macro.debug}"/>
+            <echo message="[convert-rng-to-xsd]" if:true="${xpants.debug}"/>
 
             <convert-schema file="@{file}" output="@{output}" from="rng" to="xsd">
                 <params.trang/>
@@ -251,7 +251,7 @@ Override the following property to change the value of the Trang class being use
 
         <sequential>
 
-            <echo message="[convert-dtd-to-xsd]" if:true="${macro.debug}"/>
+            <echo message="[convert-dtd-to-xsd]" if:true="${xpants.debug}"/>
 
             <convert-schema file="@{file}" output="@{output}" from="dtd" to="xsd">
                 <params.trang/>
@@ -282,7 +282,7 @@ Override the following property to change the value of the Trang class being use
 
         <sequential>
 
-            <echo message="[convert-dtd-to-rnc]" if:true="${macro.debug}"/>
+            <echo message="[convert-dtd-to-rnc]" if:true="${xpants.debug}"/>
 
             <convert-schema file="@{file}" output="@{output}" from="dtd" to="rnc">
                 <params.trang/>
@@ -313,7 +313,7 @@ Override the following property to change the value of the Trang class being use
 
         <sequential>
 
-            <echo message="[convert-dtd-to-rng]" if:true="${macro.debug}"/>
+            <echo message="[convert-dtd-to-rng]" if:true="${xpants.debug}"/>
 
             <convert-schema file="@{file}" output="@{output}" from="dtd" to="rng">
                 <params.trang/>
@@ -343,7 +343,7 @@ Override the following property to change the value of the Trang class being use
 
         <sequential>
 
-            <echo message="[convert-rnc-to-rng]" if:true="${macro.debug}"/>
+            <echo message="[convert-rnc-to-rng]" if:true="${xpants.debug}"/>
 
             <convert-schema file="@{file}" output="@{output}" from="rnc" to="rng">
                 <params.trang/>
@@ -374,7 +374,7 @@ Override the following property to change the value of the Trang class being use
 
         <sequential>
 
-            <echo message="[convert-rng-to-rnc]" if:true="${macro.debug}"/>
+            <echo message="[convert-rng-to-rnc]" if:true="${xpants.debug}"/>
 
             <convert-schema file="@{file}" output="@{output}" from="rng" to="rnc">
                 <params.trang/>
@@ -405,7 +405,7 @@ Override the following property to change the value of the Trang class being use
 
         <sequential>
 
-            <echo message="[convert-rng-to-dtd]" if:true="${macro.debug}"/>
+            <echo message="[convert-rng-to-dtd]" if:true="${xpants.debug}"/>
 
             <convert-schema file="@{file}" output="@{output}" from="rng" to="dtd">
                 <params.trang/>
@@ -436,7 +436,7 @@ Override the following property to change the value of the Trang class being use
 
         <sequential>
 
-            <echo message="[convert-rnc-to-dtd]" if:true="${macro.debug}"/>
+            <echo message="[convert-rnc-to-dtd]" if:true="${xpants.debug}"/>
 
             <convert-schema file="@{file}" output="@{output}" from="rnc" to="dtd">
                 <params.trang/>
