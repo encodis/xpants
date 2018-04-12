@@ -196,9 +196,8 @@ The following properties can be set on the command line to override the default 
 
             <local name="git.latest.tag"/>
 
-            <git command="rev-parse" property="git.latest.tag">
+            <git command="describe" property="git.latest.tag">
                 <args>
-                    <arg value="describe"/>
                     <arg value="--abbrev=0"/>
                     <arg value="--tags"/>
                 </args>
@@ -216,7 +215,7 @@ The following properties can be set on the command line to override the default 
 
         </sequential>
     </macrodef>
-    
+
 
     <macrodef
         name="git-commit"
