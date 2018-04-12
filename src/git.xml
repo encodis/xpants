@@ -110,6 +110,9 @@ The following properties can be set on the command line to override the default 
     </macrodef>
 
 
+    <!-- TODO there may be an issue with property names, always prefix local properties in macros
+         with the macro's name for uniqueness -->
+
     <macrodef
         name="git-branch"
         description="Create a property with the current branch name">
@@ -179,6 +182,43 @@ The following properties can be set on the command line to override the default 
 
 
     <macrodef
+        name="git-latest-tag"
+        description="Get the latest tag on the current branch">
+
+        <attribute
+            name="property"
+            description="Property containing the tag"/>
+
+        <sequential>
+
+            <!-- fail if required attributes not set -->
+            <check-attr-set macro="git-latest-tag" name="property" value="@{property}"/>
+
+            <local name="git.latest.tag"/>
+
+            <git command="rev-parse" property="git.latest.tag">
+                <args>
+                    <arg value="describe"/>
+                    <arg value="--abbrev=0"/>
+                    <arg value="--tags"/>
+                </args>
+            </git>
+
+            <fail message="[git-latest-tag] no tags found in branch">
+                <condition>
+                    <matches string="${git.latest.tag}" pattern="^fatal: No names found, cannot describe anything"/>
+                </condition>
+            </fail>
+
+            <property name="@{property}" value="${git.latest.tag}"/>
+
+            <echo message="[git.latest.tag] @{property}=${git.latest.tag}" if:true="${xpants.debug}"/>
+
+        </sequential>
+    </macrodef>
+    
+
+    <macrodef
         name="git-commit"
         description="Stage all files and commit">
 
@@ -244,7 +284,7 @@ The following properties can be set on the command line to override the default 
 
 
     <macrodef
-        name="git-has-outstanding-commits"
+        name="git-check-outstanding-commits"
         description="Fail the build if there are outstanding commits on the current branch">
 
         <sequential>
@@ -284,7 +324,7 @@ The following properties can be set on the command line to override the default 
 
 
     <macrodef
-        name="git-branch-matches"
+        name="git-check-branch"
         description="Fail the build if the current branch name does not match the pattern">
 
         <attribute
@@ -294,54 +334,18 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="git-branch-matches" name="pattern" value="@{pattern}"/>
+            <check-attr-set macro="git-check-branch" name="pattern" value="@{pattern}"/>
 
             <local name="git.branch.name"/>
             <git-branch property="git.branch.name"/>
 
             <!-- TODO the pattern needs to be a regexp -->
 
-            <fail message="[git-branch-matches] current git branch '${branch.name}' does not match '@{pattern}'">
+            <fail message="[git-check-branch] current git branch '${branch.name}' does not match '@{pattern}'">
                 <condition>
                     <not><equal arg1="${git.branch.name}" arg2="@{pattern}"/></not>
                 </condition>
             </fail>
-
-        </sequential>
-    </macrodef>
-
-    <macrodef
-        name="git-latest-tag"
-        description="Get the latest tag on the current branch">
-
-        <attribute
-            name="property"
-            description="Property containing the tag"/>
-
-        <sequential>
-
-            <!-- fail if required attributes not set -->
-            <check-attr-set macro="git-latest-tag" name="property" value="@{property}"/>
-
-            <local name="git.latest.tag"/>
-
-            <git command="rev-parse" property="git.latest.tag">
-                <args>
-                    <arg value="describe"/>
-                    <arg value="--abbrev=0"/>
-                    <arg value="--tags"/>
-                </args>
-            </git>
-
-            <fail message="[git-latest-tag] no tags found in branch">
-                <condition>
-                    <matches string="${git.latest.tag}" pattern="^fatal: No names found, cannot describe anything"/>
-                </condition>
-            </fail>
-
-            <property name="@{property}" value="${git.latest.tag}"/>
-
-            <echo message="[git.latest.tag] @{property}=${git.latest.tag}" if:true="${xpants.debug}"/>
 
         </sequential>
     </macrodef>
