@@ -368,7 +368,7 @@ library, rather than on the command line.
             <mkdir dir="@{output}"/>
 
             <!-- check output has been created and is a dir -->
-            <check-dir-exists macro="compile-schematron-fileset" dir="${output}"/>
+            <check-dir-exists macro="compile-schematron-fileset" dir="@{output}"/>
 
             <!-- compile all schematron files in fileset -->
             <property name="for.keepgoing" value="true"/>
