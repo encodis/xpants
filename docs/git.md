@@ -70,6 +70,17 @@ Create an annotated tag
 | tag     | Tag value   |         |         |   yes    |
 | message | Tag message |         |         |   yes    |
 
+## git-latest-tag
+
+Get the latest tag on the current
+branch
+
+#### Attributes
+
+| Name     | Description                 | Allowed | Default | Required |
+| :------- | :-------------------------- | :------ | :-----: | :------: |
+| property | Property containing the tag |         |         |   yes    |
+
 ## git-commit
 
 Stage all files and commit
@@ -91,7 +102,7 @@ status
 | :------- | :----------------------------- | :------ | :-----: | :------: |
 | property | Property containing the status |         |         |   yes    |
 
-## git-has-outstanding-commits
+## git-check-outstanding-commits
 
 Fail the build if there are outstanding commits on the current branch
 
@@ -99,7 +110,7 @@ Fail the build if there are outstanding commits on the current branch
 
 Fail the build if not in a git repository
 
-## git-branch-matches
+## git-check-branch
 
 Fail the build if the current branch name does not match the pattern
 
@@ -108,14 +119,3 @@ Fail the build if the current branch name does not match the pattern
 | Name    | Description             | Allowed | Default | Required |
 | :------ | :---------------------- | :------ | :-----: | :------: |
 | pattern | Name of branch to match |         |         |   yes    |
-
-## git-latest-tag
-
-Get the latest tag on the current
-branch
-
-#### Attributes
-
-| Name     | Description                 | Allowed | Default | Required |
-| :------- | :-------------------------- | :------ | :-----: | :------: |
-| property | Property containing the tag |         |         |   yes    |

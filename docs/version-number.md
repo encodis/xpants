@@ -63,6 +63,8 @@ and run:
 
 ##### 2018-02-14 (PH) Initial version
 
+##### 2018-04-09 (PH) Name changed to ‘version-number’
+
 # Macro Definitions
 
 ## version-inc
