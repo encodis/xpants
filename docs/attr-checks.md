@@ -5,10 +5,10 @@ macros.
 
 ## Usage
 
-    <check-attr-set macro="apply-stylesheet" name="file" value="@{file}"/>
+    <check-attr-set macro="apply-transform" name="file" value="@{file}"/>
 
     <check-attr-list
-        macro="apply-stylesheet"
+        macro="apply-transform"
         name="options"
         value="@{options}"
         list="alpha,bravo,charlie"/>
@@ -21,7 +21,7 @@ None
 
 These macros use the following properties:
 
-  - *macro.debug* Output additional information for debugging
+  - *xpants.debug* Output additional information for debugging
 
 ## Change Log
 

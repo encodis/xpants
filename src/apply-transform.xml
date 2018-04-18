@@ -401,7 +401,7 @@ None.
             <mkdir dir="@{output}"/>
 
             <!-- check output has been created and is a dir -->
-            <check-dir-exists macro="apply-transform-fileset" dir="${output}"/>
+            <check-dir-exists macro="apply-transform-fileset" dir="@{output}"/>
 
             <!-- apply stylesheet to files in fileset -->
             <property name="for.keepgoing" value="true"/>
@@ -506,7 +506,7 @@ None.
             <mkdir dir="@{output}"/>
 
             <!-- check output has been created and is a dir -->
-            <check-dir-exists macro="apply-transform-list-fileset" dir="${output}"/>
+            <check-dir-exists macro="apply-transform-list-fileset" dir="@{output}"/>
 
             <!-- apply stylesheet list to files in fileset -->
             <property name="for.keepgoing" value="true"/>

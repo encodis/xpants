@@ -37,7 +37,7 @@ files).
 ## Dependencies
 
 These stylesheets are included using the default stylesheet mechanism
-described in [apply-stylesheet](apply-stylesheet.html):
+described in [apply-transform](apply-transform.html):
 
   - **extract-markdown-from-ant.xsl:** This is the standard stylesheet
     used to extract Markdown from ANT scripts.
@@ -49,6 +49,8 @@ described in [apply-stylesheet](apply-stylesheet.html):
 ## Change Log
 
 ##### 2018-02-15 (PH) Initial version
+
+##### 2018-04-09 (PH) Macro naming alignment
 
 # Macro Definitions
 
@@ -84,7 +86,7 @@ file
 | type   | Source file type                 | ant, sch, xsl |         |    no    |
 | output | Path for extracted Markdown file |               |         |   yes    |
 
-## extract-markdown-dir
+## extract-markdown-fileset
 
 Extract Markdown documentation from a set of
 files

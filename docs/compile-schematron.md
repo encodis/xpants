@@ -21,7 +21,7 @@ includes have been merged and abstract patterns resolved, but before
 compilation into XSLT.
 
 Each filter is taken in the order it occurs in the *filters* attribute.
-This is used by the [apply-stylesheet](./apply-stylesheet.html) macro so
+This is used by the [apply-transform](./apply-transform.html) macro so
 it assumes that all filters correspond to standard XSLTs in the XSLT
 Library. So, for example, specifying the filter “remove-docs” will apply
 the stylesheet *remove-docs.xsl*.
@@ -121,6 +121,8 @@ default behaviour:
 
 ##### 2018-02-19 (PH) Initial version
 
+##### 2018-04-09 (PH) Macro naming alignment
+
 # Macro Definitions
 
 ## compile-schematron
@@ -161,7 +163,7 @@ file
 | filters  | List of optional filters to be applied           |         | remove-docs |    no    |
 | output   | Path for output file                             |         |             |   yes    |
 
-## compile-schematron-dir
+## compile-schematron-fileset
 
 Compile a folder of Schematron
 files
@@ -182,7 +184,7 @@ files
 | :---------- | :---------------------- | :------: | :------: |
 | input.files | A fileset specification |   yes    |   yes    |
 
-## merge-schematron-includes
+## compile-schematron-merge-includes
 
 Merge included files into a single Schematron file
 
@@ -193,7 +195,7 @@ Merge included files into a single Schematron file
 | file   | Source Schematron file |         |         |   yes    |
 | output | Merged Schematron file |         |         |   yes    |
 
-## resolve-schematron-abstracts
+## compile-schematron-resolve-abstracts
 
 Resolve abstract patterns in a Schematron file
 

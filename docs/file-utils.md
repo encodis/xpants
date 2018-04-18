@@ -28,9 +28,9 @@ directories:
 
 ## Usage
 
-    <check-file-exists macro="apply-stylesheet" file="result.dat"/>
+    <check-file-exists macro="apply-transform" file="result.dat"/>
     
-    <check-fileset-empty macro="apply-stylesheet">
+    <check-fileset-empty macro="apply-transform">
         <fileset dir="../build" includes="**/*.dat"/>
     </check-fileset-empty>
 

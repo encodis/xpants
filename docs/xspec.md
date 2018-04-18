@@ -29,6 +29,8 @@ None.
 
 ##### 2018-03-19 (PH) Initial version
 
+##### 2018-04-09 (PH) Macro naming alignment
+
 # Macro Definitions
 
 ## xspec
@@ -65,7 +67,7 @@ file
 | coverage | Output test coverage report | true, false              |  false  |    no    |
 | junit    | Output JUnit report         | true, false              |  false  |    no    |
 
-## xspec-dir
+## xspec-fileset
 
 Run a folder of XSpec
 files

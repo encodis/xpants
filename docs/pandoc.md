@@ -28,6 +28,8 @@ default behaviour:
 
 ##### 2018-02-14 (PH) Initial version
 
+##### 2018-04-09 (PH) Macro naming alignment
+
 # Macro Definitions
 
 ## pandoc
@@ -78,9 +80,9 @@ parameters
 | variables   | List of variables     |         |                |    no    |
 | output      | Output file           |         |                |   yes    |
 
-## pandoc-dir
+## pandoc-fileset
 
-Run pandoc on folder, with
+Run pandoc on fileset, with
 parameters
 
 #### Attributes
