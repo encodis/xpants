@@ -252,6 +252,8 @@ The following properties can be set on the command line to override the default 
             <propertyregex property="variables.list" input="@{variables}" regexp="^|," replace=" --variable=" global="true"/>
 
             <!-- TODO allow for multiple CSS stylesheets -->
+            <local name="style.list"/>
+            <propertyregex property="style.list" input="@{style}" regexp="^|," replace=" --css=" global="true"/>
 
             <!-- run pandoc -->
             <exec
@@ -262,7 +264,7 @@ The following properties can be set on the command line to override the default 
                 <arg value="--to=@{to}"/>
                 <arg line="${options.list}" unless:blank="@{options}"/>
                 <arg value="--template=@{template}" unless:blank="@{template}"/>
-                <arg value="--css=@{style}" unless:blank="@{style}"/>
+                <arg value="${style.list}" unless:blank="@{style}"/>
                 <arg value="--data-dir=@{datadir}" unless:blank="@{datadir}"/>
                 <arg line="${filters.list}" unless:blank="@{filters}"/>
                 <arg line="${lua-filters.list}" unless:blank="@{lua-filters}"/>

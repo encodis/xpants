@@ -116,15 +116,15 @@ summary:     Build file for XPantS
         <mkdir dir="${build.dir}/${class.path}"/>
 
         <!-- extract macrodefs into temp dir -->
-        <apply-stylesheet
+        <apply-transform
             output="${temp.dist}"
-            stylesheet="extract-macrodef-from-ant">
+            xslt="extract-macrodef-from-ant">
 
             <fileset dir="${src.dir}">
                 <include name="*.xml"/>
                 <exclude name="xpants.xml"/>
             </fileset>
-        </apply-stylesheet>
+        </apply-transform>
 
         <!-- concatenate macrodefs into single antlib.xml file in dist dir -->
         <!-- IDEA put each macro file in an antlib, so this would go in the XSLT, then antlib.xml
