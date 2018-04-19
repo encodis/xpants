@@ -264,7 +264,7 @@ The following properties can be set on the command line to override the default 
                 <arg value="--to=@{to}"/>
                 <arg line="${options.list}" unless:blank="@{options}"/>
                 <arg value="--template=@{template}" unless:blank="@{template}"/>
-                <arg value="${style.list}" unless:blank="@{style}"/>
+                <arg line="${style.list}" unless:blank="@{style}"/>
                 <arg value="--data-dir=@{datadir}" unless:blank="@{datadir}"/>
                 <arg line="${filters.list}" unless:blank="@{filters}"/>
                 <arg line="${lua-filters.list}" unless:blank="@{lua-filters}"/>
