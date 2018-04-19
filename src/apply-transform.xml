@@ -245,6 +245,9 @@ None.
 
             <!-- TODO can we use catalog to find these (as well as schema?) -->
 
+            <!-- IDEA catalog could be how users specify their own XSLT library, but how to
+                 integrate -->
+
             <!-- does stylesheet exist as a file as given? -->
             <local name="given.xslt.exists"/>
             <available file="@{xslt}" type="file" property="given.xslt.exists"/>
@@ -308,6 +311,9 @@ None.
                 <!-- otherwise use Xalan -->
                 <factory name="org.apache.xalan.processor.TransformerFactoryImpl" unless:true="${saxon.processor}">
                 </factory>
+
+                <!-- TODO xslt task has it's own way of processing fileset - might be quicker
+                     so this would fold -file and -fileset together. use mapper for output file? -->
 
                 <!-- IDEA can we load catalog from JAR file? do we need to? -->
                 <xmlcatalog if:set="xpants.catalog">
