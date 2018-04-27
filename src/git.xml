@@ -111,7 +111,8 @@ The following properties can be set on the command line to override the default 
 
 
     <!-- TODO there may be an issue with property names, always prefix local properties in macros
-         with the macro's name for uniqueness -->
+         with the macro's name for uniqueness. this might be because macros are calling Macros
+         and 'local' does not mean what you think it does it that context -->
 
     <macrodef
         name="git-branch"
