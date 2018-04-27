@@ -45,7 +45,7 @@ To use the XPantS macros simply include the appropriate task definition at the t
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- load xpants -->
-    <taskdef resource="com/encodis/xpants/xpants.xml"/>
+    <taskdef resource="com/encodis/xpants/antlib.xml"/>
 
     ...
 </project>
@@ -80,7 +80,7 @@ Note that in this case, if one macro needs a macro in another file it will autom
 
 ## Macro Definitions
 
-[apply-stylesheet](apply-stylesheet.md)
+[apply-transform](apply-transform.md)
 
 [attr-checks](attr-checks.md)
 
@@ -100,10 +100,6 @@ Note that in this case, if one macro needs a macro in another file it will autom
 
 [git](git.md)
 
-[merge-xincludes](merge-xincludes.md)
-
-[minimise-xml](minimise-xml.md)
-
 [pandoc](pandoc.md)
 
 [python](python.md)
@@ -111,6 +107,8 @@ Note that in this case, if one macro needs a macro in another file it will autom
 [ssh](ssh.md)
 
 [tidy](tidy.md)
+
+[validate-instance](validate-instance.md)
 
 [validate-with-dtd](validate-with-dtd.md)
 

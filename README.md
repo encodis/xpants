@@ -38,7 +38,7 @@ To use the XPantS macros simply include the appropriate task definition at the t
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- load xpants -->
-    <taskdef resource="com/encodis/xpants/xpants.xml"/>
+    <taskdef resource="com/encodis/xpants/antlib.xml"/>
 
     ...
 </project>
