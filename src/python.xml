@@ -169,9 +169,7 @@ property will be based on the script name given in the attribute:
             <loadfile srcfile="@{script}" property="@{script}.version.number">
                 <filterchain>
                     <tokenfilter>
-                        <containsregex
-                            pattern="__version__ = '(.*)'"
-                            replace="\1"/>
+                        <containsregex pattern="__version__ = '(.*)'" replace="\1"/>
                     </tokenfilter>
                     <striplinebreaks/>
                 </filterchain>
@@ -199,6 +197,9 @@ property will be based on the script name given in the attribute:
             description="Distribution directory"/>
 
         <sequential>
+
+            <!-- check that setup.py exists -->
+            <check-file-exists prefix="[python-install-module]" file="setup.py"/>
 
             <python script="setup.py">
                 <args>
