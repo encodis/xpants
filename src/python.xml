@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        python.xml
-date:         2018-02-14
+date:         2018-05-02
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to run, build and install python modules or scripts
@@ -73,14 +73,14 @@ property will be based on the script name given in the attribute:
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.python}"/>
 
-    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
 
     <macrodef
         name="python"
-        description="Run a python module or script">
+        description="Run a Python module or script">
 
         <attribute
             name="module"
@@ -109,7 +109,7 @@ property will be based on the script name given in the attribute:
 
         <sequential>
 
-            <check-attr-set macro="python" name="dir" value="@{dir}"/>
+            <check-value-set prefix="[python]" name="dir" value="@{dir}"/>
 
             <fail message="[python] cannot specify 'module' and 'script' attributes together">
                 <condition>

@@ -9,7 +9,7 @@
 ---
 project:    XML Practical ANT Scripts
 title:      tidy.xml
-date:       2018-02-14
+date:       2018-05-02
 author:     Philip Hodder
 contact:    philip.hodder@encodis.com
 summary:    Macros to run HTML Tidy
@@ -70,7 +70,7 @@ The following properties can be set on the command line to override the default 
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.tidy}"/>
 
-    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
@@ -108,7 +108,7 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="tidy" name="output" value="@{output}"/>
+            <check-value-set prefix="[tidy]" name="output" value="@{output}"/>
 
             <!-- file or dir mode? -->
             <tidy-file
@@ -118,13 +118,13 @@ The following properties can be set on the command line to override the default 
                 output="@{output}"
                 unless:blank="@{file}"/>
 
-            <tidy-dir
+            <tidy-fileset
                 config="@{config}"
                 params="@{params}"
                 output="@{output}"
                 if:blank="@{file}">
                 <input.files/>
-            </tidy-dir>
+            </tidy-fileset>
 
         </sequential>
     </macrodef>
@@ -156,7 +156,7 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="tidy-file" name="file" value="@{file}"/>
+            <check-value-set prefix="[tidy-file]" name="file" value="@{file}"/>
 
             <!-- find tidy.exe -->
             <check-exe-path property="tidy.exe" unless:set="tidy.exe"/>
@@ -178,7 +178,7 @@ The following properties can be set on the command line to override the default 
 
 
     <macrodef
-        name="tidy-dir"
+        name="tidy-fileset"
         description="Run tidy on a folder of HTML files">
 
         <attribute

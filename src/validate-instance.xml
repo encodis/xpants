@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        validate-instance.xml
-date:         2018-04-09
+date:         2018-05-02
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to validate XML instances using schema (XSD, DTD, RNC or RNG) or Schematron
@@ -90,7 +90,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.validate-instance}"/>
 
-    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
     <include file="${xpants.dir}/compile-schematron.xml"/>
 
@@ -240,8 +240,8 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="validate-instance-file" name="file" value="@{file}"/>
-            <check-attr-list macro="validate-instance-file" name="type" value="@{type}" list="dtd,xsd,rnc,rng,sch"/>
+            <check-value-set prefix="[validate-instance-file]" name="file" value="@{file}"/>
+            <check-value-list prefix="[validate-instance-file]" name="type" value="@{type}" list="dtd,xsd,rnc,rng,sch"/>
 
             <!-- fail if instance file does not exist -->
             <check-file-exists macro="validate-instance-file" file="@{file}"/>
@@ -254,11 +254,11 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
             <property name="schema.@{type}" value="true"/>
 
             <!-- if validating XSD must supply namespace -->
-            <check-attr-set macro="validate-instance-file" name="namespace" value="@{namespace}" if:set="${schema.xsd}"/>
+            <check-value-set prefix="[validate-instance-file]" name="namespace" value="@{namespace}" if:set="${schema.xsd}"/>
 
             <!-- if validating with RNG/RNC must supply schema explicitly -->
-            <check-attr-set macro="validate-instance-file" name="schema" value="@{schema}" if:set="${schema.rng}"/>
-            <check-attr-set macro="validate-instance-file" name="schema" value="@{schema}" if:set="${schema.rnc}"/>
+            <check-value-set prefix="[validate-instance-file]" name="schema" value="@{schema}" if:set="${schema.rng}"/>
+            <check-value-set prefix="[validate-instance-file]" name="schema" value="@{schema}" if:set="${schema.rnc}"/>
 
             <!-- set up properties for catalog use, can override on command line -->
             <property environment="env"/>

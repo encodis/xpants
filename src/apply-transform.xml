@@ -8,7 +8,7 @@
 ---
 project:    XML Practical ANT Scripts
 title:      apply-transform.xml
-date:       2018-04-09
+date:       2018-05-02
 author:     Philip Hodder
 contact:    philip.hodder@encodis.com
 summary:    Macro definitions to apply an XSLT stylesheet to an XML file
@@ -133,7 +133,7 @@ None.
 
     <property name="xpants.xslt.dir" value="${xpants.dir}/xslt"/>
 
-    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
 
@@ -171,7 +171,7 @@ None.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="apply-transform" name="xslt" value="@{xslt}"/>
+            <check-value-set prefix="[apply-transform]" name="xslt" value="@{xslt}"/>
 
             <!-- NOTE do not check for @{output} being blank, as this indicates @{file} should be overwritten -->
 
@@ -451,7 +451,7 @@ None.
             <check-file-exists macro="apply-transform-list-file" file="@{file}"/>
 
             <!-- fail if no stylesheets supplied -->
-            <check-attr-set macro="apply-transform-list-file" name="xslt-list" value="@{xslt-list}"/>
+            <check-value-set prefix="[apply-transform-list-file]" name="xslt-list" value="@{xslt-list}"/>
 
             <!-- set up output if not blank -->
             <copy file="@{file}" tofile="@{output}" unless:blank="@{output}"/>
@@ -506,7 +506,7 @@ None.
             </check-fileset-empty>
 
             <!-- fail if no stylesheets supplied -->
-            <check-attr-set macro="apply-transform-list-fileset" name="xslt-list" value="@{xslt-list}"/>
+            <check-value-set prefix="[apply-transform-list-fileset]" name="xslt-list" value="@{xslt-list}"/>
 
             <!-- make output dir if needed -->
             <mkdir dir="@{output}"/>

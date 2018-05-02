@@ -85,6 +85,8 @@ These macros create the following (global) properties:
 
     </description>
 
+    <!-- TODO: see check-values.xml; should generalise here and have message prefix etc -->
+
     <!-- macros -->
 
     <macrodef

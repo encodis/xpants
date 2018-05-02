@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        xpants.xml
-date:         2018-02-14
+date:         2018-05-02
 author:       Philip Hodder
 sontact:      philip.hodder@encodis.com
 summary:      Single file to include all XPantS macros
@@ -41,8 +41,8 @@ included separately. This may increase load time, as each file loads the environ
 
     <!-- include macros -->
     <include file="${xpants.dir}/apply-transform.xml"/>
-    <include file="${xpants.dir}/attr-checks.xml"/>
     <include file="${xpants.dir}/aws.xml"/>
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/compare-files.xml"/>
     <include file="${xpants.dir}/compile-schematron.xml"/>
     <include file="${xpants.dir}/convert-schema.xml"/>

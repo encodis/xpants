@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        aws.xml
-date:         2018-02-14
+date:         2018-05-02
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to use aws commands within a build file
@@ -59,8 +59,8 @@ root.
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.aws}"/>
 
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
-    <include file="${xpants.dir}/attr-checks.xml"/>
 
     <!-- macros -->
 
@@ -99,10 +99,10 @@ root.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="aws" name="profile" value="@{profile}"/>
-            <check-attr-set macro="aws" name="command" value="@{command}"/>
-            <check-attr-set macro="aws" name="subcommand" value="@{subcommand}"/>
-            <check-attr-set macro="aws" name="dir" value="@{dir}"/>
+            <check-value-set prefix="[aws]" name="profile" value="@{profile}"/>
+            <check-value-set prefix="[aws]" name="command" value="@{command}"/>
+            <check-value-set prefix="[aws]" name="subcommand" value="@{subcommand}"/>
+            <check-value-set prefix="[aws]" name="dir" value="@{dir}"/>
 
             <!-- find aws.exe -->
             <check-exe-path property="aws.exe" unless:set="aws.exe"/>
@@ -158,9 +158,9 @@ root.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="aws-s3-sync" name="profile" value="@{profile}"/>
-            <check-attr-set macro="aws-s3-sync" name="target" value="@{target}"/>
-            <check-attr-set macro="aws-s3-sync" name="bucket" value="@{bucket}"/>
+            <check-value-set prefix="[aws-s3-sync]" name="profile" value="@{profile}"/>
+            <check-value-set prefix="[aws-s3-sync]" name="target" value="@{target}"/>
+            <check-value-set prefix="[aws-s3-sync]" name="bucket" value="@{bucket}"/>
             <check-dir-exists macro="aws-s3-sync" dir="@{source}"/>
 
             <!-- TODO ideally @{bucket} would be applied on call to this macro, to allow it to go both ways -->

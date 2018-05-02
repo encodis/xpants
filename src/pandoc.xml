@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        pandoc.xml
-date:         2018-04-09
+date:         2018-05-02
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to process files using pandoc
@@ -55,7 +55,7 @@ The following properties can be set on the command line to override the default 
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.pandoc}"/>
 
-    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
@@ -127,8 +127,8 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="pandoc" name="format" value="@{format}"/>
-            <check-attr-set macro="pandoc" name="output" value="@{output}"/>
+            <check-value-set prefix="[pandoc]" name="format" value="@{format}"/>
+            <check-value-set prefix="[pandoc]" name="output" value="@{output}"/>
 
             <!-- file or dir mode? -->
             <pandoc-file
@@ -224,10 +224,10 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="pandoc-file" name="file" value="@{file}"/>
-            <check-attr-set macro="pandoc-file" name="from" value="@{from}"/>
-            <check-attr-set macro="pandoc-file" name="to" value="@{to}"/>
-            <check-attr-set macro="pandoc-file" name="output" value="@{output}"/>
+            <check-value-set prefix="[pandoc-file]" name="file" value="@{file}"/>
+            <check-value-set prefix="[pandoc-file]" name="from" value="@{from}"/>
+            <check-value-set prefix="[pandoc-file]" name="to" value="@{to}"/>
+            <check-value-set prefix="[pandoc-file]" name="output" value="@{output}"/>
 
             <!-- fail if file does not exist -->
             <check-file-exists macro="pandoc-file" file="@{file}"/>
