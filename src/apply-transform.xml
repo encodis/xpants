@@ -226,7 +226,7 @@ None.
         <sequential>
 
             <!-- fail if file does not exist -->
-            <check-file-exists macro="apply-transform-file" file="@{file}" unless:blank="@{file}"/>
+            <check-file-exists prefix="[apply-transform-file]" file="@{file}" unless:blank="@{file}"/>
 
             <!-- set debugging properties -->
             <property name="temp.dir" value="${java.io.tmpdir}"/>
@@ -274,7 +274,7 @@ None.
 
             <!-- detect XSLT processor (use Saxon if possible) -->
             <local name="saxon.processor"/>
-            <check-class-path macro="apply-transform-file" class="net.sf.saxon.TransformerFactoryImpl" property="saxon.processor"/>
+            <check-class-path prefix="[apply-transform-file]" class="net.sf.saxon.TransformerFactoryImpl" property="saxon.processor"/>
 
             <local name="temp.file"/>
             <tempfile property="temp.file" prefix="apply-transform" destdir="${temp.dir}" deleteonexit="${temp.delete}"/>
@@ -399,7 +399,7 @@ None.
         <sequential>
 
             <!-- fail if input.files is empty -->
-            <check-fileset-empty macro="apply-transform-fileset">
+            <check-fileset-empty prefix="[apply-transform-fileset]">
                 <input.files/>
             </check-fileset-empty>
 
@@ -407,7 +407,7 @@ None.
             <mkdir dir="@{output}"/>
 
             <!-- check output has been created and is a dir -->
-            <check-dir-exists macro="apply-transform-fileset" dir="@{output}"/>
+            <check-dir-exists prefix="[apply-transform-fileset]" dir="@{output}"/>
 
             <!-- apply stylesheet to files in fileset -->
             <property name="for.keepgoing" value="true"/>
@@ -448,7 +448,7 @@ None.
         <sequential>
 
             <!-- fail if file does not exist -->
-            <check-file-exists macro="apply-transform-list-file" file="@{file}"/>
+            <check-file-exists prefix="[apply-transform-list-file]" file="@{file}"/>
 
             <!-- fail if no stylesheets supplied -->
             <check-value-set prefix="[apply-transform-list-file]" name="xslt-list" value="@{xslt-list}"/>
@@ -501,7 +501,7 @@ None.
         <sequential>
 
             <!-- fail if input.files is empty -->
-            <check-fileset-empty macro="apply-transform-list-fileset">
+            <check-fileset-empty prefix="[apply-transform-list-fileset]">
                 <input.files/>
             </check-fileset-empty>
 
@@ -512,7 +512,7 @@ None.
             <mkdir dir="@{output}"/>
 
             <!-- check output has been created and is a dir -->
-            <check-dir-exists macro="apply-transform-list-fileset" dir="@{output}"/>
+            <check-dir-exists prefix="[apply-transform-list-fileset]" dir="@{output}"/>
 
             <!-- apply stylesheet list to files in fileset -->
             <property name="for.keepgoing" value="true"/>
@@ -568,7 +568,7 @@ None.
                 </condition>
             </fail>
 
-            <check-file-exists macro="apply-transform-template" file="${saxon.jar}"/>
+            <check-file-exists prefix="[apply-transform-template]" file="${saxon.jar}"/>
 
             <!-- TODO check xslt exists (or is in standard library?) -->
 

@@ -129,13 +129,12 @@ Override the following property to change the value of the Trang class being use
             <check-value-list prefix="[convert-schema]" name="to" value="@{to}" list="xsd,dtd,rng,rnc"/>
 
             <!-- check input file exists -->
-            <check-file-exists macro="convert-schema" file="@{file}"/>
+            <check-file-exists prefix="[convert-schema]" file="@{file}"/>
 
             <!-- make sure we can find trang on the classpath -->
-
             <property name="trang.class" value="com.thaiopensource.relaxng.translate.Driver"/>
 
-            <check-class-path macro="convert-schema" class="${trang.class}"/>
+            <check-class-path prefix="[convert-schema]" class="${trang.class}"/>
 
             <echo message="[convert-schema] trang.class=${trang.class}" if:true="${xpants.debug}"/>
 

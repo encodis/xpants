@@ -152,7 +152,7 @@ XSLT files.
             <check-value-set prefix="[extract-markdown-file]" name="file" value="@{file}"/>
 
             <!-- fail if file does not exist -->
-            <check-file-exists macro="extract-markdown-file" file="@{file}"/>
+            <check-file-exists prefix="[extract-markdown-file]" file="@{file}"/>
 
             <!-- detect stylesheet to use, use file extension if not specified -->
             <!-- NOTE this will not be called if type is blank as parent macro will fail, so be careful -->
@@ -201,7 +201,7 @@ XSLT files.
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="extract-markdown-fileset">
+            <check-fileset-empty prefix="[extract-markdown-fileset]">
                 <input.files/>
             </check-fileset-empty>
 
@@ -209,7 +209,7 @@ XSLT files.
             <mkdir dir="@{output}"/>
 
             <!-- check output has been created and is a dir -->
-            <check-dir-exists macro="extract-markdown-fileset" dir="@{output}"/>
+            <check-dir-exists prefix="[extract-markdown-fileset]" dir="@{output}"/>
 
             <!-- extract macrkdown for all files in fileset -->
             <property name="for.keepgoing" value="true"/>

@@ -27,7 +27,7 @@ A set of utility macros to check values of properties (or macro attribute values
 
 ```
 &lt;check-value-list
-&#9;macro="[apply-transform]"
+&#9;prefix="[apply-transform]"
 &#9;name="options"
 &#9;value="@{options}"
 &#9;list="alpha,bravo,charlie"/&gt;

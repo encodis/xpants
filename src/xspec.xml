@@ -199,7 +199,7 @@ None.
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="xspec-fileset">
+            <check-fileset-empty prefix="[xspec-fileset]">
                 <xspec.files/>
             </check-fileset-empty>
 

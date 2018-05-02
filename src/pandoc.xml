@@ -230,7 +230,7 @@ The following properties can be set on the command line to override the default 
             <check-value-set prefix="[pandoc-file]" name="output" value="@{output}"/>
 
             <!-- fail if file does not exist -->
-            <check-file-exists macro="pandoc-file" file="@{file}"/>
+            <check-file-exists prefix="[pandoc-file]" file="@{file}"/>
 
             <!-- check if pandoc executable is available -->
             <check-exe-path property="pandoc.exe" windows="pan-doc.exe" unless:set="pandoc.exe"/>
@@ -339,7 +339,7 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="pandoc-fileset">
+            <check-fileset-empty prefix="[pandoc-fileset]">
                 <input.files/>
             </check-fileset-empty>
 
@@ -347,7 +347,7 @@ The following properties can be set on the command line to override the default 
             <mkdir dir="@{output}"/>
 
             <!-- check output has been created and is a dir -->
-            <check-dir-exists macro="pandoc-fileset" dir="@{output}"/>
+            <check-dir-exists prefix="[pandoc-fileset]" dir="@{output}"/>
 
             <!-- run pandoc on all files in fileset -->
             <property name="for.keepgoing" value="true"/>

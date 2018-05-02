@@ -127,7 +127,7 @@ $ ant version -Dversion.bump=major
             <check-value-list prefix="[version-inc]" name="element" value="@{element}" list="major,minor,patch,build"/>
 
             <!-- check properties file exists -->
-            <check-file-exists macro="version-inc" file="@{file}"/>
+            <check-file-exists prefix="[version-inc]" file="@{file}"/>
 
             <!-- get version properties from file -->
             <property file="@{file}"/>
@@ -158,6 +158,7 @@ $ ant version -Dversion.bump=major
             <var name="version.minor" value="${version.number.minor}"/>
             <var name="version.patch" value="${version.number.patch}"/>
 
+            <!-- TODO: verify this works -->
             <math result="version.major" datatype="int" if:set="increment.major">
                 <add>
                     <num value="${version.major}"/>

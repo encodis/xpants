@@ -251,7 +251,7 @@ library, rather than on the command line.
             <check-value-set prefix="[compile-schematron-file]" name="file" value="@{file}"/>
 
             <!-- fail if file does not exist -->
-            <check-file-exists macro="compile-schematron-file" file="@{file}"/>
+            <check-file-exists prefix="[compile-schematron-file]" file="@{file}"/>
 
             <!-- make temporary files for the intermediate stages -->
             <property name="temp.dir" value="${java.io.tmpdir}"/>
@@ -360,7 +360,7 @@ library, rather than on the command line.
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="compile-schematron-fileset">
+            <check-fileset-empty prefix="[compile-schematron-fileset]">
                 <input.files/>
             </check-fileset-empty>
 
@@ -368,7 +368,7 @@ library, rather than on the command line.
             <mkdir dir="@{output}"/>
 
             <!-- check output has been created and is a dir -->
-            <check-dir-exists macro="compile-schematron-fileset" dir="@{output}"/>
+            <check-dir-exists prefix="[compile-schematron-fileset]" dir="@{output}"/>
 
             <!-- compile all schematron files in fileset -->
             <property name="for.keepgoing" value="true"/>

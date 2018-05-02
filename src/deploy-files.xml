@@ -76,9 +76,9 @@ Deploy different filesets for 'latest' and 'versioned' files:
 ## Dependencies
 
 * ${xpants.dir}/aws.xml
-* ${xpants.dir}/ssh.xml
-* ${xpants.dir}/attr-checks.xml
+* ${xpants.dir}/check-value.xml
 * ${xpants.dir}/file-utils.xml
+* ${xpants.dir}/ssh.xml
 
 ## Properties
 
@@ -138,7 +138,7 @@ The following properties are required when using the 'aws' method:
             <check-value-set prefix="[deploy-file]" name="target" value="@{target}"/>
 
             <!-- check that @{file} exists -->
-            <check-file-exists macro="deploy-file" file="@{file}"/>
+            <check-file-exists prefix="[deploy-file]" file="@{file}"/>
 
             <!-- get base filename -->
             <local name="file.name"/>
@@ -215,11 +215,11 @@ The following properties are required when using the 'aws' method:
             <check-value-set prefix="[deploy-file]" name="target" value="@{target}"/>
 
             <!-- check fileset/source combinations -->
-            <check-fileset-empty macro="deploy-files" if:blank="@{source}">
+            <check-fileset-empty prefix="[deploy-files]" if:blank="@{source}">
                 <deploy.files/>
             </check-fileset-empty>
 
-            <check-dir-exists macro="deploy-files" dir="@{source}" unless:blank="@{source}"/>
+            <check-dir-exists prefix="[deploy-files]" dir="@{source}" unless:blank="@{source}"/>
 
             <!-- fail if @{clean} not specified correctly -->
             <check-value-list prefix="[deploy-files]" name="clean" value="@{clean}" list="target,files,none"/>

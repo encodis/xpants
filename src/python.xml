@@ -136,7 +136,7 @@ property will be based on the script name given in the attribute:
             <check-exe-path property="python@{version}.exe" unless:set="python@{version}.exe"/>
 
             <!-- check script exists -->
-            <check-file-exists macro="python" file="@{script}" unless:blank="@{script}"/>
+            <check-file-exists prefix="[python]" file="@{script}" unless:blank="@{script}"/>
 
             <!-- run module or script -->
             <exec
@@ -163,7 +163,7 @@ property will be based on the script name given in the attribute:
         <sequential>
 
             <!-- check that setup.py exists -->
-            <check-file-exists macro="python-update-version" file="setup.py"/>
+            <check-file-exists prefix="[python-update-version]" file="setup.py"/>
 
             <!-- get version number from module -->
             <loadfile srcfile="@{script}" property="@{script}.version.number">
@@ -232,7 +232,7 @@ property will be based on the script name given in the attribute:
         <sequential>
 
             <!-- check that setup.py exists -->
-            <check-file-exists macro="python-install-module" file="setup.py"/>
+            <check-file-exists prefix="[python-install-module]" file="setup.py"/>
 
             <!-- unzip to build -->
             <property name="temp.dir" value="${java.io.tmpdir}"/>

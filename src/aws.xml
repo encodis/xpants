@@ -161,7 +161,7 @@ root.
             <check-value-set prefix="[aws-s3-sync]" name="profile" value="@{profile}"/>
             <check-value-set prefix="[aws-s3-sync]" name="target" value="@{target}"/>
             <check-value-set prefix="[aws-s3-sync]" name="bucket" value="@{bucket}"/>
-            <check-dir-exists macro="aws-s3-sync" dir="@{source}"/>
+            <check-dir-exists prefix="[aws-s3-sync]" dir="@{source}"/>
 
             <!-- TODO ideally @{bucket} would be applied on call to this macro, to allow it to go both ways -->
 
