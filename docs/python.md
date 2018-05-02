@@ -56,7 +56,7 @@ in the attribute:
 
 ## python
 
-Run a python module or
+Run a Python module or
 script
 
 #### Attributes

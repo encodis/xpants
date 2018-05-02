@@ -9,7 +9,7 @@
 ---
 project:    XML Practical ANT Scripts
 title:      file-utils.xml
-date:       2018-03-26
+date:       2018-05-02
 author:     Philip Hodder
 contact:    philip.hodder@encodis.com
 summary:    Macros to check various file system related things
@@ -86,6 +86,11 @@ These macros create the following (global) properties:
     </description>
 
     <!-- TODO: see check-values.xml; should generalise here and have message prefix etc -->
+
+    <!-- include macros/properties -->
+    <dirname property="xpants.dir" file="${ant.file.validate-instance}"/>
+
+    <include file="${xpants.dir}/check-value.xml"/>
 
     <!-- macros -->
 
@@ -303,7 +308,7 @@ These macros create the following (global) properties:
             <property environment="env"/>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="check-exe-path" name="property" value="@{property}"/>
+            <check-value-set prefix="[check-exe-path]" name="property" value="@{property}"/>
 
             <local name="property.name"/>
             <propertyregex property="property.name" input="@{property}" regexp="([a-zA-Z0-9_-]+).[a-zA-Z0-9_-]+" replace="\1"/>
