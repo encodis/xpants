@@ -162,9 +162,6 @@ property will be based on the script name given in the attribute:
 
         <sequential>
 
-            <!-- check that setup.py exists -->
-            <check-file-exists prefix="[python-update-version]" file="setup.py"/>
-
             <!-- get version number from module -->
             <loadfile srcfile="@{script}" property="@{script}.version.number">
                 <filterchain>
@@ -198,9 +195,6 @@ property will be based on the script name given in the attribute:
 
         <sequential>
 
-            <!-- check that setup.py exists -->
-            <check-file-exists prefix="[python-install-module]" file="setup.py"/>
-
             <python script="setup.py">
                 <args>
                     <arg value="sdist"/>
@@ -231,9 +225,6 @@ property will be based on the script name given in the attribute:
             description="Python module version number"/>
 
         <sequential>
-
-            <!-- check that setup.py exists -->
-            <check-file-exists prefix="[python-install-module]" file="setup.py"/>
 
             <!-- unzip to build -->
             <property name="temp.dir" value="${java.io.tmpdir}"/>
