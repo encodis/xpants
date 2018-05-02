@@ -88,7 +88,7 @@ These macros create the following (global) properties:
     <!-- TODO: see check-values.xml; should generalise here and have message prefix etc -->
 
     <!-- include macros/properties -->
-    <dirname property="xpants.dir" file="${ant.file.validate-instance}"/>
+    <dirname property="xpants.dir" file="${ant.file.file-utils}"/>
 
     <include file="${xpants.dir}/check-value.xml"/>
 

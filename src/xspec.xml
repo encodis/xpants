@@ -53,7 +53,7 @@ None.
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- include macros/properties -->
-    <dirname property="xpants.dir" file="${ant.file.git}"/>
+    <dirname property="xpants.dir" file="${ant.file.xspec}"/>
 
     <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
