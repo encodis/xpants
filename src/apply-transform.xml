@@ -49,11 +49,11 @@ The *xslt* attribute can be used in one of two ways:
 (e.g. `xslt="./my-stylesheets/convert.xsl"`).
 
 * However, it can also be used to specify default stylesheets in the XPantS XSLT Library.
-If the attribute value contains no path related information (e.g. `xslt="filter-svrl"`)
+If the attribute value contains no path related information (e.g. `xslt="remove-comments"`)
 then the macro will try to locate a stylesheet with that name and the extension ".xsl" in the
 **com/encodis/xpants/xslt** resource (i.e. in the XPantS jar file). So specifying
-`xslt="filter-svrl"` will make the macro try and load the resource
-**com/encodis/xpants/xslt/filter-svrl.xsl**.
+`xslt="remove-comments"` will make the macro try and load the resource
+**com/encodis/xpants/xslt/remove-comments.xsl**.
 
 ## Usage
 
@@ -245,8 +245,7 @@ None.
 
             <!-- TODO can we use catalog to find these (as well as schema?) -->
 
-            <!-- IDEA catalog could be how users specify their own XSLT library, but how to
-                 integrate -->
+            <!-- IDEA catalog could be how users specify their own XSLT library, but how to integrate? -->
 
             <!-- does stylesheet exist as a file as given? -->
             <local name="given.xslt.exists"/>

@@ -46,7 +46,6 @@ consequences. The filters (and stylesheets) that are known to be valid are:
 * _remove-docs:_ Removes "doc:*" elements
 * _remove-comments:_ Remove comments
 * _remove-processing-instructions:_ Remove processing instructions
-* _schematron-display-id:_ Makes sure that Schematron rule IDs are displayed in the output
 * _schematron-remove-empty-rules:_ Remove any Schematron rules with no assert or report elements
 
 The Schematron file is enhanced "in place"---intermediate versions are not kept.
@@ -270,7 +269,7 @@ library, rather than on the command line.
             <compile-schematron-resolve-abstracts file="${temp.resolved}" output="@{output}"/>
 
             <!-- apply filtering, overwrites resolved file -->
-            <apply-transform-list file="${temp.resolved}" filters="@{filters}" unless:blank="@{filters}"/>
+            <apply-transform-list-file file="${temp.resolved}" filters="@{filters}" unless:blank="@{filters}"/>
 
             <!-- choose XSLT1/XSLT2 transform based on version in SCH file, can be overridden on command line -->
             <local name="schematron.querybinding"/>

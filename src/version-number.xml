@@ -118,6 +118,12 @@ $ ant version -Dversion.bump=major
             default="patch"
             description="Version number element to increment [major,minor,patch,build]"/>
 
+        <!-- TODO optional regex for filesets? also to replace the m.m.p used below? replaceregex task? -->
+        <!-- TODO optional fileset element - files to try and update using version number regex
+                  note that build-number-set etc already update build.properties itself, so you'd pass
+                  the fileset to it as additional files to change i.e. always have at least build.propeties or equiv
+                  version-number-set has a different regex though -->
+
         <sequential>
 
             <!-- NOTE assumes version number matches "major.minor.patch", no element is optional -->
@@ -207,23 +213,27 @@ $ ant version -Dversion.bump=major
             <build-number-set file="@{file}" build="${build.number.update}" if:set="increment.build"/>
 
             <!-- add a tag? -->
-            <local name="version.tag"/>
-            <condition property="version.tag" value="true">
+            <local name="do.tag"/>
+            <condition property="do.tag" value="true">
                 <equals arg1="${git.tag}" arg2="@{element}"/>
             </condition>
 
-            <git-tag tag="v${version.number}" message="v${version.number}" if:set="version.tag"/>
+            <!-- XXX general: use 'do.x.y' for properties that are used to control things????
+                    here could be do.tag, do.commit, do.inc.build etc
+                    only ones created in the macro though, not command line or attributes
+                    -->
+            <git-tag tag="v${version.number}" message="v${version.number}" if:set="do.tag"/>
 
             <!-- commit? -->
-            <local name="version.commit"/>
-            <condition property="version.commit" value="true">
+            <local name="do.commit"/>
+            <condition property="do.commit" value="true">
                 <and>
-                    <isset property="version.tag"/>
+                    <isset property="do.tag"/>
                     <not><equals arg1="${git.commit}" arg2=""/></not>
                 </and>
             </condition>
 
-            <git-commit message="${git.commit}" if:set="version.commit"/>
+            <git-commit message="${git.commit}" if:set="do.commit"/>
 
         </sequential>
     </macrodef>

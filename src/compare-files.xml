@@ -217,25 +217,25 @@ The following properties can be set on the command line to override the default 
             <check-attr-set macro="compare-files" name="fileB" value="@{fileB}"/>
 
             <!-- first, check if files are physically identical (true = the same, false = different) -->
-            <local name="compare.result"/>
-            <condition property="compare.result" value="true">
+            <local name="do.compare"/>
+            <condition property="do.compare" value="true">
                 <filesmatch file1="@{fileA}" file2="@{fileB}"/>
             </condition>
 
             <!-- update result property -->
             <condition property="@{result}" value="true" else="false">
-                <isset property="compare.result"/>
+                <isset property="do.compare"/>
             </condition>
 
-            <echo message="[compare-files] '@{fileA}' and '@{fileB}' are the same" if:true="${compare.result}"/>
-            <echo message="[compare-files] '@{fileA}' and '@{fileB}' are different" unless:true="${compare.result}"/>
+            <echo message="[compare-files] '@{fileA}' and '@{fileB}' are the same" if:true="${do.compare}"/>
+            <echo message="[compare-files] '@{fileA}' and '@{fileB}' are different" unless:true="${do.compare}"/>
 
             <!-- next, if files are different and if 'output' is set then record diffs -->
 
-            <local name="compare.diff"/>
-            <condition property="compare.diff" value="true" else="false">
+            <local name="do.diff"/>
+            <condition property="do.diff" value="true" else="false">
                 <and>
-                    <not><isset property="compare.result"/></not>
+                    <not><isset property="do.compare"/></not>
                     <not><equals arg1="@{output}" arg2=""/></not>
                 </and>
             </condition>
@@ -247,7 +247,7 @@ The following properties can be set on the command line to override the default 
                 config="@{config}"
                 params="@{params}"
                 output="@{output}"
-                if:true="${compare.diff}"/>
+                if:true="${do.diff}"/>
 
         </sequential>
     </macrodef>

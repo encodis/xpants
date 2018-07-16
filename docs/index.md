@@ -110,14 +110,6 @@ Note that in this case, if one macro needs a macro in another file it will autom
 
 [validate-instance](validate-instance.md)
 
-[validate-with-dtd](validate-with-dtd.md)
-
-[validate-with-rng](validate-with-rng.md)
-
-[validate-with-sch](validate-with-sch.md)
-
-[validate-with-xsd](validate-with-xsd.md)
-
 [xspec](xspec.md)
 
 

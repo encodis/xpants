@@ -277,6 +277,7 @@ The following properties can be set on the command line to override the default 
         </sequential>
     </macrodef>
 
+    <!-- TODO: check out -\-file-scope option, do we need fileset macro? -->
     <macrodef
         name="pandoc-fileset"
         description="Run pandoc on fileset, with parameters">
