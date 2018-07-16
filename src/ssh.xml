@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        ssh.xml
-date:         2018-02-14
+date:         2018-05-02
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to use the ssh command within a build file
@@ -67,9 +67,8 @@ or the values set in the macro calls directly:
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.ssh}"/>
 
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
-    <include file="${xpants.dir}/attr-checks.xml"/>
-
 
     <!-- macros -->
 
@@ -109,10 +108,10 @@ or the values set in the macro calls directly:
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="ssh" name="user" value="@{user}"/>
-            <check-attr-set macro="ssh" name="host" value="@{host}"/>
-            <check-attr-set macro="ssh" name="keys" value="@{keys}"/>
-            <check-attr-set macro="ssh" name="command" value="@{command}"/>
+            <check-value-set prefix="[ssh]" name="user" value="@{user}"/>
+            <check-value-set prefix="[ssh]" name="host" value="@{host}"/>
+            <check-value-set prefix="[ssh]" name="keys" value="@{keys}"/>
+            <check-value-set prefix="[ssh]" name="command" value="@{command}"/>
 
             <!-- find ssh.exe -->
             <check-exe-path property="ssh.exe" unless:set="ssh.exe"/>
@@ -164,11 +163,11 @@ or the values set in the macro calls directly:
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="ssh-copy" name="user" value="@{user}"/>
-            <check-attr-set macro="ssh-copy" name="host" value="@{host}"/>
-            <check-attr-set macro="ssh-copy" name="keys" value="@{keys}"/>
-            <check-attr-set macro="ssh-copy" name="source" value="@{source}"/>
-            <check-attr-set macro="ssh-copy" name="target" value="@{target}"/>
+            <check-value-set prefix="[ssh-copy]" name="user" value="@{user}"/>
+            <check-value-set prefix="[ssh-copy]" name="host" value="@{host}"/>
+            <check-value-set prefix="[ssh-copy]" name="keys" value="@{keys}"/>
+            <check-value-set prefix="[ssh-copy]" name="source" value="@{source}"/>
+            <check-value-set prefix="[ssh-copy]" name="target" value="@{target}"/>
 
             <!-- find scp.exe -->
             <check-exe-path property="scp.exe" unless:set="scp.exe"/>
@@ -219,11 +218,11 @@ or the values set in the macro calls directly:
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="ssh-chmod" name="user" value="@{user}"/>
-            <check-attr-set macro="ssh-chmod" name="host" value="@{host}"/>
-            <check-attr-set macro="ssh-chmod" name="keys" value="@{keys}"/>
-            <check-attr-set macro="ssh-chmod" name="mode" value="@{mode}"/>
-            <check-attr-set macro="ssh-chmod" name="dir" value="@{dir}"/>
+            <check-value-set prefix="[ssh-chmod]" name="user" value="@{user}"/>
+            <check-value-set prefix="[ssh-chmod]" name="host" value="@{host}"/>
+            <check-value-set prefix="[ssh-chmod]" name="keys" value="@{keys}"/>
+            <check-value-set prefix="[ssh-chmod]" name="mode" value="@{mode}"/>
+            <check-value-set prefix="[ssh-chmod]" name="dir" value="@{dir}"/>
 
             <ssh
                 user="@{user}"
@@ -266,11 +265,11 @@ or the values set in the macro calls directly:
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="ssh-mkdir" name="user" value="@{user}"/>
-            <check-attr-set macro="ssh-mkdir" name="host" value="@{host}"/>
-            <check-attr-set macro="ssh-mkdir" name="keys" value="@{keys}"/>
-            <check-attr-set macro="ssh-mkdir" name="mode" value="@{mode}"/>
-            <check-attr-set macro="ssh-mkdir" name="dir" value="@{dir}"/>
+            <check-value-set prefix="[ssh-mkdir]" name="user" value="@{user}"/>
+            <check-value-set prefix="[ssh-mkdir]" name="host" value="@{host}"/>
+            <check-value-set prefix="[ssh-mkdir]" name="keys" value="@{keys}"/>
+            <check-value-set prefix="[ssh-mkdir]" name="mode" value="@{mode}"/>
+            <check-value-set prefix="[ssh-mkdir]" name="dir" value="@{dir}"/>
 
             <ssh
                 user="@{user}"
@@ -313,12 +312,12 @@ or the values set in the macro calls directly:
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="ssh-delete" name="user" value="@{user}"/>
-            <check-attr-set macro="ssh-delete" name="host" value="@{host}"/>
-            <check-attr-set macro="ssh-delete" name="keys" value="@{keys}"/>
-            <check-attr-set macro="ssh-delete" name="dir" value="@{dir}"/>
+            <check-value-set prefix="[ssh-delete]" name="user" value="@{user}"/>
+            <check-value-set prefix="[ssh-delete]" name="host" value="@{host}"/>
+            <check-value-set prefix="[ssh-delete]" name="keys" value="@{keys}"/>
+            <check-value-set prefix="[ssh-delete]" name="dir" value="@{dir}"/>
 
-            <check-attr-bool macro="ssh-delete" name="recursive" value="@{recursive}"/>
+            <check-value-bool prefix="[ssh-delete]" name="recursive" value="@{recursive}"/>
 
             <!-- NOTE: this does not work in quite the same way as ant's <delete> task -->
 

@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        python.xml
-date:         2018-02-14
+date:         2018-05-02
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to run, build and install python modules or scripts
@@ -73,14 +73,14 @@ property will be based on the script name given in the attribute:
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.python}"/>
 
-    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
 
     <macrodef
         name="python"
-        description="Run a python module or script">
+        description="Run a Python module or script">
 
         <attribute
             name="module"
@@ -109,7 +109,7 @@ property will be based on the script name given in the attribute:
 
         <sequential>
 
-            <check-attr-set macro="python" name="dir" value="@{dir}"/>
+            <check-value-set prefix="[python]" name="dir" value="@{dir}"/>
 
             <fail message="[python] cannot specify 'module' and 'script' attributes together">
                 <condition>
@@ -136,7 +136,7 @@ property will be based on the script name given in the attribute:
             <check-exe-path property="python@{version}.exe" unless:set="python@{version}.exe"/>
 
             <!-- check script exists -->
-            <check-file-exists macro="python" file="@{script}" unless:blank="@{script}"/>
+            <check-file-exists prefix="[python]" file="@{script}" unless:blank="@{script}"/>
 
             <!-- run module or script -->
             <exec
@@ -162,16 +162,11 @@ property will be based on the script name given in the attribute:
 
         <sequential>
 
-            <!-- check that setup.py exists -->
-            <check-file-exists macro="python-update-version" file="setup.py"/>
-
             <!-- get version number from module -->
             <loadfile srcfile="@{script}" property="@{script}.version.number">
                 <filterchain>
                     <tokenfilter>
-                        <containsregex
-                            pattern="__version__ = '(.*)'"
-                            replace="\1"/>
+                        <containsregex pattern="__version__ = '(.*)'" replace="\1"/>
                     </tokenfilter>
                     <striplinebreaks/>
                 </filterchain>
@@ -230,9 +225,6 @@ property will be based on the script name given in the attribute:
             description="Python module version number"/>
 
         <sequential>
-
-            <!-- check that setup.py exists -->
-            <check-file-exists macro="python-install-module" file="setup.py"/>
 
             <!-- unzip to build -->
             <property name="temp.dir" value="${java.io.tmpdir}"/>

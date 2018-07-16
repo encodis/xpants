@@ -85,7 +85,7 @@ Summary:     Build file for XPantS test suite
 
     </target>
 
-    <!-- NOTE attr-checks.xml only works within a macro so difficult to test -->
+    <!-- NOTE check-value.xml only works within a macro so difficult to test. Still the case? -->
 
     <!-- NOTE aws.xml requires a suitable AWS account etc, how to non-destructively test and verify? -->
 
@@ -134,14 +134,14 @@ Summary:     Build file for XPantS test suite
 
     <target name="test-file-checks">
 
-        <check-file-exists macro="test-file-checks" file="${test.dir}/new-file.dat" property="file.exists"/>
+        <check-file-exists prefix="test-file-checks" file="${test.dir}/new-file.dat" property="file.exists"/>
 
         <au:assertTrue
             message="Test file 'new-file.dat' does not exist">
             <istrue value="${file.exists}"/>
         </au:assertTrue>
 
-        <check-dir-exists macro="test-file-checks" dir="${test.dir}" property="dir.exists"/>
+        <check-dir-exists prefix="test-file-checks" dir="${test.dir}" property="dir.exists"/>
 
         <au:assertTrue
             message="Test dir '${test.dir}' does not exist">
@@ -150,7 +150,7 @@ Summary:     Build file for XPantS test suite
 
         <!-- <check-fileset-empty macro="test-file-checks" refid=""/> -->
 
-        <check-fileset-empty macro="test-file-checks" property="fileset.not.empty">
+        <check-fileset-empty prefix="test-file-checks" property="fileset.not.empty">
             <fileset dir=".">
                 <include name="**/*"/>
             </fileset>

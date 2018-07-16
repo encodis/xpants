@@ -9,7 +9,7 @@
 ---
 project:    XML Practical ANT Scripts
 title:      file-utils.xml
-date:       2018-03-26
+date:       2018-05-02
 author:     Philip Hodder
 contact:    philip.hodder@encodis.com
 summary:    Macros to check various file system related things
@@ -38,9 +38,9 @@ search for that in the path.
 ## Usage
 
 ```
-&lt;check-file-exists macro="apply-transform" file="result.dat"/&gt;
+&lt;check-file-exists prefix="[apply-transform]" file="result.dat"/&gt;
 
-&lt;check-fileset-empty macro="apply-transform"&gt;
+&lt;check-fileset-empty prefix="[apply-transform]"&gt;
     &lt;fileset dir="../build" includes="**/*.dat"/&gt;
 &lt;/check-fileset-empty&gt;
 ```
@@ -85,6 +85,13 @@ These macros create the following (global) properties:
 
     </description>
 
+    <!-- TODO: see check-values.xml; should generalise here and have message prefix etc -->
+
+    <!-- include macros/properties -->
+    <dirname property="xpants.dir" file="${ant.file.file-utils}"/>
+
+    <include file="${xpants.dir}/check-value.xml"/>
+
     <!-- macros -->
 
     <macrodef
@@ -92,8 +99,9 @@ These macros create the following (global) properties:
         description="Fail the build if the specified file does not exist">
 
         <attribute
-            name="macro"
-            description="Calling macro name"/>
+            name="prefix"
+            default=""
+            description="Message prefix"/>
 
         <attribute
             name="file"
@@ -111,7 +119,7 @@ These macros create the following (global) properties:
                 <available file="@{file}" type="file"/>
             </condition>
 
-            <fail message="[@{macro}] file '@{file}' does not exist or is a directory" if:blank="@{property}">
+            <fail message="@{prefix} file '@{file}' does not exist or is a directory" if:blank="@{property}">
                 <condition>
                     <not><available file="@{file}" type="file"/></not>
                 </condition>
@@ -126,8 +134,9 @@ These macros create the following (global) properties:
         description="Fail the build if the specified directory does not exist">
 
         <attribute
-            name="macro"
-            description="Calling macro name"/>
+            name="prefix"
+            default=""
+            description="Message prefix"/>
 
         <attribute
             name="dir"
@@ -145,7 +154,7 @@ These macros create the following (global) properties:
                 <available file="@{dir}" type="dir"/>
             </condition>
 
-            <fail message="[@{macro}] directory '@{dir}' does not exist or is a file" if:blank="@{property}">
+            <fail message="@{prefix} directory '@{dir}' does not exist or is a file" if:blank="@{property}">
                 <condition>
                     <not><available file="@{dir}" type="dir"/></not>
                 </condition>
@@ -160,8 +169,9 @@ These macros create the following (global) properties:
         description="Fail the build if the specified fileset is empty">
 
         <attribute
-            name="macro"
-            description="Calling macro name"/>
+            name="prefix"
+            default=""
+            description="Message prefix"/>
 
         <attribute
             name="refid"
@@ -193,7 +203,7 @@ These macros create the following (global) properties:
                 <isset property="fileset.notempty"/>
             </condition>
 
-            <fail message="[@{macro}] fileset is empty" if:blank="@{property}">
+            <fail message="@{prefix} fileset is empty" if:blank="@{property}">
                 <condition>
                     <not><isset property="fileset.notempty"/></not>
                 </condition>
@@ -208,8 +218,9 @@ These macros create the following (global) properties:
         description="Fail the build if the class is not in the classpath">
 
         <attribute
-            name="macro"
-            description="Calling macro name"/>
+            name="prefix"
+            default=""
+            description="Message prefix"/>
 
         <attribute
             name="class"
@@ -229,7 +240,7 @@ These macros create the following (global) properties:
                 <available classname="@{class}"/>
             </condition>
 
-            <fail message="[@{macro}] class '@{class}' not available on the classpath" if:blank="@{property}">
+            <fail message="@{prefix} class '@{class}' not available on the classpath" if:blank="@{property}">
                 <condition>
                     <not><available classname="@{class}"/></not>
                 </condition>
@@ -257,7 +268,7 @@ These macros create the following (global) properties:
 
         <sequential>
 
-            <check-file-exists macro="check-file-contains" file="@{file}"/>
+            <check-file-exists prefix="[check-file-contains]" file="@{file}"/>
 
             <fail message="[check-file-contains] attribute '@{string}' is blank or not set" if:blank="@{string}"/>
 
@@ -301,7 +312,7 @@ These macros create the following (global) properties:
             <property environment="env"/>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="check-exe-path" name="property" value="@{property}"/>
+            <check-value-set prefix="[check-exe-path]" name="property" value="@{property}"/>
 
             <local name="property.name"/>
             <propertyregex property="property.name" input="@{property}" regexp="([a-zA-Z0-9_-]+).[a-zA-Z0-9_-]+" replace="\1"/>

@@ -9,7 +9,7 @@
 ---
 project:    XML Practical ANT Scripts
 title:      version-number.xml
-date:       2018-04-09
+date:       2018-05-02
 author:     Philip Hodder
 contact:    philip.hodder@encodis.com
 summary:    Macros to manipulate version numbers
@@ -94,7 +94,7 @@ $ ant version -Dversion.bump=major
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.version-number}"/>
 
-    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
@@ -129,11 +129,11 @@ $ ant version -Dversion.bump=major
             <!-- NOTE assumes version number matches "major.minor.patch", no element is optional -->
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="version-inc" name="increment" value="@{increment}"/>
-            <check-attr-list macro="version-inc" name="element" value="@{element}" list="major,minor,patch,build"/>
+            <check-value-set prefix="[version-inc]" name="increment" value="@{increment}"/>
+            <check-value-list prefix="[version-inc]" name="element" value="@{element}" list="major,minor,patch,build"/>
 
             <!-- check properties file exists -->
-            <check-file-exists macro="version-inc" file="@{file}"/>
+            <check-file-exists prefix="[version-inc]" file="@{file}"/>
 
             <!-- get version properties from file -->
             <property file="@{file}"/>
@@ -164,6 +164,7 @@ $ ant version -Dversion.bump=major
             <var name="version.minor" value="${version.number.minor}"/>
             <var name="version.patch" value="${version.number.patch}"/>
 
+            <!-- TODO: verify this works -->
             <math result="version.major" datatype="int" if:set="increment.major">
                 <add>
                     <num value="${version.major}"/>
@@ -406,7 +407,7 @@ $ ant version -Dversion.bump=major
         <sequential>
 
             <!-- check allowed stage name -->
-            <check-attr-list macro="release-stage-set" name="stage" value="@{stage}" list="@{stages}"/>
+            <check-value-list prefix="[release-stage-set]" name="stage" value="@{stage}" list="@{stages}"/>
 
             <local name="stage.list"/>
             <propertyregex property="stage.list" input="@{stages}" regexp="," replace="|"/>

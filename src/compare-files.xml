@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        compare-files.xml
-date:         2018-02-15
+date:         2018-05-02
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to compare and difference files.
@@ -165,8 +165,8 @@ The following properties can be set on the command line to override the default 
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.compare-files}"/>
 
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
-    <include file="${xpants.dir}/attr-checks.xml"/>
 
     <!-- macros -->
 
@@ -213,8 +213,8 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="compare-files" name="fileA" value="@{fileA}"/>
-            <check-attr-set macro="compare-files" name="fileB" value="@{fileB}"/>
+            <check-value-set prefix="[compare-files]" name="fileA" value="@{fileA}"/>
+            <check-value-set prefix="[compare-files]" name="fileB" value="@{fileB}"/>
 
             <!-- first, check if files are physically identical (true = the same, false = different) -->
             <local name="do.compare"/>
@@ -297,8 +297,8 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="compare-dirs" name="dirA" value="@{dirA}"/>
-            <check-attr-set macro="compare-dirs" name="dirB" value="@{dirB}"/>
+            <check-value-set prefix="[compare-dirs]" name="dirA" value="@{dirA}"/>
+            <check-value-set prefix="[compare-dirs]" name="dirB" value="@{dirB}"/>
 
             <compare-dirs-shallow
                 dirA="@{dirA}"
@@ -339,8 +339,8 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="compare-dirs-shallow" name="dirA" value="@{dirA}"/>
-            <check-attr-set macro="compare-dirs-shallow" name="dirB" value="@{dirB}"/>
+            <check-value-set prefix="[compare-dirs-shallow]" name="dirA" value="@{dirA}"/>
+            <check-value-set prefix="[compare-dirs-shallow]" name="dirB" value="@{dirB}"/>
 
             <!-- see http://ant.1045680.n5.nabble.com/Multiple-fileset-and-filelist-comparisons-td5716217.html -->
 
@@ -404,8 +404,8 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="compare-dirs-deep" name="dirA" value="@{dirA}"/>
-            <check-attr-set macro="compare-dirs-deep" name="dirB" value="@{dirB}"/>
+            <check-value-set prefix="[compare-dirs-deep]" name="dirA" value="@{dirA}"/>
+            <check-value-set prefix="[compare-dirs-deep]" name="dirB" value="@{dirB}"/>
 
             <!-- see http://ant.1045680.n5.nabble.com/Multiple-fileset-and-filelist-comparisons-td5716217.html -->
 
@@ -517,10 +517,10 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="diff-files" name="fileA" value="@{fileA}"/>
-            <check-attr-set macro="diff-files" name="fileB" value="@{fileB}"/>
-            <check-attr-set macro="diff-files" name="output" value="@{output}"/>
-            <check-attr-set macro="diff-files" name="type" value="@{type}"/>
+            <check-value-set prefix="[diff-files]" name="fileA" value="@{fileA}"/>
+            <check-value-set prefix="[diff-files]" name="fileB" value="@{fileB}"/>
+            <check-value-set prefix="[diff-files]" name="output" value="@{output}"/>
+            <check-value-set prefix="[diff-files]" name="type" value="@{type}"/>
 
             <!-- by default always use text compare unless specifically told to use XML -->
             <!-- TODO autodetect classpath of DeltaXML? -->
@@ -572,9 +572,9 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="diff-files-txt" name="fileA" value="@{fileA}"/>
-            <check-attr-set macro="diff-files-txt" name="fileB" value="@{fileB}"/>
-            <check-attr-set macro="diff-files-txt" name="output" value="@{output}"/>
+            <check-value-set prefix="[diff-files-txt]" name="fileA" value="@{fileA}"/>
+            <check-value-set prefix="[diff-files-txt]" name="fileB" value="@{fileB}"/>
+            <check-value-set prefix="[diff-files-txt]" name="output" value="@{output}"/>
 
             <!-- check for diff exe -->
             <check-exe-path property="diff.exe" unless:set="diff.exe"/>
@@ -624,13 +624,13 @@ The following properties can be set on the command line to override the default 
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="diff-files-xml" name="fileA" value="@{fileA}"/>
-            <check-attr-set macro="diff-files-xml" name="fileB" value="@{fileB}"/>
-            <check-attr-set macro="diff-files-xml" name="config" value="@{config}"/>
-            <check-attr-set macro="diff-files-xml" name="output" value="@{output}"/>
+            <check-value-set prefix="[diff-files-xml]" name="fileA" value="@{fileA}"/>
+            <check-value-set prefix="[diff-files-xml]" name="fileB" value="@{fileB}"/>
+            <check-value-set prefix="[diff-files-xml]" name="config" value="@{config}"/>
+            <check-value-set prefix="[diff-files-xml]" name="output" value="@{output}"/>
 
             <!-- fail if @{config} not specified correctly -->
-            <check-attr-list macro="diff-files-xml" name="config" value="@{config}" list="delta,diffreport,diffreport-sbs,raw,schema,xhtml,doc-delta,doc-diffreport,doc-diffreport-sbs"/>
+            <check-value-list prefix="[diff-files-xml]" name="config" value="@{config}" list="delta,diffreport,diffreport-sbs,raw,schema,xhtml,doc-delta,doc-diffreport,doc-diffreport-sbs"/>
 
             <!-- default Delta XML location -->
             <property name="deltaxml.dir" location="${user.home}/.ant/lib/DeltaXMLCore-8_2_1_j"/>

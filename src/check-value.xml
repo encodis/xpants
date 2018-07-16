@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+    name="check-value"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+project:    XML Practical ANT Scripts
+title:      check-value.xml
+date:       2018-05-02
+author:     Philip Hodder
+contact:    philip.hodder@encodis.com
+summary:    Macros to check various types of values
+...
+
+# check-value.xml
+
+A set of utility macros to check values of properties (or macro attribute values).
+
+## Usage
+
+```
+&lt;check-value-set prefix="[apply-transform]" name="file" value="@{file}"/&gt;
+```
+
+```
+&lt;check-value-list
+&#9;prefix="[apply-transform]"
+&#9;name="options"
+&#9;value="@{options}"
+&#9;list="alpha,bravo,charlie"/&gt;
+```
+
+## Dependencies
+
+None
+
+## Properties
+
+These macros use the following properties:
+
+* *xpants.debug* Output additional information for debugging
+
+## Change Log
+
+##### 2017-12-05 (Initial version) (PH)
+
+##### 2018-05-02 Generalised to values rather than attributes (PH)
+
+    </description>
+
+    <!-- macros -->
+
+    <macrodef
+        name="check-value-set"
+        description="Fail the build if the specified value is not set or is blank">
+
+        <attribute
+            name="prefix"
+            default=""
+            description="Message prefix"/>
+
+        <attribute
+            name="name"
+            description="Value name"/>
+
+        <attribute
+            name="value"
+            description="Value"/>
+
+        <sequential>
+
+            <fail message="@{prefix} '@{name}' is blank or not set" if:blank="@{value}"/>
+
+            <!-- TODO add check for it all being spaces -->
+
+            <echo message="@{prefix} @{name}=@{value}" if:true="${xpants.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="check-value-bool"
+        description="Fail the build if the specified value is not a boolean value">
+
+        <attribute
+            name="prefix"
+            default=""
+            description="Message prefix"/>
+
+        <attribute
+            name="name"
+            description="Value name"/>
+
+        <attribute
+            name="value"
+            description="Value"/>
+
+        <sequential>
+
+            <fail message="@{prefix} '@{name}' is blank" if:blank="@{value}"/>
+
+            <fail message="@{prefix} '@{name}' is not 'true' or 'false', 'on' or 'off', 'yes' or 'no'">
+                <condition>
+                    <not><contains string="true,false,on,off,yes,no" substring="@{value}"/></not>
+                </condition>
+            </fail>
+
+            <echo message="@{prefix} @{name}=@{value}" if:true="${xpants.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+
+    <macrodef
+        name="check-value-list"
+        description="Fail the build if the specified value is not one of a list of values">
+
+        <attribute
+            name="prefix"
+            default=""
+            description="Message prefix"/>
+
+        <attribute
+            name="name"
+            description="Value name"/>
+
+        <attribute
+            name="value"
+            description="Value"/>
+
+        <attribute
+            name="list"
+            description="List of allowed values"/>
+
+        <sequential>
+
+            <fail message="@{prefix} '@{name}' is blank" if:blank="@{value}"/>
+
+            <fail message="@{prefix} '@{name}' is not one of the allowed values: '@{list}'">
+                <condition>
+                    <not><contains string="@{list}" substring="@{value}"/></not>
+                    <!-- TODO what if value contains a , (or a space) -->
+                    <!-- TODO tokenize comma/space sep list and check tokens? -->
+                </condition>
+            </fail>
+
+            <echo message="@{prefix} @{name}=@{value}" if:true="${xpants.debug}"/>
+
+        </sequential>
+    </macrodef>
+
+</project>

@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        extract-markdown.xml
-date:         2018-04-09
+date:         2018-05-02
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to use extract Markdown documentation from files
@@ -77,7 +77,7 @@ XSLT files.
     <dirname property="xpants.dir" file="${ant.file.extract-markdown}"/>
 
     <include file="${xpants.dir}/apply-transform.xml"/>
-    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
 
     <!-- macros -->
@@ -108,8 +108,8 @@ XSLT files.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="extract-markdown" name="output" value="@{output}"/>
-            <check-attr-list macro="extract-markdown" name="type" value="@{type}" list="ant,sch,xsl"/>
+            <check-value-set prefix="[extract-markdown]" name="output" value="@{output}"/>
+            <check-value-list prefix="[extract-markdown]" name="type" value="@{type}" list="ant,sch,xsl"/>
 
             <!-- file or fileset mode? -->
             <extract-markdown-file
@@ -149,10 +149,10 @@ XSLT files.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="extract-markdown-file" name="file" value="@{file}"/>
+            <check-value-set prefix="[extract-markdown-file]" name="file" value="@{file}"/>
 
             <!-- fail if file does not exist -->
-            <check-file-exists macro="extract-markdown-file" file="@{file}"/>
+            <check-file-exists prefix="[extract-markdown-file]" file="@{file}"/>
 
             <!-- detect stylesheet to use, use file extension if not specified -->
             <!-- NOTE this will not be called if type is blank as parent macro will fail, so be careful -->
@@ -164,7 +164,7 @@ XSLT files.
                 <equals arg1="@{type}" arg2=""/>
             </condition>
 
-            <check-attr-list macro="extract-markdown-file" name="file.type" value="${file.type}" list="ant,sch,xsl"/>
+            <check-value-list prefix="[extract-markdown-file]" name="file.type" value="${file.type}" list="ant,sch,xsl"/>
 
             <!-- get stylesheet name -->
             <local name="extract.stylesheet"/>
@@ -201,7 +201,7 @@ XSLT files.
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="extract-markdown-fileset">
+            <check-fileset-empty prefix="[extract-markdown-fileset]">
                 <input.files/>
             </check-fileset-empty>
 
@@ -209,7 +209,7 @@ XSLT files.
             <mkdir dir="@{output}"/>
 
             <!-- check output has been created and is a dir -->
-            <check-dir-exists macro="extract-markdown-fileset" dir="@{output}"/>
+            <check-dir-exists prefix="[extract-markdown-fileset]" dir="@{output}"/>
 
             <!-- extract macrkdown for all files in fileset -->
             <property name="for.keepgoing" value="true"/>

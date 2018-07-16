@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        validate-instance.xml
-date:         2018-04-09
+date:         2018-05-02
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to validate XML instances using schema (XSD, DTD, RNC or RNG) or Schematron
@@ -90,7 +90,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
     <!-- include macros/properties -->
     <dirname property="xpants.dir" file="${ant.file.validate-instance}"/>
 
-    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
     <include file="${xpants.dir}/compile-schematron.xml"/>
 
@@ -240,29 +240,32 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="validate-instance-file" name="file" value="@{file}"/>
-            <check-attr-list macro="validate-instance-file" name="type" value="@{type}" list="dtd,xsd,rnc,rng,sch"/>
+            <check-value-set prefix="[validate-instance-file]" name="file" value="@{file}"/>
+            <check-value-list prefix="[validate-instance-file]" name="type" value="@{type}" list="dtd,xsd,rnc,rng,sch"/>
 
             <!-- fail if instance file does not exist -->
-            <check-file-exists macro="validate-instance-file" file="@{file}"/>
+            <check-file-exists prefix="[validate-instance-file]" file="@{file}"/>
 
             <!-- fail if schema given but does not exist -->
-            <check-file-exists macro="validate-instance-file" file="@{schema}" unless:blank="@{schema}"/>
+            <check-file-exists prefix="[validate-instance-file]" file="@{schema}" unless:blank="@{schema}"/>
 
             <!-- set schema type -->
             <local name="schema.@{type}"/>
             <property name="schema.@{type}" value="true"/>
 
             <!-- if validating XSD must supply namespace -->
-            <check-attr-set macro="validate-instance-file" name="namespace" value="@{namespace}" if:set="${schema.xsd}"/>
+            <check-value-set prefix="[validate-instance-file]" name="namespace" value="@{namespace}" if:set="${schema.xsd}"/>
 
             <!-- if validating with RNG/RNC must supply schema explicitly -->
-            <check-attr-set macro="validate-instance-file" name="schema" value="@{schema}" if:set="${schema.rng}"/>
-            <check-attr-set macro="validate-instance-file" name="schema" value="@{schema}" if:set="${schema.rnc}"/>
+            <check-value-set prefix="[validate-instance-file]" name="schema" value="@{schema}" if:set="${schema.rng}"/>
+            <check-value-set prefix="[validate-instance-file]" name="schema" value="@{schema}" if:set="${schema.rnc}"/>
 
             <!-- set up properties for catalog use, can override on command line -->
             <property environment="env"/>
             <property name="xpants.catalog" value="${env.XPANTS_CATALOG}" if:set="env.XPANTS_CATALOG"/>
+
+            <!-- property for jing.class -->
+            <property name="jing.class" value="com.thaiopensource.relaxng.util.Driver"/>
 
             <!-- set up XML catalog -->
             <xmlcatalog id="xpantscatalog" if:set="xpants.catalog">
@@ -304,12 +307,12 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                 <xmlcatalog refid="xpantscatalog" if:set="xpants.catalog"/>
 			</schemavalidate>
 
-            <!-- check jing.jar exists -->
-            <check-class-path macro="validate-instance" class="com.thaiopensource.relaxng.util.Driver" if:set="${schema.rnc}"/>
+            <!-- check jing.jar exists for RNC -->
+            <check-class-path prefix="[validate-instance]" class="${jing.class}" if:set="${schema.rnc}"/>
 
             <!-- validate RNC -->
             <java
-                classpath="com.thaiopensource.relaxng.util.Driver"
+                classpath="${jing.class}"
                 failonerror="false"
                 if:set="${schema.rnc}">
                 <arg value="-c"/>
@@ -317,12 +320,12 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
                 <arg value="@{file}"/>
             </java>
 
-            <!-- check jing.jar exists -->
-            <check-class-path macro="validate-instance" class="com.thaiopensource.relaxng.util.Driver" if:set="${schema.rng}"/>
+            <!-- check jing.jar exists for RNG -->
+            <check-class-path prefix="[validate-instance]" class="${jing.class}" if:set="${schema.rng}"/>
 
             <!-- validate RNG -->
             <java
-                classpath="com.thaiopensource.relaxng.util.Driver"
+                classpath="${jing.class}"
                 failonerror="false"
                 if:set="${schema.rng}">
                 <arg value="@{schema}"/>
@@ -420,7 +423,7 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="validate-instance-fileset">
+            <check-fileset-empty prefix="[validate-instance-fileset]">
                 <input.files/>
             </check-fileset-empty>
 

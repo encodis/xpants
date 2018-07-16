@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        compile-schematron.xml
-date:         2018-04-09
+date:         2018-05-02
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to compile Schematron files
@@ -140,7 +140,7 @@ library, rather than on the command line.
     <dirname property="xpants.dir" file="${ant.file.compile-schematron}"/>
 
     <include file="${xpants.dir}/apply-transform.xml"/>
-    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/check-value.xml"/>
 
     <!-- macros -->
 
@@ -186,7 +186,7 @@ library, rather than on the command line.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="compile-schematron" name="output" value="@{output}"/>
+            <check-value-set prefix="[compile-schematron]" name="output" value="@{output}"/>
 
             <!-- file or fileset mode? -->
             <compile-schematron-file
@@ -247,10 +247,10 @@ library, rather than on the command line.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="compile-schematron-file" name="file" value="@{file}"/>
+            <check-value-set prefix="[compile-schematron-file]" name="file" value="@{file}"/>
 
             <!-- fail if file does not exist -->
-            <check-file-exists macro="compile-schematron-file" file="@{file}"/>
+            <check-file-exists prefix="[compile-schematron-file]" file="@{file}"/>
 
             <!-- make temporary files for the intermediate stages -->
             <property name="temp.dir" value="${java.io.tmpdir}"/>
@@ -359,7 +359,7 @@ library, rather than on the command line.
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="compile-schematron-fileset">
+            <check-fileset-empty prefix="[compile-schematron-fileset]">
                 <input.files/>
             </check-fileset-empty>
 
@@ -367,7 +367,7 @@ library, rather than on the command line.
             <mkdir dir="@{output}"/>
 
             <!-- check output has been created and is a dir -->
-            <check-dir-exists macro="compile-schematron-fileset" dir="@{output}"/>
+            <check-dir-exists prefix="[compile-schematron-fileset]" dir="@{output}"/>
 
             <!-- compile all schematron files in fileset -->
             <property name="for.keepgoing" value="true"/>
@@ -410,8 +410,8 @@ library, rather than on the command line.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="compile-schematron-merge-includes" name="file" value="@{file}"/>
-            <check-attr-set macro="compile-schematron-merge-includes" name="output" value="@{output}"/>
+            <check-value-set prefix="[compile-schematron-merge-includes]" name="file" value="@{file}"/>
+            <check-value-set prefix="[compile-schematron-merge-includes]" name="output" value="@{output}"/>
 
             <property name="merge-schematron-includes.stylesheet" value="iso/iso_dsdl_include"/>
 
@@ -438,8 +438,8 @@ library, rather than on the command line.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="compile-schematron-resolve-abstracts" name="file" value="@{file}"/>
-            <check-attr-set macro="compile-schematron-resolve-abstracts" name="output" value="@{output}"/>
+            <check-value-set prefix="[compile-schematron-resolve-abstracts]" name="file" value="@{file}"/>
+            <check-value-set prefix="[compile-schematron-resolve-abstracts]" name="output" value="@{output}"/>
 
             <!-- NOTE set property "resolve-schematron-abstracts.stylesheet=iso/iso_abstract_expand_bugfix6" to override -->
 

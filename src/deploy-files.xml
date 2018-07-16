@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        deploy-files.xml
-date:         2018-02-20
+date:         2018-05-02
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to use deploy files to a location
@@ -76,9 +76,9 @@ Deploy different filesets for 'latest' and 'versioned' files:
 ## Dependencies
 
 * ${xpants.dir}/aws.xml
-* ${xpants.dir}/ssh.xml
-* ${xpants.dir}/attr-checks.xml
+* ${xpants.dir}/check-value.xml
 * ${xpants.dir}/file-utils.xml
+* ${xpants.dir}/ssh.xml
 
 ## Properties
 
@@ -108,9 +108,9 @@ The following properties are required when using the 'aws' method:
     <dirname property="xpants.dir" file="${ant.file.deploy-files}"/>
 
     <include file="${xpants.dir}/aws.xml"/>
-    <include file="${xpants.dir}/ssh.xml"/>
-    <include file="${xpants.dir}/attr-checks.xml"/>
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
+    <include file="${xpants.dir}/ssh.xml"/>
 
     <!-- macros -->
 
@@ -134,11 +134,11 @@ The following properties are required when using the 'aws' method:
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="deploy-file" name="file" value="@{file}"/>
-            <check-attr-set macro="deploy-file" name="target" value="@{target}"/>
+            <check-value-set prefix="[deploy-file]" name="file" value="@{file}"/>
+            <check-value-set prefix="[deploy-file]" name="target" value="@{target}"/>
 
             <!-- check that @{file} exists -->
-            <check-file-exists macro="deploy-file" file="@{file}"/>
+            <check-file-exists prefix="[deploy-file]" file="@{file}"/>
 
             <!-- get base filename -->
             <local name="file.name"/>
@@ -212,23 +212,23 @@ The following properties are required when using the 'aws' method:
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="deploy-file" name="target" value="@{target}"/>
+            <check-value-set prefix="[deploy-file]" name="target" value="@{target}"/>
 
             <!-- check fileset/source combinations -->
-            <check-fileset-empty macro="deploy-files" if:blank="@{source}">
+            <check-fileset-empty prefix="[deploy-files]" if:blank="@{source}">
                 <deploy.files/>
             </check-fileset-empty>
 
-            <check-dir-exists macro="deploy-files" dir="@{source}" unless:blank="@{source}"/>
+            <check-dir-exists prefix="[deploy-files]" dir="@{source}" unless:blank="@{source}"/>
 
             <!-- fail if @{clean} not specified correctly -->
-            <check-attr-list macro="deploy-files" name="clean" value="@{clean}" list="target,files,none"/>
+            <check-value-list prefix="[deploy-files]" name="clean" value="@{clean}" list="target,files,none"/>
 
             <!-- choose deploy method (override on command line if required) -->
             <property name="deploy.method" value="@{method}"/>
 
             <!-- fail if ${deploy.method} is not specified correctly -->
-            <check-attr-list macro="deploy-files" name="method" value="${deploy.method}" list="copy,sync,scp,aws"/>
+            <check-value-list prefix="[deploy-files]" name="method" value="${deploy.method}" list="copy,sync,scp,aws"/>
 
             <property name="method.${deploy.method}" value="true"/>
 

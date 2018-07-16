@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        xspec.xml
-date:         2018-04-09
+date:         2018-05-02
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to use XSpec within a build file
@@ -53,10 +53,10 @@ None.
     <taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
     <!-- include macros/properties -->
-    <dirname property="xpants.dir" file="${ant.file.git}"/>
+    <dirname property="xpants.dir" file="${ant.file.xspec}"/>
 
+    <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/file-utils.xml"/>
-    <include file="${xpants.dir}/attr-checks.xml"/>
 
     <!-- macros -->
 
@@ -139,12 +139,12 @@ None.
         <sequential>
 
             <!-- fail if required attributes not set -->
-            <check-attr-set macro="xspec-file" name="file" value="@{file}"/>
+            <check-value-set prefix="[xspec-file]" name="file" value="@{file}"/>
 
-            <check-attr-list macro="xspec-file" name="test" value="@{test}" list="xslt,xquery,schematron"/>
+            <check-value-list prefix="[xspec-file]" name="test" value="@{test}" list="xslt,xquery,schematron"/>
 
-            <check-attr-bool macro="xspec-file" name="coverage" value="@{coverage}"/>
-            <check-attr-bool macro="xspec-file" name="junit" value="@{junit}"/>
+            <check-value-bool prefix="[xspec-file]" name="coverage" value="@{coverage}"/>
+            <check-value-bool prefix="[xspec-file]" name="junit" value="@{junit}"/>
 
             <!-- find XSpec command -->
             <check-exe-path property="xspec.exe" unix="xspec.sh" windows="xspec.bat" unless:set="xspec.exe"/>
@@ -199,7 +199,7 @@ None.
         <sequential>
 
             <!-- fail if input fileset is empty -->
-            <check-fileset-empty macro="xspec-fileset">
+            <check-fileset-empty prefix="[xspec-fileset]">
                 <xspec.files/>
             </check-fileset-empty>
 

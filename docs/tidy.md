@@ -80,7 +80,7 @@ file
 | params | Additional parameters and options    |         |         |    no    |
 | output | Path for the output file             |         |         |    no    |
 
-## tidy-dir
+## tidy-fileset
 
 Run tidy on a folder of HTML
 files
