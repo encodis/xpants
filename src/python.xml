@@ -94,7 +94,7 @@ property will be based on the script name given in the attribute:
 
         <attribute
             name="version"
-            default=""
+            default="3"
             description="Python version [2,3]"/>
 
         <attribute
@@ -188,6 +188,8 @@ property will be based on the script name given in the attribute:
         name="python-build-distribution"
         description="Build a distribution for a python module">
 
+        <!-- TODO needs more options e.g. for bdist wheel -->
+
         <attribute
             name="dir"
             default=""
@@ -206,10 +208,10 @@ property will be based on the script name given in the attribute:
         </sequential>
     </macrodef>
 
-
+    <!-- DELETE not appropriate for this -->
     <macrodef
         name="python-install-module"
-        description="Install a python module">
+        description="Install a Python module">
 
         <attribute
             name="dir"
