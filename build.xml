@@ -187,7 +187,7 @@ summary:     Build file for XPantS
         name="local-install"
         description="Deploy local build to user's ANT library"
         depends="build-distribution">
-
+        <!-- TODO remove old installs -->
         <deploy-file
             file="${build.dir}/${dist.dir}/${jar.file}"
             target="${user.home}/.ant/lib"
