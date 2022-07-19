@@ -8,7 +8,7 @@
 ---
 project:      XML Practical ANT Scripts
 title:        pandoc.xml
-date:         2018-05-02
+date:         2020-10-12
 author:       Philip Hodder
 contact:      philip.hodder@encodis.com
 summary:      Macro definitions to process files using pandoc
@@ -46,6 +46,8 @@ The following properties can be set on the command line to override the default 
 ##### 2018-02-14 (PH) Initial version
 
 ##### 2018-04-09 (PH) Macro naming alignment
+
+##### 2020-10-12 (PH) Add metadata variables option
 
     </description>
 
@@ -115,6 +117,11 @@ The following properties can be set on the command line to override the default 
             description="List of variables"/>
 
         <attribute
+            name="metadata"
+            default=""
+            description="List of metadata variables"/>
+
+        <attribute
             name="output"
             description="Path for output file(s)"/>
 
@@ -142,6 +149,7 @@ The following properties can be set on the command line to override the default 
                 filters="@{filters}"
                 lua-filters="@{lua-filters}"
                 variables="@{variables}"
+                metadata="@{metadata}"
                 output="@{output}"
                 unless:blank="@{file}"/>
 
@@ -155,6 +163,7 @@ The following properties can be set on the command line to override the default 
                 filters="@{filters}"
                 lua-filters="@{lua-filters}"
                 variables="@{variables}"
+                metadata="@{metadata}"
                 output="@{output}"
                 if:blank="@{file}">
                 <input.files/>
@@ -218,6 +227,11 @@ The following properties can be set on the command line to override the default 
             description="List of variables"/>
 
         <attribute
+            name="metadata"
+            default=""
+            description="List of metadata variables"/>
+
+        <attribute
             name="output"
             description="Output file"/>
 
@@ -250,6 +264,10 @@ The following properties can be set on the command line to override the default 
             <!-- convert variables -->
             <local name="variables.list"/>
             <propertyregex property="variables.list" input="@{variables}" regexp="^|," replace=" --variable=" global="true"/>
+            
+            <!-- convert metadata -->
+            <local name="metadata.list"/>
+            <propertyregex property="metadata.list" input="@{metadata}" regexp="^|," replace=" --metadata=" global="true"/>
 
             <!-- TODO allow for multiple CSS stylesheets -->
             <local name="style.list"/>
@@ -267,8 +285,9 @@ The following properties can be set on the command line to override the default 
                 <arg line="${style.list}" unless:blank="@{style}"/>
                 <arg value="--data-dir=@{datadir}" unless:blank="@{datadir}"/>
                 <arg line="${filters.list}" unless:blank="@{filters}"/>
-                <arg line="${lua-filters.list}" unless:blank="@{lua-filters}"/>
                 <arg line="${variables.list}" unless:blank="@{variables}"/>
+                <arg line="${metadata.list}" unless:blank="@{metadata}"/>
+                <arg line="${lua-filters.list}" unless:blank="@{lua-filters}"/>
                 <arg value="--output=@{output}"/>
 
                 <arg value="@{file}"/>
@@ -328,6 +347,11 @@ The following properties can be set on the command line to override the default 
             description="List of variables"/>
 
         <attribute
+            name="metadata"
+            default=""
+            description="List of metadata variables"/>
+
+        <attribute
             name="output"
             description="Path for converted files"/>
 
@@ -377,6 +401,8 @@ The following properties can be set on the command line to override the default 
                         style="@{style}"
                         filters="@{filters}"
                         lua-filters="@{lua-filters}"
+                        variables="@{variables}"
+                        metadata="@{metadata}"
                         output="@{output}/${output.file}.${output.ext}"/>
 
                 </sequential>
