@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project
-    name="content"
+    name="content-utils"
     xmlns:if="ant:if"
     xmlns:unless="ant:unless">
 
     <description>
 ---
 project:    XML Practical ANT Scripts
-title:      content.xml
+title:      content-utils.xml
 date:       2022-07-19
 author:     Philip Hodder
 contact:    philip.hodder@encodis.com
 summary:    Macros to help manipulate content files
 ...
 
-# content.xml
+# content-utils.xml
 
 A set of utility macros to help manage content, usually for subsequent processing in e.g. pandoc:
 

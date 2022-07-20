@@ -12,7 +12,7 @@ title: validate-instance.xml
 
 A set of macro definitions to validate an XML file using a related
 schema. Essentially this macro is a wrapper around ANT’s built in
-`<xmlvalidate>` and `<schemavalidate>` tasks, together with the “java”
+`<xmlvalidate>` and `<schemavalidate>` tasks, together with the `<java>`
 task (for RelaxNG validation), and the `<apply-template>` and
 `<compile-schematron>` macros (for Schematron validation). The top level
 macro (“validate-instance”) will validate either a single file or a file

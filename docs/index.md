@@ -17,11 +17,13 @@ XPantS assumes that a number of additional libraries and/or applications are ins
 
 *   Although it is not required the [Saxon XSLT and XQuery Processor](https://www.saxonica.com/products/products.xml) is recommended. XPantS will use Saxon for XSLT processing if it can, otherwise it will default to Xalan.
 
-    > NOTE: Ensure that the relevant Saxon JAR file is in ANT's classpath (e.g. in **$ANT_HOME/lib** or **~/.ant/lib**). Installing Saxon using [Homebrew](brew.sh) on MacOS will place it in a location like **/usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar**. The simplest way to fix this is to set up a symbolic link:
+    > NOTE: Ensure that the relevant Saxon JAR file is in ANT's classpath (e.g. in **$ANT_HOME/lib** or **~/.ant/lib**). Installing Saxon using [Homebrew](brew.sh) on MacOS will place it in a location like **/usr/local/Cellar/saxon/11.3/libexec/saxon9he.jar**. The simplest way to fix this is to set up a symbolic link:
     >
-    `$ ln -s /usr/local/Cellar/saxon/9.8.0.4/libexec/saxon9he.jar ~/.ant/lib`.
-
-*   [XML Resolver](http://www.java2s.com/Code/Jar/x/Downloadxmlresolverjar.htm), installed in ANT's classpath. You may get warnings if the corresponding **XMLResolver.properties** file is missing, but these can generally be ignored. Alternatively, use the **resolver.jar** available from [DeltaXML](https://docs.deltaxml.com/core/current/samples/FilesWithCatalog/ReadMe.html) which contains a number of fixes to the Apache version.
+    `$ ln -s /usr/local/Cellar/saxon/11.3/libexec/saxon9he.jar ~/.ant/lib`.
+    >
+    > Note that if Homebrew updates Saxon you will need to recreate the link.
+    
+*   [XML Resolver](https://xmlresolver.org), installed in ANT's classpath (or **~/.ant/lib**).
 
 *   The *convert-schema* macros use the [Trang](http://www.thaiopensource.com/relaxng/trang.html) converter, which should be installed in the ANT classpath (e.g. in **$ANT_HOME/lib** or **~/.ant/lib**).
 
@@ -68,7 +70,6 @@ If you have used the alternative installation method (copying individual files t
     <!-- include macros/properties -->
     <property environment="env"/>
 
-    <include file="/usr/local/lib/xpants/attr-checks.xml"/>
     <include file="/usr/local/lib/xpants/file-checks.xml"/>
 
     ...
@@ -87,6 +88,8 @@ Note that in this case, if one macro needs a macro in another file it will autom
 [compare-files](compare-files.md)
 
 [compile-schematron](compile-schematron.md)
+
+[content-utils](content-utils.md)
 
 [convert-schema](convert-schema.md)
 

@@ -17,7 +17,7 @@ XPantS assumes that a number of additional libraries and/or applications are ins
 
 *   [Saxon XSLT and XQuery Processor](https://www.saxonica.com/products/products.xml) (not required, but recommended).
 
-*   [XML Resolver](http://www.java2s.com/Code/Jar/x/Downloadxmlresolverjar.htm).
+*   [XML Resolver](https://xmlresolver.org).
 
 *   A number of macros act as wrappers around command line applications, which obviously need to be installed to work.
 

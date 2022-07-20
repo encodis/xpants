@@ -45,7 +45,7 @@ included separately. This may increase load time, as each file loads the environ
     <include file="${xpants.dir}/check-value.xml"/>
     <include file="${xpants.dir}/compare-files.xml"/>
     <include file="${xpants.dir}/compile-schematron.xml"/>
-    <include file="${xpants.dir}/content.xml"/>
+    <include file="${xpants.dir}/content-utils.xml"/>
     <include file="${xpants.dir}/convert-schema.xml"/>
     <include file="${xpants.dir}/deploy-files.xml"/>
     <include file="${xpants.dir}/extract-markdown.xml"/>

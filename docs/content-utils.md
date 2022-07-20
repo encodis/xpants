@@ -4,10 +4,10 @@ contact: philip.hodder@encodis.com
 date: 2022-07-19
 project: XML Practical ANT Scripts
 summary: Macros to help manipulate content files
-title: content.xml
+title: content-utils.xml
 ---
 
-# content.xml
+# content-utils.xml
 
 A set of utility macros to help manage content, usually for subsequent
 processing in e.g. pandoc:
