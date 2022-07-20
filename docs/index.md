@@ -82,8 +82,6 @@ Note that in this case, if one macro needs a macro in another file it will autom
 
 [apply-transform](apply-transform.md)
 
-[attr-checks](attr-checks.md)
-
 [aws](aws.md)
 
 [compare-files](compare-files.md)
