@@ -19,7 +19,7 @@ summary:      Macro definitions to use XSpec within a build file
 A set of macro definitions to use [XSpec](https://github.com/xspec/xspec) from within a build file.
 These macros simply wrap the **xspec.bat** or **xspec.sh** command file.
 
-&gt; NOTE: These macros will execute the XSpec command file using ANT's &lt;exec&gt; command. They
+&gt; NOTE: These macros will execute the XSpec command file using ANT's `&lt;exec&gt;` command. They
 do not attempt to replicate the logic in those files. Therefore XSpec must be installed and
 configured as described in its instructions. However, in addition to this, the folder containing
 the **xspec.bat/xspec.sh** files must be on the path.
