@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+    name="content"
+    xmlns:if="ant:if"
+    xmlns:unless="ant:unless">
+
+    <description>
+---
+project:    XML Practical ANT Scripts
+title:      content.xml
+date:       2022-07-19
+author:     Philip Hodder
+contact:    philip.hodder@encodis.com
+summary:    Macros to help manipulate content files
+...
+
+# content.xml
+
+A set of utility macros to help manage content, usually for subsequent processing in e.g. pandoc:
+
+*  *compile-contents* produces a single file by concatenating all files in a folder, or by 
+using a file containing a list of files. As these may also be Markdown files, this macro
+removes YAML headers from each one.
+
+NOTE: PDF document production is still TBD.
+
+## Usage
+
+TBC
+
+## Dependencies
+
+None
+
+## Properties
+
+These macros use the following properties:
+
+*  *xpants.debug* Output additional information for debugging
+
+## Change Log
+
+##### 2022-07-19 (Initial version) (PH)
+
+    </description>
+
+    <!-- macros -->
+
+    <macrodef
+        name="compile-contents"
+        description="Compile a list of contents into a single file">
+        
+        <attribute
+            name="contents"
+            default=""
+            description="File containing list of files to convert, one file per line"/>
+
+        <!-- TBD: this complicates things and may not be required -->
+        <!-- <attribute
+            name="folder"
+            default=""
+            description="Folder to be added to the list of files"/> -->
+
+        <attribute
+            name="output"
+            description="Name of output file"/>
+        
+        <!-- contentSet -->
+        <element
+            name="contentSet"
+            optional="true"
+            implicit="true"
+            description="File set to be converted"/>
+            
+        <sequential>
+    
+            <!-- check if file set is empty -->
+            <local name="book.contentset-not-empty"/>
+            <pathconvert property="book.contentset-not-empty" setonempty="false" if:blank="@{contents}">
+                <input/>
+            </pathconvert>
+
+            <!-- fail if there are no files to process -->
+            <fail message="[compile-contents] no files to process, one of 'contents' or 'contentSet' must be set">
+                <condition>
+                    <and>
+                        <equals arg1="@{contents}" arg2=""/>
+                        <not><isset property="book.contentset-not-empty"/></not>
+                    </and>
+                </condition>
+            </fail>
+        
+            <!-- if using a contents file then make sure the lines are prefixed with either 
+                 the file's folder or the folder given as an attribute -->
+            
+            <!-- temporary file list with correct path -->
+            <local name="book.folder"/>
+            <dirname property="book.folder" file="@{contents}" unless:blank="@{contents}"/>
+
+            <!-- use loadfile and echo combination to prefix lines in contents file -->
+            <local name="book.contents"/>
+            <loadfile property="book.contents" srcFile="@{contents}" unless:blank="@{contents}">
+                <filterchain>
+                    <prefixlines prefix="${book.folder}/"/>
+                </filterchain>
+            </loadfile>
+        
+            <!-- book-contents.file is a property containing the lines from contents with correct paths -->
+            <tempfile property="book.contents-file" suffix=".txt" destdir="${build.dir}" deleteonexit="true" unless:blank="@{contents}"/>
+            <echo file="${book.contents-file}" message="${book.contents}" unless:blank="@{contents}"/>
+            
+            <!-- TODO: (optionally) remove YAML header from each file. This cannot be done using 
+            ANT tasks, will have to be a external (MW?) tool. This would then be a separate step and
+            would create a number of files with the same name in a temp dir to then be concatenated -->
+            
+            <!-- concatenate the source files together -->
+            <concat
+                destfile="@{output}"
+                overwrite="true"
+                append="yes"
+                fixlastline="yes">
+
+                <resourcelist unless:blank="@{contents}">
+                    <file file="${book.contents-file}"/>
+                </resourcelist>
+
+                <contentSet if:set="book.contentset-not-empty"/>
+            </concat>
+        
+        </sequential>
+
+    </macrodef>
