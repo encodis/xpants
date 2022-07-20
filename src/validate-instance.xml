@@ -18,8 +18,8 @@ summary:      Macro definitions to validate XML instances using schema (XSD, DTD
 
 A set of macro definitions to validate an XML file using a related schema. Essentially this macro is
 a wrapper around ANT's built in `&lt;xmlvalidate&gt;` and `&lt;schemavalidate&gt;` tasks, together
-with the &lt;java&gt; task (for RelaxNG validation), and the &lt;apply-template&gt; and
-&lt;compile-schematron&gt; macros (for Schematron validation). The top level macro
+with the `&lt;java&gt;` task (for RelaxNG validation), and the `&lt;apply-template&gt;` and
+`&lt;compile-schematron&gt;` macros (for Schematron validation). The top level macro
 ("validate-instance") will validate either a single file or a file set, depending on the arguments
 supplied:
 
@@ -81,6 +81,8 @@ the value of the *XPANTS_CATALOG* environment variable (if set).
 ##### 2018-04-09 (PH) Macro naming alignment
 
 ##### 2018-04-10 (PH) Renamed to validate-instance
+
+##### 2022-07-20 (PH) Corrected doc rendering
 
     </description>
 
