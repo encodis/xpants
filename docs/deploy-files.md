@@ -1,3 +1,12 @@
+---
+author: Philip Hodder
+contact: philip.hodder@encodis.com
+date: 2018-05-02
+project: XML Practical ANT Scripts
+summary: Macro definitions to use deploy files to a location
+title: deploy-files.xml
+---
+
 # deploy-files.xml
 
 A set of macro definitions to deploy sets of files to a designated
@@ -12,21 +21,21 @@ of the source files (*flatten=true*).
 
 The *method* attribute can be explicitly set to the following values:
 
-  - ‘copy’ This is the default, and uses the native ANT ‘copy’ task.
+-   ‘copy’ This is the default, and uses the native ANT ‘copy’ task.
     This presupposes that the *target* is reachable on the local machine
     or suitable network share etc.
-  - ‘sync’ This uses the native ANT ‘sync’ task. This presupposes that
+-   ‘sync’ This uses the native ANT ‘sync’ task. This presupposes that
     the *target* is reachable on the local machine or suitable network
-    share etc. This may help with performance in some cases ( e.g. a
+    share etc. This may help with performance in some cases (e.g. a
     target needs updating but not many files have changed). The
     *flatten* and *clean* options are ignored.
-  - ‘scp’ This use the SSH secure copy program. In this case the
+-   ‘scp’ This use the SSH secure copy program. In this case the
     properties *ssh.host*, *ssh.user* and *ssh.keys* must also be set as
     described in the [ssh](ssh.html) macro before calling *deploy-files*
     with this method. Also in this case the *target* attribute should
-    start with the root location on the host (e.g. “/www” for a web
+    start with the root location on the host (e.g. “/www” for a web
     server). The *clean* option can be set to clean the *target* folder.
-  - ‘aws’ This uses the AWS CLI program to synchronise to an S3 bucket.
+-   ‘aws’ This uses the AWS CLI program to synchronise to an S3 bucket.
     The properties *aws.profile* and *aws.bucket* must also be set as
     described in the [aws](aws.html) macro before calling *deploy-files*
     with this method. The *flatten*, *clean* and *overwrite* options are
@@ -35,7 +44,7 @@ The *method* attribute can be explicitly set to the following values:
 ## Usage
 
     <property name="deploy.target" value="${project.deploy.area}/${project.name}"/>
-    
+
     <deploy-files
         target="${deploy.target}/docs">
         <fileset>
@@ -51,7 +60,7 @@ Deploy different filesets for ‘latest’ and ‘versioned’ files:
             <fileset dir="." includes="build/*.dat"/>
         </fileset>
     </deploy-files>
-    
+
     <deploy-files
         target="\\myfile.share\${department}\${assets}\v1.2">
         <fileset dir=".">
@@ -62,28 +71,28 @@ Deploy different filesets for ‘latest’ and ‘versioned’ files:
 
 ## Dependencies
 
-  - ${xpants.dir}/aws.xml
-  - ${xpants.dir}/ssh.xml
-  - ${xpants.dir}/attr-checks.xml
-  - ${xpants.dir}/file-utils.xml
+-   ${xpants.dir}/aws.xml
+-   ${xpants.dir}/check-value.xml
+-   ${xpants.dir}/file-utils.xml
+-   ${xpants.dir}/ssh.xml
 
 ## Properties
 
 Override the following property to force a deployment method:
 
-  - *deploy.method* The default is ‘copy’. Alternatives are ‘sync’,
+-   *deploy.method* The default is ‘copy’. Alternatives are ‘sync’,
     ‘ssh’ and ‘aws’.
 
 The following properties are required when using the ‘scp’ method:
 
-  - *ssh.host*
-  - *ssh.user*
-  - *ssh.keys*
+-   *ssh.host*
+-   *ssh.user*
+-   *ssh.keys*
 
 The following properties are required when using the ‘aws’ method:
 
-  - *aws.profile*
-  - *aws.bucket*
+-   *aws.profile*
+-   *aws.bucket*
 
 ## Change Log
 
@@ -93,13 +102,12 @@ The following properties are required when using the ‘aws’ method:
 
 ## deploy-file
 
-Deploy a file to a designated target
-folder
+Deploy a file to a designated target folder
 
 #### Attributes
 
 | Name      | Description                            | Allowed     | Default | Required |
-| :-------- | :------------------------------------- | :---------- | :-----: | :------: |
+|:----------|:---------------------------------------|:------------|:-------:|:--------:|
 | file      | File to deploy                         |             |         |   yes    |
 | target    | Destination folder for deployment      |             |         |   yes    |
 | overwrite | Overwrite the target file if it exists | true, false |  false  |    no    |
@@ -107,13 +115,12 @@ folder
 ## deploy-files
 
 Deploy a set of files to a location designated by the deployment
-environment and
-target
+environment and target
 
 #### Attributes
 
 | Name      | Description                                            | Allowed              | Default | Required |
-| :-------- | :----------------------------------------------------- | :------------------- | :-----: | :------: |
+|:----------|:-------------------------------------------------------|:---------------------|:-------:|:--------:|
 | target    | Root destination folder for deployment                 |                      |         |   yes    |
 | source    | Directory to deploy, if fileset not specified          |                      |         |    no    |
 | flatten   | Flatten the input fileset directory structure          | true, false          |  false  |    no    |
@@ -124,18 +131,17 @@ target
 #### Elements
 
 | Name         | Description             | Implicit | Required |
-| :----------- | :---------------------- | :------: | :------: |
+|:-------------|:------------------------|:--------:|:--------:|
 | deploy.files | A fileset specification |   yes    |    no    |
 
 ## deploy-files-copy
 
-Deploy a set of files to a target location folder, using ant
-copy
+Deploy a set of files to a target location folder, using ant copy
 
 #### Attributes
 
 | Name      | Description                                    | Allowed             | Default | Required |
-| :-------- | :--------------------------------------------- | :------------------ | :-----: | :------: |
+|:----------|:-----------------------------------------------|:--------------------|:-------:|:--------:|
 | target    | Root destination folder for deployment         |                     |         |   yes    |
 | source    | Directory to deploy, if fileset not specified  |                     |         |    no    |
 | flatten   | Flatten the input fileset directory structure  | true, false         |  false  |    no    |
@@ -145,18 +151,17 @@ copy
 #### Elements
 
 | Name         | Description             | Implicit | Required |
-| :----------- | :---------------------- | :------: | :------: |
+|:-------------|:------------------------|:--------:|:--------:|
 | deploy.files | A fileset specification |   yes    |    no    |
 
 ## deploy-files-sync
 
-Deploy a set of files to a target location, using ant
-sync
+Deploy a set of files to a target location, using ant sync
 
 #### Attributes
 
 | Name      | Description                                   | Allowed     | Default | Required |
-| :-------- | :-------------------------------------------- | :---------- | :-----: | :------: |
+|:----------|:----------------------------------------------|:------------|:-------:|:--------:|
 | target    | Root destination folder for deployment        |             |         |   yes    |
 | source    | Directory to deploy, if fileset not specified |             |         |    no    |
 | overwrite | Overwrite the target directory if it exists   | true, false |  false  |    no    |
@@ -164,18 +169,17 @@ sync
 #### Elements
 
 | Name         | Description             | Implicit | Required |
-| :----------- | :---------------------- | :------: | :------: |
+|:-------------|:------------------------|:--------:|:--------:|
 | deploy.files | A fileset specification |   yes    |    no    |
 
 ## deploy-files-scp
 
-Deploy a set of files to a target location, using
-scp
+Deploy a set of files to a target location, using scp
 
 #### Attributes
 
 | Name   | Description                                    | Allowed             | Default | Required |
-| :----- | :--------------------------------------------- | :------------------ | :-----: | :------: |
+|:-------|:-----------------------------------------------|:--------------------|:-------:|:--------:|
 | target | Root destination folder for deployment         |                     |         |   yes    |
 | source | Directory to deploy, if fileset not specified  |                     |         |    no    |
 | clean  | Remove target directory/files before deploying | target, files, none |  false  |    no    |
@@ -183,23 +187,22 @@ scp
 #### Elements
 
 | Name         | Description             | Implicit | Required |
-| :----------- | :---------------------- | :------: | :------: |
+|:-------------|:------------------------|:--------:|:--------:|
 | deploy.files | A fileset specification |   yes    |    no    |
 
 ## deploy-files-aws
 
-Deploy a set of files to a target location, using
-awscli
+Deploy a set of files to a target location, using awscli
 
 #### Attributes
 
 | Name   | Description                                   | Allowed | Default | Required |
-| :----- | :-------------------------------------------- | :------ | :-----: | :------: |
+|:-------|:----------------------------------------------|:--------|:-------:|:--------:|
 | target | Root destination folder for deployment        |         |         |   yes    |
 | source | Directory to deploy, if fileset not specified |         |         |    no    |
 
 #### Elements
 
 | Name         | Description             | Implicit | Required |
-| :----------- | :---------------------- | :------: | :------: |
+|:-------------|:------------------------|:--------:|:--------:|
 | deploy.files | A fileset specification |   yes    |    no    |

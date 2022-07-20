@@ -1,13 +1,22 @@
+---
+author: Philip Hodder
+contact: philip.hodder@encodis.com
+date: 2018-05-02
+project: XML Practical ANT Scripts
+summary: Macro definitions to compile Schematron files
+title: compile-schematron.xml
+---
+
 # compile-schematron.xml
 
 A set of macro definitions to compile a Schematron file into an XSL
 file. The top level macro (“compile-schematron”) will compile either a
 single file or a folder, depending on the arguments supplied:
 
-  - If the *file* attribute is not blank and refers to a file that
+-   If the *file* attribute is not blank and refers to a file that
     exists then it will be compiled, using the *output* attribute as the
     resulting file name for the report.
-  - If the *file* attribute is not supplied then the macro will compile
+-   If the *file* attribute is not supplied then the macro will compile
     all files in a folder determined by the ‘input.files’ element.
 
 > NOTE: It is the responsibility of the calling task to ensure that any
@@ -30,13 +39,11 @@ the stylesheet *remove-docs.xsl*.
 > the XSLT Library to the Schematron. Take care when specifying filters
 > in case there are unintended consequences. The filters (and
 > stylesheets) that are known to be valid are:
-> 
->   - *remove-docs:* Removes “doc:\*" elements
->   - *remove-comments:* Remove comments
->   - *remove-processing-instructions:* Remove processing instructions
->   - *schematron-display-id:* Makes sure that Schematron rule IDs are
->     displayed in the output
->   - *schematron-remove-empty-rules:* Remove any Schematron rules with
+>
+> -   *remove-docs:* Removes “doc:\*” elements
+> -   *remove-comments:* Remove comments
+> -   *remove-processing-instructions:* Remove processing instructions
+> -   *schematron-remove-empty-rules:* Remove any Schematron rules with
 >     no assert or report elements
 
 The Schematron file is enhanced “in place”—intermediate versions are not
@@ -64,10 +71,10 @@ The following stylesheets are used by this module. They are local copies
 of the [ISO Schematron](http://www.schematron.com/implementation.html)
 stylesheets:
 
-  - **iso/iso\_dsdl\_include.xsl**
-  - **iso/iso\_abstract\_expand.xsl**
-  - **iso/iso\_svrl\_for\_xslt2.xsl**
-  - **iso/iso\_svrl\_for\_xslt1.xsl**
+-   **iso/iso_dsdl_include.xsl**
+-   **iso/iso_abstract_expand.xsl**
+-   **iso/iso_svrl_for_xslt2.xsl**
+-   **iso/iso_svrl_for_xslt1.xsl**
 
 Other stylsheets in the XSLT library may be used as dictated by any
 enhancement filters set.
@@ -76,10 +83,10 @@ enhancement filters set.
 > standard stylesheet as distributed by ISO. However, in this stylesheet
 > variables used in an abstract pattern [are not
 > replaced](https://code.google.com/archive/p/schematron/issues/6). The
-> **iso/iso\_abstract\_expand\_bugfix6.xsl** stylesheet implements a
+> **iso/iso_abstract_expand_bugfix6.xsl** stylesheet implements a
 > [fix](http://itfundamentalist.blogspot.co.uk/2009/03/schematron-stilesheets-wont-work-with.html)
 > for this.
-> 
+>
 > Projects that need to use the “fixed” version (e.g. the Content
 > Migration project) should override the
 > *resolve-schematron-abstracts.stylesheet* property (as described
@@ -88,7 +95,7 @@ enhancement filters set.
     <property
         name="resolve-schematron-abstracts.stylesheet"
         value="iso/iso_abstract_expand_bugfix6.xsl"/>
-    
+
     <compile-schematron
         file="file.sch"
         output="compiled/file.xsl"
@@ -99,15 +106,15 @@ enhancement filters set.
 The following properties can be set on the command line to override the
 default behaviour:
 
-  - *merge-schematron-includes.stylesheet* Allows replacement of the
-    “iso\_dsdl\_include.xsl” stylesheet.
-  - *resolve-schematron-abstracts.stylesheet* Allows replacement of the
-    “iso\_abstract\_expand.xsl” stylesheet.
-  - *compile-schematron-to-xsl.stylesheet* Allows the caller to specify
+-   *merge-schematron-includes.stylesheet* Allows replacement of the
+    “iso_dsdl_include.xsl” stylesheet.
+-   *resolve-schematron-abstracts.stylesheet* Allows replacement of the
+    “iso_abstract_expand.xsl” stylesheet.
+-   *compile-schematron-to-xsl.stylesheet* Allows the caller to specify
     the compilation stylesheet, rather than choosing
-    “iso\_svrl\_for\_xslt1.xsl” or “iso\_svrl\_for\_xslt2.xsl”
-    depending on the version of XSLT being used.
-  - *compile.full-path-notation* Change format of output XPath messages.
+    “iso_svrl_for_xslt1.xsl” or “iso_svrl_for_xslt2.xsl” depending on
+    the version of XSLT being used.
+-   *compile.full-path-notation* Change format of output XPath messages.
     Valid values are “1” (the default which is rather unreadable for
     humans but contains position information, allowing errors in
     instance documents to be identified more easily), “2” (easier to
@@ -127,13 +134,12 @@ default behaviour:
 
 ## compile-schematron
 
-Compile Schematron file(s) to the indicated
-format
+Compile Schematron file(s) to the indicated format
 
 #### Attributes
 
 | Name     | Description                                      | Allowed |   Default   | Required |
-| :------- | :----------------------------------------------- | :------ | :---------: | :------: |
+|:---------|:-------------------------------------------------|:--------|:-----------:|:--------:|
 | file     | Source Schematron file                           |         |             |    no    |
 | encoding | The output encoding                              |         |    utf-8    |    no    |
 | phase    | The phase to restrict the schema to              |         |    \#ALL    |    no    |
@@ -144,18 +150,17 @@ format
 #### Elements
 
 | Name        | Description             | Implicit | Required |
-| :---------- | :---------------------- | :------: | :------: |
+|:------------|:------------------------|:--------:|:--------:|
 | input.files | A fileset specification |   yes    |    no    |
 
 ## compile-schematron-file
 
-Compile a Schematron
-file
+Compile a Schematron file
 
 #### Attributes
 
 | Name     | Description                                      | Allowed |   Default   | Required |
-| :------- | :----------------------------------------------- | :------ | :---------: | :------: |
+|:---------|:-------------------------------------------------|:--------|:-----------:|:--------:|
 | file     | Source XML file                                  |         |             |   yes    |
 | encoding | The output encoding                              |         |    utf-8    |    no    |
 | phase    | The phase to restrict the schema to              |         |    \#ALL    |    no    |
@@ -165,13 +170,12 @@ file
 
 ## compile-schematron-fileset
 
-Compile a folder of Schematron
-files
+Compile a folder of Schematron files
 
 #### Attributes
 
 | Name     | Description                                      | Allowed |   Default   | Required |
-| :------- | :----------------------------------------------- | :------ | :---------: | :------: |
+|:---------|:-------------------------------------------------|:--------|:-----------:|:--------:|
 | encoding | The output encoding                              |         |    utf-8    |    no    |
 | phase    | The phase to restrict the schema to              |         |    \#ALL    |    no    |
 | foreign  | Preserve nodes that are not in the ISO namespace |         |    false    |    no    |
@@ -181,7 +185,7 @@ files
 #### Elements
 
 | Name        | Description             | Implicit | Required |
-| :---------- | :---------------------- | :------: | :------: |
+|:------------|:------------------------|:--------:|:--------:|
 | input.files | A fileset specification |   yes    |   yes    |
 
 ## compile-schematron-merge-includes
@@ -191,7 +195,7 @@ Merge included files into a single Schematron file
 #### Attributes
 
 | Name   | Description            | Allowed | Default | Required |
-| :----- | :--------------------- | :------ | :-----: | :------: |
+|:-------|:-----------------------|:--------|:-------:|:--------:|
 | file   | Source Schematron file |         |         |   yes    |
 | output | Merged Schematron file |         |         |   yes    |
 
@@ -202,6 +206,6 @@ Resolve abstract patterns in a Schematron file
 #### Attributes
 
 | Name   | Description              | Allowed | Default | Required |
-| :----- | :----------------------- | :------ | :-----: | :------: |
+|:-------|:-------------------------|:--------|:-------:|:--------:|
 | file   | Source Schematron file   |         |         |   yes    |
 | output | Resolved Schematron file |         |         |   yes    |

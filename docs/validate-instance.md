@@ -1,17 +1,27 @@
+---
+author: Philip Hodder
+contact: philip.hodder@encodis.com
+date: 2018-05-02
+project: XML Practical ANT Scripts
+summary: Macro definitions to validate XML instances using schema (XSD,
+  DTD, RNC or RNG) or Schematron
+title: validate-instance.xml
+---
+
 # validate-instance.xml
 
 A set of macro definitions to validate an XML file using a related
 schema. Essentially this macro is a wrapper around ANT’s built in
-`<xmlvalidate>` and `<schemavalidate>` tasks, together with the <java>
-task (for RelaxNG validation), and the <apply-template> and
-<compile-schematron> macros (for Schematron validation). The top level
+`<xmlvalidate>` and `<schemavalidate>` tasks, together with the “java”
+task (for RelaxNG validation), and the `<apply-template>` and
+`<compile-schematron>` macros (for Schematron validation). The top level
 macro (“validate-instance”) will validate either a single file or a file
 set, depending on the arguments supplied:
 
-  - If the *file* attribute is not blank and refers to a file that
+-   If the *file* attribute is not blank and refers to a file that
     exists then it will be validated, using the *output* attribute as
     the resulting file name for the report.
-  - If the *file* attribute is not supplied then the macro will convert
+-   If the *file* attribute is not supplied then the macro will convert
     all files in a folder determined by the *input.files* element.
 
 ## Usage
@@ -45,7 +55,7 @@ in the **docs/validation** folder:
 
 ## Dependencies
 
-  - The [Jing](http://www.thaiopensource.com/relaxng/jing.html)
+-   The [Jing](http://www.thaiopensource.com/relaxng/jing.html)
     validator must be installed on ANT’s classpath to validate RelaxNG
     files.
 
@@ -54,8 +64,8 @@ in the **docs/validation** folder:
 The following properties can be set on the command line to override the
 default behaviour:
 
-  - *xpants.catalog* can be used to set a base XML catalog for resolving
-    entities. The default is the value of the *XPANTS\_CATALOG*
+-   *xpants.catalog* can be used to set a base XML catalog for resolving
+    entities. The default is the value of the *XPANTS_CATALOG*
     environment variable (if set).
 
 ## Change Log
@@ -66,17 +76,18 @@ default behaviour:
 
 ##### 2018-04-10 (PH) Renamed to validate-instance
 
+##### 2022-07-20 (PH) Corrected doc rendering
+
 # Macro Definitions
 
 ## validate-instance
 
-Validate an instance file according to a
-schema
+Validate an instance file according to a schema
 
 #### Attributes
 
 | Name      | Description                        | Allowed                 | Default | Required |
-| :-------- | :--------------------------------- | :---------------------- | :-----: | :------: |
+|:----------|:-----------------------------------|:------------------------|:-------:|:--------:|
 | file      | Source XML file                    |                         |         |    no    |
 | type      | Type of schema validation          | dtd, xsd, rnc, rng, sch |         |    no    |
 | schema    | Schema file                        |                         |         |    no    |
@@ -87,18 +98,17 @@ schema
 #### Elements
 
 | Name        | Description             | Implicit | Required |
-| :---------- | :---------------------- | :------: | :------: |
+|:------------|:------------------------|:--------:|:--------:|
 | input.files | A fileset specification |   yes    |    no    |
 
 ## validate-instance-file
 
-Validate an XML instance document against a
-schema
+Validate an XML instance document against a schema
 
 #### Attributes
 
 | Name      | Description                        | Allowed                 | Default | Required |
-| :-------- | :--------------------------------- | :---------------------- | :-----: | :------: |
+|:----------|:-----------------------------------|:------------------------|:-------:|:--------:|
 | file      | Source XML file                    |                         |         |   yes    |
 | type      | Type of schema validation          | dtd, xsd, rnc, rng, sch |         |    no    |
 | schema    | Schema file                        |                         |         |    no    |
@@ -108,13 +118,12 @@ schema
 
 ## validate-instance-fileset
 
-Validate a folder of XML instance documents against a
-schema
+Validate a folder of XML instance documents against a schema
 
 #### Attributes
 
 | Name      | Description                                         | Allowed       | Default | Required |
-| :-------- | :-------------------------------------------------- | :------------ | :-----: | :------: |
+|:----------|:----------------------------------------------------|:--------------|:-------:|:--------:|
 | schema    | Schema file                                         |               |         |    no    |
 | namespace | Namespace URI (for XSD validation)                  |               |         |    no    |
 | type      | Type of schema validation                           | dtd, xsd, rng |         |    no    |
@@ -124,5 +133,5 @@ schema
 #### Elements
 
 | Name        | Description             | Implicit | Required |
-| :---------- | :---------------------- | :------: | :------: |
+|:------------|:------------------------|:--------:|:--------:|
 | input.files | A fileset specification |   yes    |   yes    |

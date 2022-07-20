@@ -1,20 +1,29 @@
+---
+author: Philip Hodder
+contact: philip.hodder@encodis.com
+date: 2018-05-02
+project: XML Practical ANT Scripts
+summary: Macros to check various file system related things
+title: file-utils.xml
+---
+
 # file-utils.xml
 
 A set of utility macros to peform various checks on files and
 directories:
 
-  - *check-file-exists* fails the build if the specified file does not
+-   *check-file-exists* fails the build if the specified file does not
     exist
-  - *check-dir-exists* fails the build if the specified directory does
+-   *check-dir-exists* fails the build if the specified directory does
     not exist
-  - *check-fileset-empty* fails the build if the specified file set
+-   *check-fileset-empty* fails the build if the specified file set
     evaluates to an empty list of files
-  - *check-class-path* fails the build if the specified class does not
+-   *check-class-path* fails the build if the specified class does not
     exist in the ANT classpath
-  - *check-file-contains* sets the given property to “true” if a file
+-   *check-file-contains* sets the given property to “true” if a file
     contains a particular string; if the property is not supplied then
     the build will fail if the file does not contain the string
-  - *check-exe-path* checks that the specified executable is available
+-   *check-exe-path* checks that the specified executable is available
     on the path, sets a property with the name of the executable and
     fails the build if it cannot find it.This is typically used for
     build files that might be used on both Windows and Unix that use the
@@ -28,9 +37,9 @@ directories:
 
 ## Usage
 
-    <check-file-exists macro="apply-transform" file="result.dat"/>
-    
-    <check-fileset-empty macro="apply-transform">
+    <check-file-exists prefix="[apply-transform]" file="result.dat"/>
+
+    <check-fileset-empty prefix="[apply-transform]">
         <fileset dir="../build" includes="**/*.dat"/>
     </check-fileset-empty>
 
@@ -39,7 +48,7 @@ executable is passed to the <exec> task. This would be *git* in
 Unix/MacOS and *git.exe* in Windows.
 
     <check-exe-path property="git.exe"/>
-    
+
     <exec
         executable="${git.exe}"
         dir="."
@@ -61,7 +70,7 @@ None
 
 These macros create the following (global) properties:
 
-  - *xpants.dir*
+-   *xpants.dir*
 
 ## Change Log
 
@@ -71,84 +80,78 @@ These macros create the following (global) properties:
 
 ## check-file-exists
 
-Fail the build if the specified file does not
-exist
+Fail the build if the specified file does not exist
 
 #### Attributes
 
 | Name     | Description                                          | Allowed | Default | Required |
-| :------- | :--------------------------------------------------- | :------ | :-----: | :------: |
-| macro    | Calling macro name                                   |         |         |   yes    |
+|:---------|:-----------------------------------------------------|:--------|:-------:|:--------:|
+| prefix   | Message prefix                                       |         |         |    no    |
 | file     | File to check for availability                       |         |         |   yes    |
 | property | Property to update with result (true if file exists) |         |         |    no    |
 
 ## check-dir-exists
 
-Fail the build if the specified directory does not
-exist
+Fail the build if the specified directory does not exist
 
 #### Attributes
 
 | Name     | Description                                         | Allowed | Default | Required |
-| :------- | :-------------------------------------------------- | :------ | :-----: | :------: |
-| macro    | Calling macro name                                  |         |         |   yes    |
+|:---------|:----------------------------------------------------|:--------|:-------:|:--------:|
+| prefix   | Message prefix                                      |         |         |    no    |
 | dir      | Directory to check for availability                 |         |         |   yes    |
 | property | Property to update with result (true if dir exists) |         |         |    no    |
 
 ## check-fileset-empty
 
-Fail the build if the specified fileset is
-empty
+Fail the build if the specified fileset is empty
 
 #### Attributes
 
 | Name     | Description                                                | Allowed | Default | Required |
-| :------- | :--------------------------------------------------------- | :------ | :-----: | :------: |
-| macro    | Calling macro name                                         |         |         |   yes    |
+|:---------|:-----------------------------------------------------------|:--------|:-------:|:--------:|
+| prefix   | Message prefix                                             |         |         |    no    |
 | refid    | Reference to fileset specification to check                |         |         |    no    |
 | property | Property to update with result (true if fileset not empty) |         |         |    no    |
 
 #### Elements
 
 | Name        | Description                    | Implicit | Required |
-| :---------- | :----------------------------- | :------: | :------: |
+|:------------|:-------------------------------|:--------:|:--------:|
 | input.files | Fileset specification to check |   yes    |    no    |
 
 ## check-class-path
 
-Fail the build if the class is not in the
-classpath
+Fail the build if the class is not in the classpath
 
 #### Attributes
 
 | Name     | Description                                              | Allowed | Default | Required |
-| :------- | :------------------------------------------------------- | :------ | :-----: | :------: |
-| macro    | Calling macro name                                       |         |         |   yes    |
+|:---------|:---------------------------------------------------------|:--------|:-------:|:--------:|
+| prefix   | Message prefix                                           |         |         |    no    |
 | class    | Class to check                                           |         |         |   yes    |
 | property | Property to update with result (true if class available) |         |         |    no    |
 
 ## check-file-contains
 
-Set a property if a file contains a
-string
+Set a property if a file contains a string
 
 #### Attributes
 
 | Name     | Description                                                   | Allowed | Default | Required |
-| :------- | :------------------------------------------------------------ | :------ | :-----: | :------: |
+|:---------|:--------------------------------------------------------------|:--------|:-------:|:--------:|
 | file     | File to examine                                               |         |         |   yes    |
 | string   | String to check                                               |         |         |   yes    |
 | property | Property to update with result (true if file contains string) |         |         |    no    |
 
 ## check-exe-path
 
-Fail the build if the executable is not on the
-path
+Fail the build if the executable is not on the path
 
 #### Attributes
 
 | Name     | Description                                                   | Allowed | Default | Required |
-| :------- | :------------------------------------------------------------ | :------ | :-----: | :------: |
+|:---------|:--------------------------------------------------------------|:--------|:-------:|:--------:|
 | property | Property to set with the executable name                      |         |         |   yes    |
 | windows  | Name of the Windows executable (if different from ‘property’) |         |         |    no    |
 | unix     | Name of the Unix executable (if different from ‘property’)    |         |         |    no    |

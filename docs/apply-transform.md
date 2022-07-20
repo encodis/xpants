@@ -1,3 +1,12 @@
+---
+author: Philip Hodder
+contact: philip.hodder@encodis.com
+date: 2018-05-02
+project: XML Practical ANT Scripts
+summary: Macro definitions to apply an XSLT stylesheet to an XML file
+title: apply-transform.xml
+---
+
 # apply-transform.xml
 
 Macro definitions to apply an XSLT stylesheets or transforms to an XML
@@ -6,18 +15,18 @@ place, i.e. the name of the file is not changed. The top level macro
 (“apply-transform”) will transform either a single file or a folder,
 depending on the arguments supplied:
 
-  - If the *file* attribute is not blank and refers to a file that
+-   If the *file* attribute is not blank and refers to a file that
     exists then it will be transformed.
-  - If the *file* attribute is not supplied then the macro will
+-   If the *file* attribute is not supplied then the macro will
     transform all files in a folder determined by the *input.files*
     element.
 
 Furthermore:
 
-  - When processing an individual input file it will be overwritten in
+-   When processing an individual input file it will be overwritten in
     place, unless the *output* attribute is set in which case that will
     be used as the resulting file name.
-  - If the *output* attribute refers to a directory then the output of
+-   If the *output* attribute refers to a directory then the output of
     the transform will be copied there. Also, if the *ext* attribute is
     set then it will replace the file’s original extension. *ext* should
     therefore contain a leading “.” if that is required.
@@ -34,16 +43,17 @@ case.
 
 The *xslt* attribute can be used in one of two ways:
 
-  - Primarily it can be used to specify a relative or absolute path to a
-    stylesheet (e.g. `xslt="./my-stylesheets/convert.xsl"`).
+-   Primarily it can be used to specify a relative or absolute path to a
+    stylesheet (e.g. `xslt="./my-stylesheets/convert.xsl"`).
 
-  - However, it can also be used to specify default stylesheets in the
+-   However, it can also be used to specify default stylesheets in the
     XPantS XSLT Library. If the attribute value contains no path related
-    information (e.g. `xslt="filter-svrl"`) then the macro will try to
-    locate a stylesheet with that name and the extension “.xsl” in the
-    **com/encodis/xpants/xslt** resource (i.e. in the XPantS jar file).
-    So specifying `xslt="filter-svrl"` will make the macro try and load
-    the resource **com/encodis/xpants/xslt/filter-svrl.xsl**.
+    information (e.g. `xslt="remove-comments"`) then the macro will try
+    to locate a stylesheet with that name and the extension “.xsl” in
+    the **com/encodis/xpants/xslt** resource (i.e. in the XPantS jar
+    file). So specifying `xslt="remove-comments"` will make the macro
+    try and load the resource
+    **com/encodis/xpants/xslt/remove-comments.xsl**.
 
 ## Usage
 
@@ -115,7 +125,7 @@ Apply a stylsheet to the designated file(s)
 #### Attributes
 
 | Name   | Description                 | Allowed | Default | Required |
-| :----- | :-------------------------- | :------ | :-----: | :------: |
+|:-------|:----------------------------|:--------|:-------:|:--------:|
 | file   | Source XML file             |         |         |    no    |
 | xslt   | XSLT file to be applied     |         |         |   yes    |
 | ext    | Extension of output file(s) |         |         |    no    |
@@ -124,7 +134,7 @@ Apply a stylsheet to the designated file(s)
 #### Elements
 
 | Name        | Description             | Implicit | Required |
-| :---------- | :---------------------- | :------: | :------: |
+|:------------|:------------------------|:--------:|:--------:|
 | input.files | A fileset specification |   yes    |    no    |
 
 ## apply-transform-file
@@ -134,7 +144,7 @@ Apply a stylsheet to a file
 #### Attributes
 
 | Name   | Description                 | Allowed | Default | Required |
-| :----- | :-------------------------- | :------ | :-----: | :------: |
+|:-------|:----------------------------|:--------|:-------:|:--------:|
 | file   | Source XML file             |         |         |   yes    |
 | xslt   | XSLT file to be applied     |         |         |   yes    |
 | ext    | Extension of output file(s) |         |         |    no    |
@@ -143,7 +153,7 @@ Apply a stylsheet to a file
 #### Elements
 
 | Name        | Description                  | Implicit | Required |
-| :---------- | :--------------------------- | :------: | :------: |
+|:------------|:-----------------------------|:--------:|:--------:|
 | params.xslt | A set of parameters for XSLT |   yes    |    no    |
 
 ## apply-transform-fileset
@@ -153,7 +163,7 @@ Apply a stylsheet to all files in a folder
 #### Attributes
 
 | Name   | Description                 | Allowed | Default | Required |
-| :----- | :-------------------------- | :------ | :-----: | :------: |
+|:-------|:----------------------------|:--------|:-------:|:--------:|
 | xslt   | XSLT file to be applied     |         |         |   yes    |
 | ext    | Extension of output file(s) |         |         |    no    |
 | output | Path for output files       |         |         |   yes    |
@@ -161,31 +171,29 @@ Apply a stylsheet to all files in a folder
 #### Elements
 
 | Name        | Description             | Implicit | Required |
-| :---------- | :---------------------- | :------: | :------: |
+|:------------|:------------------------|:--------:|:--------:|
 | input.files | A fileset specification |   yes    |    no    |
 
 ## apply-transform-list-file
 
-Apply a series of stylesheets to a
-file
+Apply a series of stylesheets to a file
 
 #### Attributes
 
 | Name      | Description                                        | Allowed | Default | Required |
-| :-------- | :------------------------------------------------- | :------ | :-----: | :------: |
+|:----------|:---------------------------------------------------|:--------|:-------:|:--------:|
 | file      | Source file                                        |         |         |   yes    |
 | xslt-list | Comma separated list of stylesheets to be applied  |         |         |    no    |
 | output    | Final output file (default: overwrite source file) |         |         |    no    |
 
 ## apply-transform-list-fileset
 
-Apply a series of stylesheets to all files in a
-fileset
+Apply a series of stylesheets to all files in a fileset
 
 #### Attributes
 
 | Name      | Description                                       | Allowed | Default | Required |
-| :-------- | :------------------------------------------------ | :------ | :-----: | :------: |
+|:----------|:--------------------------------------------------|:--------|:-------:|:--------:|
 | xslt-list | Comma separated list of stylesheets to be applied |         |         |    no    |
 | ext       | Extension of output file(s)                       |         |         |    no    |
 | output    | Output directory                                  |         |         |   yes    |
@@ -193,7 +201,7 @@ fileset
 #### Elements
 
 | Name        | Description             | Implicit | Required |
-| :---------- | :---------------------- | :------: | :------: |
+|:------------|:------------------------|:--------:|:--------:|
 | input.files | A fileset specification |   yes    |    no    |
 
 ## apply-transform-template
@@ -203,12 +211,12 @@ Run a stylesheet using an initial template
 #### Attributes
 
 | Name     | Description              | Allowed | Default | Required |
-| :------- | :----------------------- | :------ | :-----: | :------: |
+|:---------|:-------------------------|:--------|:-------:|:--------:|
 | xslt     | XSLT file to be executed |         |         |   yes    |
 | template | Initial template         |         |         |   yes    |
 
 #### Elements
 
 | Name | Description           | Implicit | Required |
-| :--- | :-------------------- | :------: | :------: |
+|:-----|:----------------------|:--------:|:--------:|
 | args | Additional parameters |   yes    |    no    |

@@ -1,15 +1,23 @@
+---
+author: Philip Hodder
+contact: philip.hodder@encodis.com
+date: 2018-05-02
+project: XML Practical ANT Scripts
+summary: Macros to check various types of values
+title: check-value.xml
+---
+
 # check-value.xml
 
 A set of utility macros to check values of properties (or macro
-attribute
-    values).
+attribute values).
 
 ## Usage
 
     <check-value-set prefix="[apply-transform]" name="file" value="@{file}"/>
 
     <check-value-list
-        macro="[apply-transform]"
+        prefix="[apply-transform]"
         name="options"
         value="@{options}"
         list="alpha,bravo,charlie"/>
@@ -22,7 +30,7 @@ None
 
 These macros use the following properties:
 
-  - *xpants.debug* Output additional information for debugging
+-   *xpants.debug* Output additional information for debugging
 
 ## Change Log
 
@@ -39,7 +47,7 @@ Fail the build if the specified value is not set or is blank
 #### Attributes
 
 | Name   | Description    | Allowed | Default | Required |
-| :----- | :------------- | :------ | :-----: | :------: |
+|:-------|:---------------|:--------|:-------:|:--------:|
 | prefix | Message prefix |         |         |    no    |
 | name   | Value name     |         |         |   yes    |
 | value  | Value          |         |         |   yes    |
@@ -51,7 +59,7 @@ Fail the build if the specified value is not a boolean value
 #### Attributes
 
 | Name   | Description    | Allowed | Default | Required |
-| :----- | :------------- | :------ | :-----: | :------: |
+|:-------|:---------------|:--------|:-------:|:--------:|
 | prefix | Message prefix |         |         |    no    |
 | name   | Value name     |         |         |   yes    |
 | value  | Value          |         |         |   yes    |
@@ -63,7 +71,7 @@ Fail the build if the specified value is not one of a list of values
 #### Attributes
 
 | Name   | Description            | Allowed | Default | Required |
-| :----- | :--------------------- | :------ | :-----: | :------: |
+|:-------|:-----------------------|:--------|:-------:|:--------:|
 | prefix | Message prefix         |         |         |    no    |
 | name   | Value name             |         |         |   yes    |
 | value  | Value                  |         |         |   yes    |

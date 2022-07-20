@@ -1,3 +1,12 @@
+---
+author: Philip Hodder
+date: 2018-05-02
+project: XML Practical ANT Scripts
+sontact: philip.hodder@encodis.com
+summary: Single file to include all XPantS macros
+title: xpants.xml
+---
+
 # xpants.xml
 
 A single file to include that then includes all XPantS macros, so they

@@ -1,3 +1,12 @@
+---
+author: Philip Hodder
+contact: philip.hodder@encodis.com
+date: 2018-05-02
+project: XML Practical ANT Scripts
+summary: Macro definitions to use the ssh command within a build file
+title: ssh.xml
+---
+
 # ssh.xml
 
 A set of macro definitions to use *ssh* to commands on an external
@@ -21,24 +30,24 @@ Copy files to an SSH host:
 
 ## Dependencies
 
-  - The *ssh* executable must be installed and available on the PATH.
-  - The *scp* executable must be installed and available on the PATH.
+-   The *ssh* executable must be installed and available on the PATH.
+-   The *scp* executable must be installed and available on the PATH.
 
 ## Properties
 
 The following properties can be set on the command line to override the
 default behaviour:
 
-  - *ssh.exe* The name of the *ssh* executable
-  - *scp.exe* The name of the *scp* executable
+-   *ssh.exe* The name of the *ssh* executable
+-   *scp.exe* The name of the *scp* executable
 
 The following properties are used as default values and must be set
 before the macros are used, or the values set in the macro calls
 directly:
 
-  - *ssh.host* The DNS name of the SSH server to connect to
-  - *ssh.user* The user on the SSH host to connect as
-  - *ssh.keys* The key file (usually a .PEM file) to authorise the
+-   *ssh.host* The DNS name of the SSH server to connect to
+-   *ssh.user* The user on the SSH host to connect as
+-   *ssh.keys* The key file (usually a .PEM file) to authorise the
     connection
 
 ## Change Log
@@ -49,13 +58,12 @@ directly:
 
 ## ssh
 
-Run ssh with command line
-arguments
+Run ssh with command line arguments
 
 #### Attributes
 
 | Name     | Description                                     | Allowed |   Default   | Required |
-| :------- | :---------------------------------------------- | :------ | :---------: | :------: |
+|:---------|:------------------------------------------------|:--------|:-----------:|:--------:|
 | user     | User name on remote host                        |         | ${ssh.user} |    no    |
 | host     | Domain name of host                             |         | ${ssh.host} |    no    |
 | keys     | Key file (e.g. PEM) to authenticate             |         | ${ssh.keys} |    no    |
@@ -65,18 +73,17 @@ arguments
 #### Elements
 
 | Name | Description                          | Implicit | Required |
-| :--- | :----------------------------------- | :------: | :------: |
+|:-----|:-------------------------------------|:--------:|:--------:|
 | args | Remaining ssh command line arguments |    no    |    no    |
 
 ## ssh-copy
 
-Copy files using the scp
-command
+Copy files using the scp command
 
 #### Attributes
 
 | Name   | Description                         | Allowed |   Default   | Required |
-| :----- | :---------------------------------- | :------ | :---------: | :------: |
+|:-------|:------------------------------------|:--------|:-----------:|:--------:|
 | user   | User name on remote host            |         | ${ssh.user} |    no    |
 | host   | Domain name of host                 |         | ${ssh.host} |    no    |
 | keys   | Key file (e.g. PEM) to authenticate |         | ${ssh.keys} |    no    |
@@ -85,13 +92,12 @@ command
 
 ## ssh-chmod
 
-Use ssh to change file permissions on the
-host
+Use ssh to change file permissions on the host
 
 #### Attributes
 
 | Name | Description                         | Allowed |   Default   | Required |
-| :--- | :---------------------------------- | :------ | :---------: | :------: |
+|:-----|:------------------------------------|:--------|:-----------:|:--------:|
 | user | User name on remote host            |         | ${ssh.user} |    no    |
 | host | Domain name of host                 |         | ${ssh.host} |    no    |
 | keys | Key file (e.g. PEM) to authenticate |         | ${ssh.keys} |    no    |
@@ -100,13 +106,12 @@ host
 
 ## ssh-mkdir
 
-Use ssh to make a directory on the
-host
+Use ssh to make a directory on the host
 
 #### Attributes
 
 | Name | Description                         | Allowed |   Default   | Required |
-| :--- | :---------------------------------- | :------ | :---------: | :------: |
+|:-----|:------------------------------------|:--------|:-----------:|:--------:|
 | user | User name on remote host            |         | ${ssh.user} |    no    |
 | host | Domain name of host                 |         | ${ssh.host} |    no    |
 | keys | Key file (e.g. PEM) to authenticate |         | ${ssh.keys} |    no    |
@@ -115,13 +120,12 @@ host
 
 ## ssh-delete
 
-Use ssh to remove a directory or files on the
-host
+Use ssh to remove a directory or files on the host
 
 #### Attributes
 
 | Name      | Description                             | Allowed     |   Default   | Required |
-| :-------- | :-------------------------------------- | :---------- | :---------: | :------: |
+|:----------|:----------------------------------------|:------------|:-----------:|:--------:|
 | user      | User name on remote host                |             | ${ssh.user} |    no    |
 | host      | Domain name of host                     |             | ${ssh.host} |    no    |
 | keys      | Key file (e.g. PEM) to authenticate     |             | ${ssh.keys} |    no    |

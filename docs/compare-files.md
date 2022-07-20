@@ -1,3 +1,12 @@
+---
+author: Philip Hodder
+contact: philip.hodder@encodis.com
+date: 2018-05-02
+project: XML Practical ANT Scripts
+summary: Macro definitions to compare and difference files.
+title: compare-files.xml
+---
+
 # compare-files.xml
 
 A set of macro definitions to compare files and perform file
@@ -79,15 +88,15 @@ your local machine with the appropriate license server running.
 When used in XML mode, the *config* property can take one of several
 values, indicating the type of comparison to be performed:
 
-  - *delta:* XML Compare, output XML delta
-  - *diffreport:* XML Compare, output HTML folding report
-  - *diffreport-sbs:* XML Compare, output HTML5 Side-by-Side report
-  - *raw:* XML Compare, output recombinable delta
-  - *schema:* Schema Compare, output HTML report
-  - *xhtml:* XHTML Compare, output XHTML
-  - *doc-delta:* XML Compare, output XML delta
-  - *doc-diffreport:* XML Compare, output HTML folding report
-  - *doc-diffreport-sbs:* XML Compare, output HTML Side-by-Side report
+-   *delta:* XML Compare, output XML delta
+-   *diffreport:* XML Compare, output HTML folding report
+-   *diffreport-sbs:* XML Compare, output HTML5 Side-by-Side report
+-   *raw:* XML Compare, output recombinable delta
+-   *schema:* Schema Compare, output HTML report
+-   *xhtml:* XHTML Compare, output XHTML
+-   *doc-delta:* XML Compare, output XML delta
+-   *doc-diffreport:* XML Compare, output HTML folding report
+-   *doc-diffreport-sbs:* XML Compare, output HTML Side-by-Side report
 
 Some of these configurations take additional parameters, but these are
 not yet enabled in these macros.
@@ -100,15 +109,15 @@ site](https://docs.deltaxml.com/core/current/docs/command-processor.html).
 The various DeltaXML comparison options can each be parameterised in a
 variety of ways. These can be be viewed by running the DeltaXML
 **command.jar** and using the “describe” option to list the options for
-the chosen configuration. For example: `$ java -jar
-/usr/local/bin/DeltaXMLCore-8_2_1_j/command.jar describe delta`.
+the chosen configuration. For example:
+`$ java -jar /usr/local/bin/DeltaXMLCore-8_2_1_j/command.jar describe delta`.
 
 Not all config/param options are supported by these macros. The ones
 that are are listed in the table below, together with their default
 values and their “macro” equivalents.
 
 | Delta XML Parameter | Default | Macro name | delta | diffreport |
-| :------------------ | :------ | :--------- | :---: | :--------: |
+|:--------------------|:--------|:-----------|:-----:|:----------:|
 | Preserve Whitespace | false   | whitespace |  yes  |    yes     |
 | Full Context        | true    | context    |  yes  |     no     |
 | Word By Word        | false   | word       |  yes  |    yes     |
@@ -117,7 +126,7 @@ values and their “macro” equivalents.
 
 To turn an option on or off, use the “macro” version of the name
 (prefixed with “no” to turn it off). Parameters that do not work with a
-particular configuration have no effect ( e.g. using the “Full Context”
+particular configuration have no effect (e.g. using the “Full Context”
 option with the “diffreport” config).
 
 For example, the following macro call will compare two files using
@@ -134,9 +143,9 @@ DeltaXML’s “delta” compare function with “Preserve Whitespace=false” a
 
 ## Dependencies
 
-  - The *diff* executable must be installed and available on the PATH.
-  - The DeltaXML software must be installed on the system correctly
-  - The DeltaXML license file/server must be installed on the system
+-   The *diff* executable must be installed and available on the PATH.
+-   The DeltaXML software must be installed on the system correctly
+-   The DeltaXML license file/server must be installed on the system
     correctly
 
 ## Properties
@@ -144,9 +153,9 @@ DeltaXML’s “delta” compare function with “Preserve Whitespace=false” a
 The following properties can be set on the command line to override the
 default behaviour:
 
-  - *diff.exe* The name of the *diff* executable
-  - *deltaxml.dir* The default DeltaXML install location (default:
-    **/usr/local/bin/DeltaXMLCore-8\_2\_1\_j**)
+-   *diff.exe* The name of the *diff* executable
+-   *deltaxml.dir* The default DeltaXML install location (default:
+    **/usr/local/bin/DeltaXMLCore-8_2\_1_j**)
 
 ## Change Log
 
@@ -156,13 +165,12 @@ default behaviour:
 
 ## compare-files
 
-Compare two files and report on
-differences
+Compare two files and report on differences
 
 #### Attributes
 
 | Name   | Description                                               | Allowed  | Default | Required |
-| :----- | :-------------------------------------------------------- | :------- | :-----: | :------: |
+|:-------|:----------------------------------------------------------|:---------|:-------:|:--------:|
 | fileA  | Path to first file                                        |          |         |   yes    |
 | fileB  | Path to second file                                       |          |         |   yes    |
 | result | Property to store comparison result                       |          |         |    no    |
@@ -173,13 +181,12 @@ differences
 
 ## compare-dirs
 
-Compare two directories and report on the
-differences
+Compare two directories and report on the differences
 
 #### Attributes
 
 | Name   | Description                                                   | Allowed  | Default | Required |
-| :----- | :------------------------------------------------------------ | :------- | :-----: | :------: |
+|:-------|:--------------------------------------------------------------|:---------|:-------:|:--------:|
 | dirA   | Path to first directory                                       |          |         |   yes    |
 | dirB   | Path to second directory                                      |          |         |   yes    |
 | deep   | Perform deep or shallow comparison                            |          |  false  |    no    |
@@ -197,7 +204,7 @@ only)
 #### Attributes
 
 | Name   | Description                         | Allowed | Default | Required |
-| :----- | :---------------------------------- | :------ | :-----: | :------: |
+|:-------|:------------------------------------|:--------|:-------:|:--------:|
 | dirA   | Path to first directory             |         |         |   yes    |
 | dirB   | Path to second directory            |         |         |   yes    |
 | result | Property to store comparison result |         |         |   yes    |
@@ -205,13 +212,12 @@ only)
 ## compare-dirs-deep
 
 Compare two directories and report on the differences (deep, compare
-individual
-files)
+individual files)
 
 #### Attributes
 
 | Name   | Description                                                   | Allowed  | Default | Required |
-| :----- | :------------------------------------------------------------ | :------- | :-----: | :------: |
+|:-------|:--------------------------------------------------------------|:---------|:-------:|:--------:|
 | dirA   | Path to first directory                                       |          |         |   yes    |
 | dirB   | Path to second directory                                      |          |         |   yes    |
 | result | Property to store comparison result                           |          |         |   yes    |
@@ -222,13 +228,12 @@ files)
 
 ## diff-files
 
-Difference two
-files
+Difference two files
 
 #### Attributes
 
 | Name   | Description                                              | Allowed  | Default | Required |
-| :----- | :------------------------------------------------------- | :------- | :-----: | :------: |
+|:-------|:---------------------------------------------------------|:---------|:-------:|:--------:|
 | fileA  | Path to first file                                       |          |         |   yes    |
 | fileB  | Path to second file                                      |          |         |   yes    |
 | type   | Type of comparison                                       | txt, xml |   txt   |    no    |
@@ -238,13 +243,12 @@ files
 
 ## diff-files-txt
 
-Difference two files using the diff
-tool
+Difference two files using the diff tool
 
 #### Attributes
 
 | Name   | Description                                              | Allowed | Default  | Required |
-| :----- | :------------------------------------------------------- | :------ | :------: | :------: |
+|:-------|:---------------------------------------------------------|:--------|:--------:|:--------:|
 | fileA  | Path to first file                                       |         |          |   yes    |
 | fileB  | Path to second file                                      |         |          |   yes    |
 | config | Configuration parameters or arguments for the comparison |         | –context |    no    |
@@ -252,13 +256,12 @@ tool
 
 ## diff-files-xml
 
-Difference two files using the DeltaXML
-tool
+Difference two files using the DeltaXML tool
 
 #### Attributes
 
 | Name   | Description                                | Allowed                                                                                              | Default | Required |
-| :----- | :----------------------------------------- | :--------------------------------------------------------------------------------------------------- | :-----: | :------: |
+|:-------|:-------------------------------------------|:-----------------------------------------------------------------------------------------------------|:-------:|:--------:|
 | fileA  | Path to first file                         |                                                                                                      |         |   yes    |
 | fileB  | Path to second file                        |                                                                                                      |         |   yes    |
 | config | Configuration ID to use for XML comparison | delta, diffreport, diffreport-sbs, raw, schema, xhtml, doc-delta, doc-diffreport, doc-diffreport-sbs |  delta  |    no    |

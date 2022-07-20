@@ -1,3 +1,12 @@
+---
+author: Philip Hodder
+contact: philip.hodder@encodis.com
+date: 2018-02-19
+project: XML Practical ANT Scripts
+summary: Remove line breaks and indentation from an XML document
+title: remove-newlines.xsl
+---
+
 # remove-newlines.xsl
 
 This stylesheet will “linearize” an XML document (removing new lines and
@@ -10,81 +19,42 @@ strips all “space only” text elements.
 ## Templates
 
 <table>
-
 <thead>
-
 <tr>
-
 <th width="35%">
-
 Name
-
 </th>
-
 <th>
-
 Type
-
 </th>
-
 <th>
-
 Mode
-
 </th>
-
 <th>
-
 Parameters
-
 </th>
-
 <th width="35%">
-
 Description
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td>
-
-@\*|node()
-
+@\*\|node()
 </td>
-
 <td>
-
 match
-
 </td>
-
 <td>
-
 \#all
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>

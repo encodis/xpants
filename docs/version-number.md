@@ -1,3 +1,12 @@
+---
+author: Philip Hodder
+contact: philip.hodder@encodis.com
+date: 2018-05-02
+project: XML Practical ANT Scripts
+summary: Macros to manipulate version numbers
+title: version-number.xml
+---
+
 # version.xml
 
 This module defines macros for retrieving and manipulating version and
@@ -55,7 +64,7 @@ and run:
 
 ## Dependencies
 
-  - A **build.properties** file (or equivalent) must be available
+-   A **build.properties** file (or equivalent) must be available
 
 ## Properties
 
@@ -69,98 +78,90 @@ and run:
 
 ## version-inc
 
-Update a version
-number
+Update a version number
 
 #### Attributes
 
 | Name      | Description                             | Allowed                    |     Default      | Required |
-| :-------- | :-------------------------------------- | :------------------------- | :--------------: | :------: |
+|:----------|:----------------------------------------|:---------------------------|:----------------:|:--------:|
 | file      | Properties file for version information |                            | build.properties |    no    |
 | increment | Amount to increment version number      |                            |        1         |    no    |
 | element   | Version number element to increment     | major, minor, patch, build |      patch       |    no    |
 
 ## version-inc-major
 
-Increment the major version
-number
+Increment the major version number
 
 #### Attributes
 
 | Name      | Description                             | Allowed |     Default      | Required |
-| :-------- | :-------------------------------------- | :------ | :--------------: | :------: |
+|:----------|:----------------------------------------|:--------|:----------------:|:--------:|
 | file      | Properties file for version information |         | build.properties |    no    |
 | increment | Amount to increment version number      |         |        1         |    no    |
 
 ## version-inc-minor
 
-Increment the minor version
-number
+Increment the minor version number
 
 #### Attributes
 
 | Name      | Description                             | Allowed |     Default      | Required |
-| :-------- | :-------------------------------------- | :------ | :--------------: | :------: |
+|:----------|:----------------------------------------|:--------|:----------------:|:--------:|
 | file      | Properties file for version information |         | build.properties |    no    |
 | increment | Amount to increment version number      |         |        1         |    no    |
 
 ## version-inc-patch
 
-Increment the patch version
-number
+Increment the patch version number
 
 #### Attributes
 
 | Name      | Description                             | Allowed |     Default      | Required |
-| :-------- | :-------------------------------------- | :------ | :--------------: | :------: |
+|:----------|:----------------------------------------|:--------|:----------------:|:--------:|
 | file      | Properties file for version information |         | build.properties |    no    |
 | increment | Amount to increment version number      |         |        1         |    no    |
 
 ## build-inc
 
-Increment the build
-number
+Increment the build number
 
 #### Attributes
 
 | Name      | Description                             | Allowed |     Default      | Required |
-| :-------- | :-------------------------------------- | :------ | :--------------: | :------: |
+|:----------|:----------------------------------------|:--------|:----------------:|:--------:|
 | file      | Properties file for version information |         | build.properties |    no    |
 | increment | Amount to increment version number      |         |        1         |    no    |
 
 ## version-number-set
 
-Set the version
-number
+Set the version number
 
 #### Attributes
 
 | Name    | Description                             | Allowed |     Default      | Required |
-| :------ | :-------------------------------------- | :------ | :--------------: | :------: |
+|:--------|:----------------------------------------|:--------|:----------------:|:--------:|
 | file    | Properties file for version information |         | build.properties |    no    |
 | version | New version number                      |         |                  |   yes    |
 
 ## build-number-set
 
-Set the build
-number
+Set the build number
 
 #### Attributes
 
 | Name  | Description                             | Allowed |     Default      | Required |
-| :---- | :-------------------------------------- | :------ | :--------------: | :------: |
+|:------|:----------------------------------------|:--------|:----------------:|:--------:|
 | file  | Properties file for version information |         | build.properties |    no    |
 | build | New build number                        |         |                  |   yes    |
 
 ## release-stage-set
 
-Set the release
-stage
+Set the release stage
 
 #### Attributes
 
 | Name   | Description                             | Allowed                                  |               Default               | Required |
-| :----- | :-------------------------------------- | :--------------------------------------- | :---------------------------------: | :------: |
+|:-------|:----------------------------------------|:-----------------------------------------|:-----------------------------------:|:--------:|
 | file   | Properties file for version information |                                          |          build.properties           |    no    |
 | stage  | New release stage                       |                                          |                                     |   yes    |
 | stages | Allowed stage names                     | pre-alpha, alpha, beta, rc1, rc2, stable | pre-alpha,alpha,beta,rc1,rc2,stable |    no    |

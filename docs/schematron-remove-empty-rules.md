@@ -1,3 +1,13 @@
+---
+author: Philip Hodder
+contact: philip.hodder@encodis.com
+date: 2018-02-20
+project: XML Practical ANT Scripts
+summary: Transform to remove any Schematron rule that does not contain a
+  report or assert
+title: schematron-remove-empty-rules.xsl
+---
+
 # schematron-remove-empty-rules.xsl
 
 This stylesheet will remove any *iso:rule* that does not contain an
@@ -5,302 +15,160 @@ This stylesheet will remove any *iso:rule* that does not contain an
 
 ### Input
 
-  - Valid Schematron file.
+-   Valid Schematron file.
 
 ### Output
 
-  - Schematron file with empty rules removed.
+-   Schematron file with empty rules removed.
 
 ### Output Format
 
 <table>
-
 <thead>
-
 <tr>
-
 <th>
-
 method
-
 </th>
-
 <th>
-
 encoding
-
 </th>
-
 <th>
-
 version
-
 </th>
-
 <th>
-
 omit-xml-declaration
-
 </th>
-
 <th>
-
 standalone
-
 </th>
-
 <th>
-
 doctype-public
-
 </th>
-
 <th>
-
 doctype-system
-
 </th>
-
 <th>
-
 cdata-section-elements
-
 </th>
-
 <th>
-
 indent
-
 </th>
-
 <th>
-
 media-type
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 yes
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 ## Templates
 
 <table>
-
 <thead>
-
 <tr>
-
 <th width="35%">
-
 Name
-
 </th>
-
 <th>
-
 Type
-
 </th>
-
 <th>
-
 Mode
-
 </th>
-
 <th>
-
 Parameters
-
 </th>
-
 <th width="35%">
-
 Description
-
 </th>
-
 </tr>
-
 </thead>
-
 <tbody>
-
 <tr>
-
 <td>
-
 /
-
 </td>
-
 <td>
-
 match
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 </tr>
-
 <tr>
-
 <td>
-
-@\*|node()
-
+@\*\|node()
 </td>
-
 <td>
-
 match
-
 </td>
-
 <td>
-
 \#all
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 </tr>
-
 <tr>
-
 <td>
-
 iso:rule\[not(iso:assert) and not(iso:report)\]
-
 </td>
-
 <td>
-
 match
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 <td>
-
 \-
-
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
 
 ## Change Log

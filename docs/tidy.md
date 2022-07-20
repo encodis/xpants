@@ -1,12 +1,21 @@
+---
+author: Philip Hodder
+contact: philip.hodder@encodis.com
+date: 2018-05-02
+project: XML Practical ANT Scripts
+summary: Macros to run HTML Tidy
+title: tidy.xml
+---
+
 # tidy.xml
 
 This module defines macros for processing content using ‘tidy’. The
 first processes individual files and the second processes entire trees
 by way of a fileset.
 
-  - If the *file* attribute is not blank and refers to a file that
+-   If the *file* attribute is not blank and refers to a file that
     exists then it will be converted.
-  - If the *file* attribute is not supplied then the macro will convert
+-   If the *file* attribute is not supplied then the macro will convert
     all files in a folder determined by the ‘input-fileset’ element and
     place them in the *output* folder with the same name. If the
     ‘input-fileset’ is empty the macro will fail.
@@ -31,14 +40,14 @@ Use the *params* property to set various command line options, e.g.:
 
 ## Dependencies
 
-  - The *tidy* executable must be installed and on the PATH.
+-   The *tidy* executable must be installed and on the PATH.
 
 ## Properties
 
 The following properties can be set on the command line to override the
 default behaviour:
 
-  - *tidy.exe* The name of the *tidy* executable
+-   *tidy.exe* The name of the *tidy* executable
 
 ## Change Log
 
@@ -48,13 +57,12 @@ default behaviour:
 
 ## tidy
 
-Tidy HTML
-files
+Tidy HTML files
 
 #### Attributes
 
 | Name   | Description                          | Allowed | Default | Required |
-| :----- | :----------------------------------- | :------ | :-----: | :------: |
+|:-------|:-------------------------------------|:--------|:-------:|:--------:|
 | file   | Source HTML file                     |         |         |    no    |
 | config | Path to HTML Tidy configuration file |         |         |    no    |
 | params | Additional parameters and options    |         |         |    no    |
@@ -63,18 +71,17 @@ files
 #### Elements
 
 | Name        | Description             | Implicit | Required |
-| :---------- | :---------------------- | :------: | :------: |
+|:------------|:------------------------|:--------:|:--------:|
 | input.files | A fileset specification |   yes    |    no    |
 
 ## tidy-file
 
-Run tidy on a single HTML
-file
+Run tidy on a single HTML file
 
 #### Attributes
 
 | Name   | Description                          | Allowed | Default | Required |
-| :----- | :----------------------------------- | :------ | :-----: | :------: |
+|:-------|:-------------------------------------|:--------|:-------:|:--------:|
 | file   | Path to the input file               |         |         |   yes    |
 | config | Path to HTML Tidy configuration file |         |         |    no    |
 | params | Additional parameters and options    |         |         |    no    |
@@ -82,13 +89,12 @@ file
 
 ## tidy-fileset
 
-Run tidy on a folder of HTML
-files
+Run tidy on a folder of HTML files
 
 #### Attributes
 
 | Name   | Description                          | Allowed | Default | Required |
-| :----- | :----------------------------------- | :------ | :-----: | :------: |
+|:-------|:-------------------------------------|:--------|:-------:|:--------:|
 | config | Path to HTML Tidy configuration file |         |         |    no    |
 | params | Additional parameters and options    |         |         |    no    |
 | output | Path for output file(s)              |         |         |    no    |
@@ -96,5 +102,5 @@ files
 #### Elements
 
 | Name        | Description             | Implicit | Required |
-| :---------- | :---------------------- | :------: | :------: |
+|:------------|:------------------------|:--------:|:--------:|
 | input.files | A fileset specification |   yes    |   yes    |
